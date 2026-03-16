@@ -1,10 +1,6 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import "./index.css";
 import * as XLSX from "xlsx";
-import { supabase, getProfile, updateLastSeen, saveScenario,
-         getScenarios, deleteScenario, logAdjustment, getAuditLog,
-         getAdminAuditLog, signOut } from "./supabase";
-import AuthLogin from "./AuthLogin";
 
 /* ══════════════════════════════════════════════════════════════════════════
    DVB COMMAND CENTER · Kearney × Claro Colombia · CAPEX 2026
@@ -71,7 +67,7 @@ const WHITE="#FFFFFF";
 const PURPLE_LT="#F5F3FF";
 
 const TIPO_CFG = {
-  "Network Rollout":        {c:"#2563EB",bg:"#EFF6FF",bdr:"#BFDBFE",label:"Despliegue De Red",abv:"NRO"},
+  "Network Rollout":        {c:"#2563EB",bg:"#EFF6FF",bdr:"#BFDBFE",label:"Rollout De Red",abv:"NRO"},
   "Network Modernization":  {c:"#D97706",bg:"#FFFBEB",bdr:"#FDE68A",label:"Modernización De Red",abv:"MOD"},
   "Capacity Expansion":     {c:"#059669",bg:"#ECFDF5",bdr:"#A7F3D0",label:"Expansión De Capacidad",abv:"CAP"},
   "Customer Investment":    {c:"#E8182A",bg:"#FFF1F1",bdr:"#FDD8DA",label:"Inversión En Clientes",abv:"CUI"},
@@ -79,8 +75,8 @@ const TIPO_CFG = {
   "Regulatory & Spectrum":  {c:"#B45309",bg:"#FFFBEB",bdr:"#FCD34D",label:"Regulatorio Y Espectro",abv:"REG"},
   "IT & Digital":           {c:"#0891B2",bg:"#ECFEFF",bdr:"#A5F3FC",label:"TI Y Digital",abv:"ITD"},
   "Network Operations":     {c:"#6B7280",bg:"#F9FAFB",bdr:"#E5E7EB",label:"Operaciones De Red",abv:"NOP"},
-  "Gestión Administrativa":{c:"#92400E",bg:"#FEF3C7",bdr:"#FDE68A",label:"Gestión Administrativa",abv:"ADM"},
-  RED:           {c:"#2563EB",bg:"#EFF6FF",bdr:"#BFDBFE",label:"Despliegue De Red",abv:"NRO"},
+  "Gestión Administrativa":  {c:"#92400E",bg:"#FEF3C7",bdr:"#FDE68A",label:"Gestión Administrativa",abv:"ADM"},
+  RED:           {c:"#2563EB",bg:"#EFF6FF",bdr:"#BFDBFE",label:"Rollout De Red",abv:"NRO"},
   CLIENTE:       {c:"#E8182A",bg:"#FFF1F1",bdr:"#FDD8DA",label:"Inversión En Clientes",abv:"CUI"},
   IT:            {c:"#0891B2",bg:"#ECFEFF",bdr:"#A5F3FC",label:"TI Y Digital",abv:"ITD"},
   ADMINISTRATIVA:{c:"#92400E",bg:"#FEF3C7",bdr:"#FDE68A",label:"Gestión Administrativa",abv:"ADM"},
@@ -95,310 +91,310 @@ const CATEGORIA_CFG = TIPO_CFG;
 const PXQ_TREE = {
   "101.01":{
     componentes:[
-    {id:"fiber",label:"Red troncal F1",icon:"🔌",pct:0.3,color:"#0891B2",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:48000,Q_unit:"km",P:453,sub:[{label:"Fibra F1 troncal",q:48000,p:149,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Ductos y zanjas",q:48000,p:149,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Empalmes OTDR",q:48000,p:149,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"hw",label:"Equipos OLT/agregación",icon:"📡",pct:0.25,color:"#2563EB",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:480,Q_unit:"nodos",P:23500,sub:[{label:"OLT XGS-PON",q:480,p:7755,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Módulos GPON",q:480,p:7755,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Switches agregación",q:480,p:7755,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"civil",label:"Planta externa",icon:"🏗️",pct:0.25,color:"#D97706",q_driver:"expansion_geo",p_driver:"cotizacion",Q:80000,Q_unit:"homepass",P:71,sub:[{label:"Postes y herrajes",q:80000,p:23,qd:"Por unidad",pd:"Cotización Directa"},{label:"Cajas empalme",q:80000,p:23,qd:"Por unidad",pd:"Cotización Directa"},{label:"Tendido aéreo",q:80000,p:23,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"mo",label:"Instalación planta interna",icon:"👷",pct:0.2,color:"#059669",q_driver:"activaciones",p_driver:"cotizacion",Q:36000,Q_unit:"hogares",P:111,sub:[{label:"Drop cable F3→ONT",q:36000,p:37,qd:"Por unidad",pd:"Cotización Directa"},{label:"ONT/CPE",q:36000,p:37,qd:"Por unidad",pd:"Cotización Directa"},{label:"Instalación técnica",q:36000,p:37,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"fiber",label:"Red troncal F1",icon:"🔌",pct:0.3,color:"#0891B2",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:48000,Q_unit:"km",P:453,sub:[{label:"Fibra F1 troncal",q:48000,p:149,qd:"Por unidad",pd:"benchmark_amx"},{label:"Ductos y zanjas",q:48000,p:149,qd:"Por unidad",pd:"benchmark_amx"},{label:"Empalmes OTDR",q:48000,p:149,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"hw",label:"Equipos OLT/agregación",icon:"📡",pct:0.25,color:"#2563EB",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:480,Q_unit:"nodos",P:23500,sub:[{label:"OLT XGS-PON",q:480,p:7755,qd:"Por unidad",pd:"benchmark_amx"},{label:"Módulos GPON",q:480,p:7755,qd:"Por unidad",pd:"benchmark_amx"},{label:"Switches agregación",q:480,p:7755,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"civil",label:"Planta externa",icon:"🏗️",pct:0.25,color:"#D97706",q_driver:"expansion_geo",p_driver:"cotizacion",Q:80000,Q_unit:"homepass",P:71,sub:[{label:"Postes y herrajes",q:80000,p:23,qd:"Por unidad",pd:"cotizacion"},{label:"Cajas empalme",q:80000,p:23,qd:"Por unidad",pd:"cotizacion"},{label:"Tendido aéreo",q:80000,p:23,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"mo",label:"Instalación planta interna",icon:"👷",pct:0.2,color:"#059669",q_driver:"activaciones",p_driver:"cotizacion",Q:36000,Q_unit:"hogares",P:111,sub:[{label:"Drop cable F3→ONT",q:36000,p:37,qd:"Por unidad",pd:"cotizacion"},{label:"ONT/CPE",q:36000,p:37,qd:"Por unidad",pd:"cotizacion"},{label:"Instalación técnica",q:36000,p:37,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "101.02":{
     componentes:[
-    {id:"civil",label:"Obra civil expansión",icon:"🏗️",pct:0.5,color:"#D97706",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:80000,Q_unit:"homepass",P:86,sub:[{label:"Zanjeo y ductos",q:80000,p:28,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Cámaras y registros",q:80000,p:28,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Tendido fibra",q:80000,p:28,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"hw",label:"Planta activa",icon:"📡",pct:0.3,color:"#2563EB",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:13806,Q_unit:"puertos",P:300,sub:[{label:"Splitters 1:32",q:13806,p:99,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Conectores SC/APC",q:13806,p:99,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Patchcords",q:13806,p:99,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"mo",label:"Activación masiva",icon:"👷",pct:0.2,color:"#059669",q_driver:"activaciones",p_driver:"cotizacion",Q:55000,Q_unit:"hogares",P:50,sub:[{label:"ONT masivo",q:55000,p:16,qd:"Por unidad",pd:"Cotización Directa"},{label:"Drop wire",q:55000,p:16,qd:"Por unidad",pd:"Cotización Directa"},{label:"Alta servicio",q:55000,p:16,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"civil",label:"Obra civil expansión",icon:"🏗️",pct:0.5,color:"#D97706",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:80000,Q_unit:"homepass",P:86,sub:[{label:"Zanjeo y ductos",q:80000,p:28,qd:"Por unidad",pd:"benchmark_amx"},{label:"Cámaras y registros",q:80000,p:28,qd:"Por unidad",pd:"benchmark_amx"},{label:"Tendido fibra",q:80000,p:28,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"hw",label:"Planta activa",icon:"📡",pct:0.3,color:"#2563EB",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:13806,Q_unit:"puertos",P:300,sub:[{label:"Splitters 1:32",q:13806,p:99,qd:"Por unidad",pd:"benchmark_amx"},{label:"Conectores SC/APC",q:13806,p:99,qd:"Por unidad",pd:"benchmark_amx"},{label:"Patchcords",q:13806,p:99,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Activación masiva",icon:"👷",pct:0.2,color:"#059669",q_driver:"activaciones",p_driver:"cotizacion",Q:55000,Q_unit:"hogares",P:50,sub:[{label:"ONT masivo",q:55000,p:16,qd:"Por unidad",pd:"cotizacion"},{label:"Drop wire",q:55000,p:16,qd:"Por unidad",pd:"cotizacion"},{label:"Alta servicio",q:55000,p:16,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "101.03":{
     componentes:[
-    {id:"iru",label:"IRU fibra neutra",icon:"📋",pct:0.6,color:"#B45309",q_driver:"expansion_geo",p_driver:"mercado",Q:6327,Q_unit:"unidad",P:3786,sub:[{label:"Acuerdo IRU operador neutro",q:6327,p:1249,qd:"Por unidad",pd:"Precio De Mercado"},{label:"Derechos de paso",q:6327,p:1249,qd:"Por unidad",pd:"Precio De Mercado"},{label:"Gestión",q:6327,p:1249,qd:"Por unidad",pd:"Precio De Mercado"}]},
-    {id:"hw",label:"Integración activa",icon:"📡",pct:0.4,color:"#2563EB",q_driver:"expansion_geo",p_driver:"cotizacion",Q:6327,Q_unit:"puertos",P:2000,sub:[{label:"Equipos interconexión",q:6327,p:660,qd:"Por unidad",pd:"Cotización Directa"},{label:"Integración OLT",q:6327,p:660,qd:"Por unidad",pd:"Cotización Directa"},{label:"Pruebas",q:6327,p:660,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"iru",label:"IRU fibra neutra",icon:"📋",pct:0.6,color:"#B45309",q_driver:"expansion_geo",p_driver:"mercado",Q:6327,Q_unit:"unidad",P:3786,sub:[{label:"Acuerdo IRU operador neutro",q:6327,p:1249,qd:"Por unidad",pd:"mercado"},{label:"Derechos de paso",q:6327,p:1249,qd:"Por unidad",pd:"mercado"},{label:"Gestión",q:6327,p:1249,qd:"Por unidad",pd:"mercado"}]},
+    {id:"hw",label:"Integración activa",icon:"📡",pct:0.4,color:"#2563EB",q_driver:"expansion_geo",p_driver:"cotizacion",Q:6327,Q_unit:"puertos",P:2000,sub:[{label:"Equipos interconexión",q:6327,p:660,qd:"Por unidad",pd:"cotizacion"},{label:"Integración OLT",q:6327,p:660,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas",q:6327,p:660,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "102.01":{
     componentes:[
-    {id:"civil",label:"Infraestructura pasiva",icon:"🏗️",pct:0.4,color:"#D97706",q_driver:"expansion_geo",p_driver:"cotizacion",Q:200,Q_unit:"sitios",P:20900,sub:[{label:"Torre/mástil nuevo",q:200,p:6897,qd:"Por unidad",pd:"Cotización Directa"},{label:"Shelter y plataforma",q:200,p:6897,qd:"Por unidad",pd:"Cotización Directa"},{label:"Energía y baterías",q:200,p:6897,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"hw",label:"Equipos radio LTE/NR",icon:"📡",pct:0.35,color:"#2563EB",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:200,Q_unit:"sitios",P:18291,sub:[{label:"eNodeB 4G 700MHz",q:200,p:6036,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Antenas MIMO",q:200,p:6036,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Backhaul MW",q:200,p:6036,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"mo",label:"Instalación y comisionado",icon:"👷",pct:0.15,color:"#059669",q_driver:"expansion_geo",p_driver:"cotizacion",Q:200,Q_unit:"sitios",P:7843,sub:[{label:"Montaje RF",q:200,p:2588,qd:"Por unidad",pd:"Cotización Directa"},{label:"Integración core",q:200,p:2588,qd:"Por unidad",pd:"Cotización Directa"},{label:"Drive test",q:200,p:2588,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"om",label:"O&M Año 1",icon:"🔧",pct:0.1,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:200,Q_unit:"sitios",P:5221,sub:[{label:"Mant. preventivo",q:200,p:1723,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Guardia NOC",q:200,p:1723,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Repuestos críticos",q:200,p:1723,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"civil",label:"Infraestructura pasiva",icon:"🏗️",pct:0.4,color:"#D97706",q_driver:"expansion_geo",p_driver:"cotizacion",Q:200,Q_unit:"sitios",P:20900,sub:[{label:"Torre/mástil nuevo",q:200,p:6897,qd:"Por unidad",pd:"cotizacion"},{label:"Shelter y plataforma",q:200,p:6897,qd:"Por unidad",pd:"cotizacion"},{label:"Energía y baterías",q:200,p:6897,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"hw",label:"Equipos radio LTE/NR",icon:"📡",pct:0.35,color:"#2563EB",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:200,Q_unit:"sitios",P:18291,sub:[{label:"eNodeB 4G 700MHz",q:200,p:6036,qd:"Por unidad",pd:"benchmark_amx"},{label:"Antenas MIMO",q:200,p:6036,qd:"Por unidad",pd:"benchmark_amx"},{label:"Backhaul MW",q:200,p:6036,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Instalación y comisionado",icon:"👷",pct:0.15,color:"#059669",q_driver:"expansion_geo",p_driver:"cotizacion",Q:200,Q_unit:"sitios",P:7843,sub:[{label:"Montaje RF",q:200,p:2588,qd:"Por unidad",pd:"cotizacion"},{label:"Integración core",q:200,p:2588,qd:"Por unidad",pd:"cotizacion"},{label:"Drive test",q:200,p:2588,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"om",label:"O&M Año 1",icon:"🔧",pct:0.1,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:200,Q_unit:"sitios",P:5221,sub:[{label:"Mant. preventivo",q:200,p:1723,qd:"Por unidad",pd:"historico"},{label:"Guardia NOC",q:200,p:1723,qd:"Por unidad",pd:"historico"},{label:"Repuestos críticos",q:200,p:1723,qd:"Por unidad",pd:"historico"}]}
   ]},
   "102.02":{
     componentes:[
-    {id:"hw",label:"DAS/Small cell indoor",icon:"📡",pct:0.55,color:"#2563EB",q_driver:"expansion_geo",p_driver:"cotizacion",Q:80,Q_unit:"edificios",P:6626,sub:[{label:"Unidades remotas RU",q:80,p:2187,qd:"Por unidad",pd:"Cotización Directa"},{label:"Head-end",q:80,p:2187,qd:"Por unidad",pd:"Cotización Directa"},{label:"Cableado coaxial",q:80,p:2187,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"civil",label:"Adecuación civil",icon:"🏗️",pct:0.3,color:"#D97706",q_driver:"expansion_geo",p_driver:"cotizacion",Q:80,Q_unit:"edificios",P:3615,sub:[{label:"Obra civil interna",q:80,p:1193,qd:"Por unidad",pd:"Cotización Directa"},{label:"Ductos y bandejas",q:80,p:1193,qd:"Por unidad",pd:"Cotización Directa"},{label:"Permisología",q:80,p:1193,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"mo",label:"Instalación",icon:"👷",pct:0.15,color:"#059669",q_driver:"expansion_geo",p_driver:"cotizacion",Q:80,Q_unit:"edificios",P:1808,sub:[{label:"Montaje y cableado",q:80,p:597,qd:"Por unidad",pd:"Cotización Directa"},{label:"Integración",q:80,p:597,qd:"Por unidad",pd:"Cotización Directa"},{label:"Documentación",q:80,p:597,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"DAS/Small cell indoor",icon:"📡",pct:0.55,color:"#2563EB",q_driver:"expansion_geo",p_driver:"cotizacion",Q:80,Q_unit:"edificios",P:6626,sub:[{label:"Unidades remotas RU",q:80,p:2187,qd:"Por unidad",pd:"cotizacion"},{label:"Head-end",q:80,p:2187,qd:"Por unidad",pd:"cotizacion"},{label:"Cableado coaxial",q:80,p:2187,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"civil",label:"Adecuación civil",icon:"🏗️",pct:0.3,color:"#D97706",q_driver:"expansion_geo",p_driver:"cotizacion",Q:80,Q_unit:"edificios",P:3615,sub:[{label:"Obra civil interna",q:80,p:1193,qd:"Por unidad",pd:"cotizacion"},{label:"Ductos y bandejas",q:80,p:1193,qd:"Por unidad",pd:"cotizacion"},{label:"Permisología",q:80,p:1193,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"mo",label:"Instalación",icon:"👷",pct:0.15,color:"#059669",q_driver:"expansion_geo",p_driver:"cotizacion",Q:80,Q_unit:"edificios",P:1808,sub:[{label:"Montaje y cableado",q:80,p:597,qd:"Por unidad",pd:"cotizacion"},{label:"Integración",q:80,p:597,qd:"Por unidad",pd:"cotizacion"},{label:"Documentación",q:80,p:597,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "103.01":{
     componentes:[
-    {id:"lic",label:"Capacidad cable submarino",icon:"🔑",pct:0.65,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"mercado",Q:250,Q_unit:"Gbps",P:22874,sub:[{label:"Wavelength adicional",q:250,p:7548,qd:"Por unidad",pd:"Precio De Mercado"},{label:"Mantenimiento cable",q:250,p:7548,qd:"Por unidad",pd:"Precio De Mercado"},{label:"Gestión consorcio",q:250,p:7548,qd:"Por unidad",pd:"Precio De Mercado"}]},
-    {id:"hw",label:"Equipos terminación",icon:"📡",pct:0.35,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"Gbps",P:12317,sub:[{label:"Transpondedores coherentes",q:250,p:4065,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Amplificadores EDFA",q:250,p:4065,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Gestión red",q:250,p:4065,qd:"Por unidad",pd:"Referencia Grupo AMX"}]}
+    {id:"lic",label:"Capacidad cable submarino",icon:"🔑",pct:0.65,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"mercado",Q:250,Q_unit:"Gbps",P:22874,sub:[{label:"Wavelength adicional",q:250,p:7548,qd:"Por unidad",pd:"mercado"},{label:"Mantenimiento cable",q:250,p:7548,qd:"Por unidad",pd:"mercado"},{label:"Gestión consorcio",q:250,p:7548,qd:"Por unidad",pd:"mercado"}]},
+    {id:"hw",label:"Equipos terminación",icon:"📡",pct:0.35,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"Gbps",P:12317,sub:[{label:"Transpondedores coherentes",q:250,p:4065,qd:"Por unidad",pd:"benchmark_amx"},{label:"Amplificadores EDFA",q:250,p:4065,qd:"Por unidad",pd:"benchmark_amx"},{label:"Gestión red",q:250,p:4065,qd:"Por unidad",pd:"benchmark_amx"}]}
   ]},
   "103.02":{
     componentes:[
-    {id:"iru",label:"Derecho uso cable",icon:"📋",pct:1.0,color:"#B45309",q_driver:"crecimiento_trafico",p_driver:"mercado",Q:1,Q_unit:"unidad",P:5591250,sub:[{label:"Aporte al consorcio",q:1,p:1845112,qd:"Por unidad",pd:"Precio De Mercado"},{label:"Derechos IRU",q:1,p:1845112,qd:"Por unidad",pd:"Precio De Mercado"},{label:"O&M",q:1,p:1845112,qd:"Por unidad",pd:"Precio De Mercado"}]}
+    {id:"iru",label:"Derecho uso cable",icon:"📋",pct:1.0,color:"#B45309",q_driver:"crecimiento_trafico",p_driver:"mercado",Q:1,Q_unit:"unidad",P:5591250,sub:[{label:"Aporte al consorcio",q:1,p:1845112,qd:"Por unidad",pd:"mercado"},{label:"Derechos IRU",q:1,p:1845112,qd:"Por unidad",pd:"mercado"},{label:"O&M",q:1,p:1845112,qd:"Por unidad",pd:"mercado"}]}
   ]},
   "201.01":{
     componentes:[
-    {id:"hw",label:"Hardware Radio 4G",icon:"📡",pct:0.45,color:"#2563EB",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:2000,Q_unit:"sitios",P:16010,sub:[{label:"Antenas MIMO 4T4R",q:2000,p:5283,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Radio Units RRU",q:2000,p:5283,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"BBU reemplazo",q:2000,p:5283,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"sw",label:"Software y licencias",icon:"💾",pct:0.2,color:"#7C3AED",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:2000,Q_unit:"sitios",P:7114,sub:[{label:"Licencia LTE",q:2000,p:2348,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Features avanzados",q:2000,p:2348,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Soporte año 1",q:2000,p:2348,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"civil",label:"Obras civiles",icon:"🏗️",pct:0.2,color:"#D97706",q_driver:"obsolescencia",p_driver:"historico",Q:2000,Q_unit:"sitios",P:7114,sub:[{label:"Adecuación shelter",q:2000,p:2348,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Energía rectificador",q:2000,p:2348,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Torre",q:2000,p:2348,qd:"Por unidad",pd:"Histórico Contractual"}]},
-    {id:"mo",label:"Instalación y comisionado",icon:"👷",pct:0.15,color:"#059669",q_driver:"obsolescencia",p_driver:"cotizacion",Q:2000,Q_unit:"sitios",P:5336,sub:[{label:"Desmonte viejo",q:2000,p:1761,qd:"Por unidad",pd:"Cotización Directa"},{label:"Montaje nuevo",q:2000,p:1761,qd:"Por unidad",pd:"Cotización Directa"},{label:"Drive test",q:2000,p:1761,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"Hardware Radio 4G",icon:"📡",pct:0.45,color:"#2563EB",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:2000,Q_unit:"sitios",P:16010,sub:[{label:"Antenas MIMO 4T4R",q:2000,p:5283,qd:"Por unidad",pd:"benchmark_amx"},{label:"Radio Units RRU",q:2000,p:5283,qd:"Por unidad",pd:"benchmark_amx"},{label:"BBU reemplazo",q:2000,p:5283,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"sw",label:"Software y licencias",icon:"💾",pct:0.2,color:"#7C3AED",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:2000,Q_unit:"sitios",P:7114,sub:[{label:"Licencia LTE",q:2000,p:2348,qd:"Por unidad",pd:"benchmark_amx"},{label:"Features avanzados",q:2000,p:2348,qd:"Por unidad",pd:"benchmark_amx"},{label:"Soporte año 1",q:2000,p:2348,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"civil",label:"Obras civiles",icon:"🏗️",pct:0.2,color:"#D97706",q_driver:"obsolescencia",p_driver:"historico",Q:2000,Q_unit:"sitios",P:7114,sub:[{label:"Adecuación shelter",q:2000,p:2348,qd:"Por unidad",pd:"historico"},{label:"Energía rectificador",q:2000,p:2348,qd:"Por unidad",pd:"historico"},{label:"Torre",q:2000,p:2348,qd:"Por unidad",pd:"historico"}]},
+    {id:"mo",label:"Instalación y comisionado",icon:"👷",pct:0.15,color:"#059669",q_driver:"obsolescencia",p_driver:"cotizacion",Q:2000,Q_unit:"sitios",P:5336,sub:[{label:"Desmonte viejo",q:2000,p:1761,qd:"Por unidad",pd:"cotizacion"},{label:"Montaje nuevo",q:2000,p:1761,qd:"Por unidad",pd:"cotizacion"},{label:"Drive test",q:2000,p:1761,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "201.02":{
     componentes:[
-    {id:"hw",label:"Hardware 5G NR",icon:"📡",pct:0.48,color:"#2563EB",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:300,Q_unit:"sitios",P:47666,sub:[{label:"AAU Massive MIMO",q:300,p:15730,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"gNB DU+CU",q:300,p:15730,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Fronthaul eCPRI",q:300,p:15730,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"sw",label:"Licencias NR",icon:"💾",pct:0.18,color:"#7C3AED",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:300,Q_unit:"sitios",P:17875,sub:[{label:"Licencia NR",q:300,p:5899,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Features NSA/SA",q:300,p:5899,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Network slicing",q:300,p:5899,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"civil",label:"Integración y obras",icon:"🏗️",pct:0.22,color:"#D97706",q_driver:"obsolescencia",p_driver:"cotizacion",Q:300,Q_unit:"sitios",P:21858,sub:[{label:"Refuerzo estructura",q:300,p:7213,qd:"Por unidad",pd:"Cotización Directa"},{label:"Adecuación eléctrica",q:300,p:7213,qd:"Por unidad",pd:"Cotización Directa"},{label:"Backhaul fibra",q:300,p:7213,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"om",label:"Soporte y O&M",icon:"🔧",pct:0.12,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:300,Q_unit:"sitios",P:11925,sub:[{label:"NOC 24x7",q:300,p:3935,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Field maintenance",q:300,p:3935,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Spare parts pool",q:300,p:3935,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"hw",label:"Hardware 5G NR",icon:"📡",pct:0.48,color:"#2563EB",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:300,Q_unit:"sitios",P:47666,sub:[{label:"AAU Massive MIMO",q:300,p:15730,qd:"Por unidad",pd:"benchmark_amx"},{label:"gNB DU+CU",q:300,p:15730,qd:"Por unidad",pd:"benchmark_amx"},{label:"Fronthaul eCPRI",q:300,p:15730,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"sw",label:"Licencias NR",icon:"💾",pct:0.18,color:"#7C3AED",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:300,Q_unit:"sitios",P:17875,sub:[{label:"Licencia NR",q:300,p:5899,qd:"Por unidad",pd:"benchmark_amx"},{label:"Features NSA/SA",q:300,p:5899,qd:"Por unidad",pd:"benchmark_amx"},{label:"Network slicing",q:300,p:5899,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"civil",label:"Integración y obras",icon:"🏗️",pct:0.22,color:"#D97706",q_driver:"obsolescencia",p_driver:"cotizacion",Q:300,Q_unit:"sitios",P:21858,sub:[{label:"Refuerzo estructura",q:300,p:7213,qd:"Por unidad",pd:"cotizacion"},{label:"Adecuación eléctrica",q:300,p:7213,qd:"Por unidad",pd:"cotizacion"},{label:"Backhaul fibra",q:300,p:7213,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"om",label:"Soporte y O&M",icon:"🔧",pct:0.12,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:300,Q_unit:"sitios",P:11925,sub:[{label:"NOC 24x7",q:300,p:3935,qd:"Por unidad",pd:"historico"},{label:"Field maintenance",q:300,p:3935,qd:"Por unidad",pd:"historico"},{label:"Spare parts pool",q:300,p:3935,qd:"Por unidad",pd:"historico"}]}
   ]},
   "201.03":{
     componentes:[
-    {id:"hw",label:"Infraestructura compute",icon:"🖥️",pct:0.5,color:"#2563EB",q_driver:"obsolescencia",p_driver:"cotizacion",Q:100,Q_unit:"nodos",P:42961,sub:[{label:"Servidores COTS",q:100,p:14177,qd:"Por unidad",pd:"Cotización Directa"},{label:"Storage NVMe",q:100,p:14177,qd:"Por unidad",pd:"Cotización Directa"},{label:"Networking DC 100G",q:100,p:14177,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"sw",label:"Plataforma cloud",icon:"💾",pct:0.35,color:"#7C3AED",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:100,Q_unit:"nodos",P:30073,sub:[{label:"OpenStack/VMware",q:100,p:9924,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"VNF licencias",q:100,p:9924,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Orquestación",q:100,p:9924,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"mo",label:"Integración y migración",icon:"👷",pct:0.15,color:"#059669",q_driver:"migraciones",p_driver:"cotizacion",Q:100,Q_unit:"nodos",P:12888,sub:[{label:"Migración VNFs",q:100,p:4253,qd:"Por unidad",pd:"Cotización Directa"},{label:"Pruebas aceptación",q:100,p:4253,qd:"Por unidad",pd:"Cotización Directa"},{label:"Capacitación",q:100,p:4253,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"Infraestructura compute",icon:"🖥️",pct:0.5,color:"#2563EB",q_driver:"obsolescencia",p_driver:"cotizacion",Q:100,Q_unit:"nodos",P:42961,sub:[{label:"Servidores COTS",q:100,p:14177,qd:"Por unidad",pd:"cotizacion"},{label:"Storage NVMe",q:100,p:14177,qd:"Por unidad",pd:"cotizacion"},{label:"Networking DC 100G",q:100,p:14177,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"sw",label:"Plataforma cloud",icon:"💾",pct:0.35,color:"#7C3AED",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:100,Q_unit:"nodos",P:30073,sub:[{label:"OpenStack/VMware",q:100,p:9924,qd:"Por unidad",pd:"benchmark_amx"},{label:"VNF licencias",q:100,p:9924,qd:"Por unidad",pd:"benchmark_amx"},{label:"Orquestación",q:100,p:9924,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Integración y migración",icon:"👷",pct:0.15,color:"#059669",q_driver:"migraciones",p_driver:"cotizacion",Q:100,Q_unit:"nodos",P:12888,sub:[{label:"Migración VNFs",q:100,p:4253,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas aceptación",q:100,p:4253,qd:"Por unidad",pd:"cotizacion"},{label:"Capacitación",q:100,p:4253,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "202.01":{
     componentes:[
-    {id:"hw",label:"Equipos reemplazo",icon:"📡",pct:0.45,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"nodos",P:9677,sub:[{label:"Nodos IP nueva gen",q:250,p:3193,qd:"Por unidad",pd:"Cotización Directa"},{label:"Tarjetas línea",q:250,p:3193,qd:"Por unidad",pd:"Cotización Directa"},{label:"Transceptores",q:250,p:3193,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"mo",label:"Desmonte y migración",icon:"👷",pct:0.35,color:"#059669",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"nodos",P:7527,sub:[{label:"Desmonte equipo viejo",q:250,p:2484,qd:"Por unidad",pd:"Cotización Directa"},{label:"Migración tráfico",q:250,p:2484,qd:"Por unidad",pd:"Cotización Directa"},{label:"Pruebas",q:250,p:2484,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Servicios profesionales",icon:"🛠️",pct:0.2,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"nodos",P:4301,sub:[{label:"Diseño red",q:250,p:1419,qd:"Por unidad",pd:"Cotización Directa"},{label:"PM",q:250,p:1419,qd:"Por unidad",pd:"Cotización Directa"},{label:"Documentación",q:250,p:1419,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"Equipos reemplazo",icon:"📡",pct:0.45,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"nodos",P:9677,sub:[{label:"Nodos IP nueva gen",q:250,p:3193,qd:"Por unidad",pd:"cotizacion"},{label:"Tarjetas línea",q:250,p:3193,qd:"Por unidad",pd:"cotizacion"},{label:"Transceptores",q:250,p:3193,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"mo",label:"Desmonte y migración",icon:"👷",pct:0.35,color:"#059669",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"nodos",P:7527,sub:[{label:"Desmonte equipo viejo",q:250,p:2484,qd:"Por unidad",pd:"cotizacion"},{label:"Migración tráfico",q:250,p:2484,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas",q:250,p:2484,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Servicios profesionales",icon:"🛠️",pct:0.2,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"nodos",P:4301,sub:[{label:"Diseño red",q:250,p:1419,qd:"Por unidad",pd:"cotizacion"},{label:"PM",q:250,p:1419,qd:"Por unidad",pd:"cotizacion"},{label:"Documentación",q:250,p:1419,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "202.02":{
     componentes:[
-    {id:"sw",label:"Licencias OSS/BSS",icon:"💾",pct:0.6,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:10,Q_unit:"sistemas",P:243388,sub:[{label:"AMDOCS actualización",q:10,p:80318,qd:"Por unidad",pd:"Cotización Directa"},{label:"Nokia NSP",q:10,p:80318,qd:"Por unidad",pd:"Cotización Directa"},{label:"Integraciones API",q:10,p:80318,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Implementación",icon:"🛠️",pct:0.4,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:10,Q_unit:"sistemas",P:162259,sub:[{label:"Consultoría técnica",q:10,p:53545,qd:"Por unidad",pd:"Cotización Directa"},{label:"Testing",q:10,p:53545,qd:"Por unidad",pd:"Cotización Directa"},{label:"Gestión del cambio",q:10,p:53545,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"sw",label:"Licencias OSS/BSS",icon:"💾",pct:0.6,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:10,Q_unit:"sistemas",P:243388,sub:[{label:"AMDOCS actualización",q:10,p:80318,qd:"Por unidad",pd:"cotizacion"},{label:"Nokia NSP",q:10,p:80318,qd:"Por unidad",pd:"cotizacion"},{label:"Integraciones API",q:10,p:80318,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Implementación",icon:"🛠️",pct:0.4,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:10,Q_unit:"sistemas",P:162259,sub:[{label:"Consultoría técnica",q:10,p:53545,qd:"Por unidad",pd:"cotizacion"},{label:"Testing",q:10,p:53545,qd:"Por unidad",pd:"cotizacion"},{label:"Gestión del cambio",q:10,p:53545,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "202.03":{
     componentes:[
-    {id:"mo",label:"Apagado red 3G",icon:"👷",pct:0.5,color:"#059669",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:500,Q_unit:"sitios",P:3110,sub:[{label:"Desmonte RNC/NodeB",q:500,p:1026,qd:"Por unidad",pd:"Cotización Directa"},{label:"Migración abonados",q:500,p:1026,qd:"Por unidad",pd:"Cotización Directa"},{label:"Disposición",q:500,p:1026,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Plan de migración",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:500,Q_unit:"sitios",P:1866,sub:[{label:"Comunicación clientes",q:500,p:616,qd:"Por unidad",pd:"Cotización Directa"},{label:"Soporte",q:500,p:616,qd:"Por unidad",pd:"Cotización Directa"},{label:"Monitoreo",q:500,p:616,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"hw",label:"Herramientas técnicas",icon:"📡",pct:0.2,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:500,Q_unit:"sitios",P:1244,sub:[{label:"Equipos campo",q:500,p:411,qd:"Por unidad",pd:"Cotización Directa"},{label:"Analizadores",q:500,p:411,qd:"Por unidad",pd:"Cotización Directa"},{label:"Kits diagnóstico",q:500,p:411,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"mo",label:"Apagado red 3G",icon:"👷",pct:0.5,color:"#059669",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:500,Q_unit:"sitios",P:3110,sub:[{label:"Desmonte RNC/NodeB",q:500,p:1026,qd:"Por unidad",pd:"cotizacion"},{label:"Migración abonados",q:500,p:1026,qd:"Por unidad",pd:"cotizacion"},{label:"Disposición",q:500,p:1026,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Plan de migración",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:500,Q_unit:"sitios",P:1866,sub:[{label:"Comunicación clientes",q:500,p:616,qd:"Por unidad",pd:"cotizacion"},{label:"Soporte",q:500,p:616,qd:"Por unidad",pd:"cotizacion"},{label:"Monitoreo",q:500,p:616,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"hw",label:"Herramientas técnicas",icon:"📡",pct:0.2,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:500,Q_unit:"sitios",P:1244,sub:[{label:"Equipos campo",q:500,p:411,qd:"Por unidad",pd:"cotizacion"},{label:"Analizadores",q:500,p:411,qd:"Por unidad",pd:"cotizacion"},{label:"Kits diagnóstico",q:500,p:411,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "203.01":{
     componentes:[
-    {id:"mo",label:"Trabajos desmonte",icon:"👷",pct:0.7,color:"#059669",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:51,sub:[{label:"Desmonte físico",q:1000,p:17,qd:"Por unidad",pd:"Cotización Directa"},{label:"Transporte",q:1000,p:17,qd:"Por unidad",pd:"Cotización Directa"},{label:"Bodegaje",q:1000,p:17,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Gestión y disposición",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:22,sub:[{label:"Inventario activos",q:1000,p:7,qd:"Por unidad",pd:"Cotización Directa"},{label:"Disposición RAEE",q:1000,p:7,qd:"Por unidad",pd:"Cotización Directa"},{label:"Documentación",q:1000,p:7,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"mo",label:"Trabajos desmonte",icon:"👷",pct:0.7,color:"#059669",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:51,sub:[{label:"Desmonte físico",q:1000,p:17,qd:"Por unidad",pd:"cotizacion"},{label:"Transporte",q:1000,p:17,qd:"Por unidad",pd:"cotizacion"},{label:"Bodegaje",q:1000,p:17,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Gestión y disposición",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:22,sub:[{label:"Inventario activos",q:1000,p:7,qd:"Por unidad",pd:"cotizacion"},{label:"Disposición RAEE",q:1000,p:7,qd:"Por unidad",pd:"cotizacion"},{label:"Documentación",q:1000,p:7,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "301.01":{
     componentes:[
-    {id:"hw",label:"Upgrades MW backhaul",icon:"📡",pct:0.4,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:35824,sub:[{label:"Radios MW alta cap",q:250,p:11822,qd:"Por unidad",pd:"Cotización Directa"},{label:"Antenas parabólicas",q:250,p:11822,qd:"Por unidad",pd:"Cotización Directa"},{label:"Instalación",q:250,p:11822,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"hw",label:"Core IP expansión",icon:"🌐",pct:0.35,color:"#0891B2",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"Gbps",P:31347,sub:[{label:"Routers borde",q:250,p:10345,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Upgrades DWDM",q:250,p:10345,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Licencias Gbps",q:250,p:10345,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"sw",label:"Carriers adicionales",icon:"💾",pct:0.25,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"historico",Q:250,Q_unit:"Gbps",P:22374,sub:[{label:"Carrier 4G adicional",q:250,p:7383,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Layer 5G",q:250,p:7383,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Lic. capacidad",q:250,p:7383,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"hw",label:"Upgrades MW backhaul",icon:"📡",pct:0.4,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:35824,sub:[{label:"Radios MW alta cap",q:250,p:11822,qd:"Por unidad",pd:"cotizacion"},{label:"Antenas parabólicas",q:250,p:11822,qd:"Por unidad",pd:"cotizacion"},{label:"Instalación",q:250,p:11822,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"hw",label:"Core IP expansión",icon:"🌐",pct:0.35,color:"#0891B2",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"Gbps",P:31347,sub:[{label:"Routers borde",q:250,p:10345,qd:"Por unidad",pd:"benchmark_amx"},{label:"Upgrades DWDM",q:250,p:10345,qd:"Por unidad",pd:"benchmark_amx"},{label:"Licencias Gbps",q:250,p:10345,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"sw",label:"Carriers adicionales",icon:"💾",pct:0.25,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"historico",Q:250,Q_unit:"Gbps",P:22374,sub:[{label:"Carrier 4G adicional",q:250,p:7383,qd:"Por unidad",pd:"historico"},{label:"Layer 5G",q:250,p:7383,qd:"Por unidad",pd:"historico"},{label:"Lic. capacidad",q:250,p:7383,qd:"Por unidad",pd:"historico"}]}
   ]},
   "301.02":{
     componentes:[
-    {id:"hw",label:"Fibra intermunicipal",icon:"🔌",pct:0.4,color:"#0891B2",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"Gbps",P:33480,sub:[{label:"Fibra metro DCI",q:250,p:11048,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Amplificadores EDFA",q:250,p:11048,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"OXC",q:250,p:11048,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"hw",label:"Core IP/MPLS expansión",icon:"🌐",pct:0.35,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"Gbps",P:29310,sub:[{label:"Router core nueva gen",q:250,p:9672,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Licencias MPLS",q:250,p:9672,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Tarjetas",q:250,p:9672,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"hw",label:"Nodos OLT capacidad",icon:"📡",pct:0.25,color:"#D97706",q_driver:"crecimiento_trafico",p_driver:"historico",Q:250,Q_unit:"Gbps",P:20925,sub:[{label:"OLT expansión",q:250,p:6905,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Splits HFC",q:250,p:6905,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Módulos GPON",q:250,p:6905,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"hw",label:"Fibra intermunicipal",icon:"🔌",pct:0.4,color:"#0891B2",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"Gbps",P:33480,sub:[{label:"Fibra metro DCI",q:250,p:11048,qd:"Por unidad",pd:"benchmark_amx"},{label:"Amplificadores EDFA",q:250,p:11048,qd:"Por unidad",pd:"benchmark_amx"},{label:"OXC",q:250,p:11048,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"hw",label:"Core IP/MPLS expansión",icon:"🌐",pct:0.35,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"Gbps",P:29310,sub:[{label:"Router core nueva gen",q:250,p:9672,qd:"Por unidad",pd:"benchmark_amx"},{label:"Licencias MPLS",q:250,p:9672,qd:"Por unidad",pd:"benchmark_amx"},{label:"Tarjetas",q:250,p:9672,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"hw",label:"Nodos OLT capacidad",icon:"📡",pct:0.25,color:"#D97706",q_driver:"crecimiento_trafico",p_driver:"historico",Q:250,Q_unit:"Gbps",P:20925,sub:[{label:"OLT expansión",q:250,p:6905,qd:"Por unidad",pd:"historico"},{label:"Splits HFC",q:250,p:6905,qd:"Por unidad",pd:"historico"},{label:"Módulos GPON",q:250,p:6905,qd:"Por unidad",pd:"historico"}]}
   ]},
   "301.03":{
     componentes:[
-    {id:"mo",label:"Trabajos campo",icon:"👷",pct:0.5,color:"#059669",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"sitios",P:4029,sub:[{label:"Desmonte y reubicación",q:250,p:1330,qd:"Por unidad",pd:"Cotización Directa"},{label:"Montaje",q:250,p:1330,qd:"Por unidad",pd:"Cotización Directa"},{label:"Drive test",q:250,p:1330,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"hw",label:"Materiales",icon:"📡",pct:0.3,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"sitios",P:2417,sub:[{label:"Herrajes",q:250,p:798,qd:"Por unidad",pd:"Cotización Directa"},{label:"Cables RF",q:250,p:798,qd:"Por unidad",pd:"Cotización Directa"},{label:"Conectores",q:250,p:798,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"civil",label:"Obra menor",icon:"🏗️",pct:0.2,color:"#D97706",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"sitios",P:1611,sub:[{label:"Permisología",q:250,p:532,qd:"Por unidad",pd:"Cotización Directa"},{label:"Adecuación civil",q:250,p:532,qd:"Por unidad",pd:"Cotización Directa"},{label:"Documentación",q:250,p:532,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"mo",label:"Trabajos campo",icon:"👷",pct:0.5,color:"#059669",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"sitios",P:4029,sub:[{label:"Desmonte y reubicación",q:250,p:1330,qd:"Por unidad",pd:"cotizacion"},{label:"Montaje",q:250,p:1330,qd:"Por unidad",pd:"cotizacion"},{label:"Drive test",q:250,p:1330,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"hw",label:"Materiales",icon:"📡",pct:0.3,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"sitios",P:2417,sub:[{label:"Herrajes",q:250,p:798,qd:"Por unidad",pd:"cotizacion"},{label:"Cables RF",q:250,p:798,qd:"Por unidad",pd:"cotizacion"},{label:"Conectores",q:250,p:798,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"civil",label:"Obra menor",icon:"🏗️",pct:0.2,color:"#D97706",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"sitios",P:1611,sub:[{label:"Permisología",q:250,p:532,qd:"Por unidad",pd:"cotizacion"},{label:"Adecuación civil",q:250,p:532,qd:"Por unidad",pd:"cotizacion"},{label:"Documentación",q:250,p:532,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "301.04":{
     componentes:[
-    {id:"hw",label:"Módulos GPON",icon:"📡",pct:0.7,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"puertos",P:861,sub:[{label:"Módulos XGS-PON",q:250,p:284,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Tarjetas OLT",q:250,p:284,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Transceptores",q:250,p:284,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"mo",label:"Instalación",icon:"👷",pct:0.3,color:"#059669",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"puertos",P:369,sub:[{label:"Configuración",q:250,p:122,qd:"Por unidad",pd:"Cotización Directa"},{label:"Integración NMS",q:250,p:122,qd:"Por unidad",pd:"Cotización Directa"},{label:"Documentación",q:250,p:122,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"Módulos GPON",icon:"📡",pct:0.7,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"puertos",P:861,sub:[{label:"Módulos XGS-PON",q:250,p:284,qd:"Por unidad",pd:"benchmark_amx"},{label:"Tarjetas OLT",q:250,p:284,qd:"Por unidad",pd:"benchmark_amx"},{label:"Transceptores",q:250,p:284,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Instalación",icon:"👷",pct:0.3,color:"#059669",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"puertos",P:369,sub:[{label:"Configuración",q:250,p:122,qd:"Por unidad",pd:"cotizacion"},{label:"Integración NMS",q:250,p:122,qd:"Por unidad",pd:"cotizacion"},{label:"Documentación",q:250,p:122,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "302.01":{
     componentes:[
-    {id:"svc",label:"MVNO y alianzas",icon:"💼",pct:0.6,color:"#7C3AED",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:12805,sub:[{label:"Plataforma MVNO",q:300,p:4226,qd:"Por unidad",pd:"Cotización Directa"},{label:"Integración",q:300,p:4226,qd:"Por unidad",pd:"Cotización Directa"},{label:"Soporte",q:300,p:4226,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Proyectos innovación",icon:"🛠️",pct:0.4,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:8561,sub:[{label:"Estudios y piloto",q:300,p:2825,qd:"Por unidad",pd:"Cotización Directa"},{label:"Implementación",q:300,p:2825,qd:"Por unidad",pd:"Cotización Directa"},{label:"PMO",q:300,p:2825,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"svc",label:"MVNO y alianzas",icon:"💼",pct:0.6,color:"#7C3AED",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:12805,sub:[{label:"Plataforma MVNO",q:300,p:4226,qd:"Por unidad",pd:"cotizacion"},{label:"Integración",q:300,p:4226,qd:"Por unidad",pd:"cotizacion"},{label:"Soporte",q:300,p:4226,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Proyectos innovación",icon:"🛠️",pct:0.4,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:8561,sub:[{label:"Estudios y piloto",q:300,p:2825,qd:"Por unidad",pd:"cotizacion"},{label:"Implementación",q:300,p:2825,qd:"Por unidad",pd:"cotizacion"},{label:"PMO",q:300,p:2825,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "401.01":{
     componentes:[
-    {id:"hw",label:"Equipo masivo fibra",icon:"📡",pct:0.55,color:"#2563EB",q_driver:"activaciones",p_driver:"benchmark_amx",Q:400000,Q_unit:"clientes",P:115,sub:[{label:"ONT/CPE fibra",q:400000,p:38,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Drop cable",q:400000,p:38,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"SIM/kit bienvenida",q:400000,p:38,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"mo",label:"Instalación técnica",icon:"👷",pct:0.3,color:"#059669",q_driver:"activaciones",p_driver:"cotizacion",Q:400000,Q_unit:"clientes",P:63,sub:[{label:"Visita técnica",q:400000,p:21,qd:"Por unidad",pd:"Cotización Directa"},{label:"Alta servicio",q:400000,p:21,qd:"Por unidad",pd:"Cotización Directa"},{label:"Configuración CPE",q:400000,p:21,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Comisión canal",icon:"🛠️",pct:0.15,color:"#6B7280",q_driver:"activaciones",p_driver:"historico",Q:400000,Q_unit:"clientes",P:31,sub:[{label:"Comisión distribuidor",q:400000,p:10,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Bono meta",q:400000,p:10,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Soporte postventa",q:400000,p:10,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"hw",label:"Equipo masivo fibra",icon:"📡",pct:0.55,color:"#2563EB",q_driver:"activaciones",p_driver:"benchmark_amx",Q:400000,Q_unit:"clientes",P:115,sub:[{label:"ONT/CPE fibra",q:400000,p:38,qd:"Por unidad",pd:"benchmark_amx"},{label:"Drop cable",q:400000,p:38,qd:"Por unidad",pd:"benchmark_amx"},{label:"SIM/kit bienvenida",q:400000,p:38,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Instalación técnica",icon:"👷",pct:0.3,color:"#059669",q_driver:"activaciones",p_driver:"cotizacion",Q:400000,Q_unit:"clientes",P:63,sub:[{label:"Visita técnica",q:400000,p:21,qd:"Por unidad",pd:"cotizacion"},{label:"Alta servicio",q:400000,p:21,qd:"Por unidad",pd:"cotizacion"},{label:"Configuración CPE",q:400000,p:21,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Comisión canal",icon:"🛠️",pct:0.15,color:"#6B7280",q_driver:"activaciones",p_driver:"historico",Q:400000,Q_unit:"clientes",P:31,sub:[{label:"Comisión distribuidor",q:400000,p:10,qd:"Por unidad",pd:"historico"},{label:"Bono meta",q:400000,p:10,qd:"Por unidad",pd:"historico"},{label:"Soporte postventa",q:400000,p:10,qd:"Por unidad",pd:"historico"}]}
   ]},
   "402.01":{
     componentes:[
-    {id:"hw",label:"CPE fibra reemplazo",icon:"📡",pct:0.5,color:"#2563EB",q_driver:"migraciones",p_driver:"benchmark_amx",Q:150000,Q_unit:"clientes",P:132,sub:[{label:"ONT GPON",q:150000,p:44,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Router WiFi 6",q:150000,p:44,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Kit instalación",q:150000,p:44,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"mo",label:"Migración técnica",icon:"👷",pct:0.35,color:"#059669",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:93,sub:[{label:"Desmonte cable/HFC",q:150000,p:31,qd:"Por unidad",pd:"Cotización Directa"},{label:"Instalación fibra",q:150000,p:31,qd:"Por unidad",pd:"Cotización Directa"},{label:"Pruebas QoS",q:150000,p:31,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Gestión migración",icon:"🛠️",pct:0.15,color:"#6B7280",q_driver:"migraciones",p_driver:"historico",Q:150000,Q_unit:"clientes",P:40,sub:[{label:"Comunicación cliente",q:150000,p:13,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Soporte",q:150000,p:13,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Gestión incidencias",q:150000,p:13,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"hw",label:"CPE fibra reemplazo",icon:"📡",pct:0.5,color:"#2563EB",q_driver:"migraciones",p_driver:"benchmark_amx",Q:150000,Q_unit:"clientes",P:132,sub:[{label:"ONT GPON",q:150000,p:44,qd:"Por unidad",pd:"benchmark_amx"},{label:"Router WiFi 6",q:150000,p:44,qd:"Por unidad",pd:"benchmark_amx"},{label:"Kit instalación",q:150000,p:44,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Migración técnica",icon:"👷",pct:0.35,color:"#059669",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:93,sub:[{label:"Desmonte cable/HFC",q:150000,p:31,qd:"Por unidad",pd:"cotizacion"},{label:"Instalación fibra",q:150000,p:31,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas QoS",q:150000,p:31,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Gestión migración",icon:"🛠️",pct:0.15,color:"#6B7280",q_driver:"migraciones",p_driver:"historico",Q:150000,Q_unit:"clientes",P:40,sub:[{label:"Comunicación cliente",q:150000,p:13,qd:"Por unidad",pd:"historico"},{label:"Soporte",q:150000,p:13,qd:"Por unidad",pd:"historico"},{label:"Gestión incidencias",q:150000,p:13,qd:"Por unidad",pd:"historico"}]}
   ]},
   "402.02":{
     componentes:[
-    {id:"hw",label:"CPE cable/satélite",icon:"📡",pct:0.6,color:"#2563EB",q_driver:"migraciones",p_driver:"benchmark_amx",Q:150000,Q_unit:"clientes",P:99,sub:[{label:"Módem DOCSIS 3.1",q:150000,p:33,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Terminal VSAT",q:150000,p:33,qd:"Por unidad",pd:"Referencia Grupo AMX"},{label:"Kit",q:150000,p:33,qd:"Por unidad",pd:"Referencia Grupo AMX"}]},
-    {id:"mo",label:"Instalación y swap",icon:"👷",pct:0.4,color:"#059669",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:66,sub:[{label:"Swap en sitio",q:150000,p:22,qd:"Por unidad",pd:"Cotización Directa"},{label:"Configuración",q:150000,p:22,qd:"Por unidad",pd:"Cotización Directa"},{label:"Alta NMS",q:150000,p:22,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"CPE cable/satélite",icon:"📡",pct:0.6,color:"#2563EB",q_driver:"migraciones",p_driver:"benchmark_amx",Q:150000,Q_unit:"clientes",P:99,sub:[{label:"Módem DOCSIS 3.1",q:150000,p:33,qd:"Por unidad",pd:"benchmark_amx"},{label:"Terminal VSAT",q:150000,p:33,qd:"Por unidad",pd:"benchmark_amx"},{label:"Kit",q:150000,p:33,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Instalación y swap",icon:"👷",pct:0.4,color:"#059669",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:66,sub:[{label:"Swap en sitio",q:150000,p:22,qd:"Por unidad",pd:"cotizacion"},{label:"Configuración",q:150000,p:22,qd:"Por unidad",pd:"cotizacion"},{label:"Alta NMS",q:150000,p:22,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "403.01":{
     componentes:[
-    {id:"mo",label:"Logística traslados",icon:"👷",pct:1.0,color:"#059669",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:706,sub:[{label:"Logística mudanza",q:1000,p:233,qd:"Por unidad",pd:"Cotización Directa"},{label:"Personal",q:1000,p:233,qd:"Por unidad",pd:"Cotización Directa"},{label:"Transporte",q:1000,p:233,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"mo",label:"Logística traslados",icon:"👷",pct:1.0,color:"#059669",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:706,sub:[{label:"Logística mudanza",q:1000,p:233,qd:"Por unidad",pd:"cotizacion"},{label:"Personal",q:1000,p:233,qd:"Por unidad",pd:"cotizacion"},{label:"Transporte",q:1000,p:233,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "403.02":{
     componentes:[
-    {id:"svc",label:"Soporte técnico",icon:"🛠️",pct:0.6,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:5290,sub:[{label:"Call center técnico",q:1000,p:1746,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Despacho brigada",q:1000,p:1746,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Resolución NOC",q:1000,p:1746,qd:"Por unidad",pd:"Histórico Contractual"}]},
-    {id:"hw",label:"Materiales correctivos",icon:"📡",pct:0.4,color:"#2563EB",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:3527,sub:[{label:"Repuestos CPE",q:1000,p:1164,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Cables drop",q:1000,p:1164,qd:"Por unidad",pd:"Histórico Contractual"},{label:"ONT reemplazo",q:1000,p:1164,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"svc",label:"Soporte técnico",icon:"🛠️",pct:0.6,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:5290,sub:[{label:"Call center técnico",q:1000,p:1746,qd:"Por unidad",pd:"historico"},{label:"Despacho brigada",q:1000,p:1746,qd:"Por unidad",pd:"historico"},{label:"Resolución NOC",q:1000,p:1746,qd:"Por unidad",pd:"historico"}]},
+    {id:"hw",label:"Materiales correctivos",icon:"📡",pct:0.4,color:"#2563EB",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:3527,sub:[{label:"Repuestos CPE",q:1000,p:1164,qd:"Por unidad",pd:"historico"},{label:"Cables drop",q:1000,p:1164,qd:"Por unidad",pd:"historico"},{label:"ONT reemplazo",q:1000,p:1164,qd:"Por unidad",pd:"historico"}]}
   ]},
   "501.01":{
     componentes:[
-    {id:"hw",label:"CPE y equipos cliente",icon:"📡",pct:0.4,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:46930,sub:[{label:"Router CPE empresarial",q:300,p:15487,qd:"Por unidad",pd:"Cotización Directa"},{label:"Firewall Fortinet",q:300,p:15487,qd:"Por unidad",pd:"Cotización Directa"},{label:"Switch L2/L3",q:300,p:15487,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Conectividad dedicada",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:41064,sub:[{label:"Enlace dedicado",q:300,p:13551,qd:"Por unidad",pd:"Cotización Directa"},{label:"Redundancia",q:300,p:13551,qd:"Por unidad",pd:"Cotización Directa"},{label:"SLA garantizado",q:300,p:13551,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"mo",label:"Implementación",icon:"👷",pct:0.25,color:"#059669",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:29325,sub:[{label:"Instalación técnica",q:300,p:9677,qd:"Por unidad",pd:"Cotización Directa"},{label:"Integración",q:300,p:9677,qd:"Por unidad",pd:"Cotización Directa"},{label:"Pruebas aceptación",q:300,p:9677,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"CPE y equipos cliente",icon:"📡",pct:0.4,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:46930,sub:[{label:"Router CPE empresarial",q:300,p:15487,qd:"Por unidad",pd:"cotizacion"},{label:"Firewall Fortinet",q:300,p:15487,qd:"Por unidad",pd:"cotizacion"},{label:"Switch L2/L3",q:300,p:15487,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Conectividad dedicada",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:41064,sub:[{label:"Enlace dedicado",q:300,p:13551,qd:"Por unidad",pd:"cotizacion"},{label:"Redundancia",q:300,p:13551,qd:"Por unidad",pd:"cotizacion"},{label:"SLA garantizado",q:300,p:13551,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"mo",label:"Implementación",icon:"👷",pct:0.25,color:"#059669",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:29325,sub:[{label:"Instalación técnica",q:300,p:9677,qd:"Por unidad",pd:"cotizacion"},{label:"Integración",q:300,p:9677,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas aceptación",q:300,p:9677,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "501.02":{
     componentes:[
-    {id:"hw",label:"Infraestructura nodos IP",icon:"📡",pct:0.5,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:13909,sub:[{label:"Nodos IP",q:300,p:4590,qd:"Por unidad",pd:"Cotización Directa"},{label:"Equipos activos",q:300,p:4590,qd:"Por unidad",pd:"Cotización Directa"},{label:"Infraestructura pasiva",q:300,p:4590,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"O&M contrato",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"historico",Q:300,Q_unit:"contratos",P:8345,sub:[{label:"Mantenimiento 24x7",q:300,p:2754,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Gestión incidencias",q:300,p:2754,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Reportes SLA",q:300,p:2754,qd:"Por unidad",pd:"Histórico Contractual"}]},
-    {id:"mo",label:"Despliegue",icon:"👷",pct:0.2,color:"#059669",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:5563,sub:[{label:"Instalación campo",q:300,p:1836,qd:"Por unidad",pd:"Cotización Directa"},{label:"Integración",q:300,p:1836,qd:"Por unidad",pd:"Cotización Directa"},{label:"Pruebas",q:300,p:1836,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"Infraestructura nodos IP",icon:"📡",pct:0.5,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:13909,sub:[{label:"Nodos IP",q:300,p:4590,qd:"Por unidad",pd:"cotizacion"},{label:"Equipos activos",q:300,p:4590,qd:"Por unidad",pd:"cotizacion"},{label:"Infraestructura pasiva",q:300,p:4590,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"O&M contrato",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"historico",Q:300,Q_unit:"contratos",P:8345,sub:[{label:"Mantenimiento 24x7",q:300,p:2754,qd:"Por unidad",pd:"historico"},{label:"Gestión incidencias",q:300,p:2754,qd:"Por unidad",pd:"historico"},{label:"Reportes SLA",q:300,p:2754,qd:"Por unidad",pd:"historico"}]},
+    {id:"mo",label:"Despliegue",icon:"👷",pct:0.2,color:"#059669",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:5563,sub:[{label:"Instalación campo",q:300,p:1836,qd:"Por unidad",pd:"cotizacion"},{label:"Integración",q:300,p:1836,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas",q:300,p:1836,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "501.03":{
     componentes:[
-    {id:"hw",label:"Equipos dedicados",icon:"📡",pct:0.6,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:1071,sub:[{label:"CPE industrial",q:300,p:353,qd:"Por unidad",pd:"Cotización Directa"},{label:"Redundancia",q:300,p:353,qd:"Por unidad",pd:"Cotización Directa"},{label:"Seguridad física",q:300,p:353,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Servicios gestionados",icon:"🛠️",pct:0.4,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:715,sub:[{label:"SLA 99.99%",q:300,p:236,qd:"Por unidad",pd:"Cotización Directa"},{label:"Soporte 24x7",q:300,p:236,qd:"Por unidad",pd:"Cotización Directa"},{label:"Reportería",q:300,p:236,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"Equipos dedicados",icon:"📡",pct:0.6,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:1071,sub:[{label:"CPE industrial",q:300,p:353,qd:"Por unidad",pd:"cotizacion"},{label:"Redundancia",q:300,p:353,qd:"Por unidad",pd:"cotizacion"},{label:"Seguridad física",q:300,p:353,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Servicios gestionados",icon:"🛠️",pct:0.4,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:715,sub:[{label:"SLA 99.99%",q:300,p:236,qd:"Por unidad",pd:"cotizacion"},{label:"Soporte 24x7",q:300,p:236,qd:"Por unidad",pd:"cotizacion"},{label:"Reportería",q:300,p:236,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "501.04":{
     componentes:[
-    {id:"lic",label:"Licencias nube",icon:"🔑",pct:0.7,color:"#7C3AED",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:2238,sub:[{label:"Compute OCI",q:300,p:739,qd:"Por unidad",pd:"Cotización Directa"},{label:"Storage",q:300,p:739,qd:"Por unidad",pd:"Cotización Directa"},{label:"Networking cloud",q:300,p:739,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Integración",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:960,sub:[{label:"Migración workloads",q:300,p:317,qd:"Por unidad",pd:"Cotización Directa"},{label:"Conectividad directa",q:300,p:317,qd:"Por unidad",pd:"Cotización Directa"},{label:"Soporte",q:300,p:317,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"lic",label:"Licencias nube",icon:"🔑",pct:0.7,color:"#7C3AED",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:2238,sub:[{label:"Compute OCI",q:300,p:739,qd:"Por unidad",pd:"cotizacion"},{label:"Storage",q:300,p:739,qd:"Por unidad",pd:"cotizacion"},{label:"Networking cloud",q:300,p:739,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Integración",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:960,sub:[{label:"Migración workloads",q:300,p:317,qd:"Por unidad",pd:"cotizacion"},{label:"Conectividad directa",q:300,p:317,qd:"Por unidad",pd:"cotizacion"},{label:"Soporte",q:300,p:317,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "502.01":{
     componentes:[
-    {id:"hw",label:"Equipos TI datacenter",icon:"🖥️",pct:0.55,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:28798,sub:[{label:"Servidores cliente",q:300,p:9503,qd:"Por unidad",pd:"Cotización Directa"},{label:"Storage",q:300,p:9503,qd:"Por unidad",pd:"Cotización Directa"},{label:"Networking 100G",q:300,p:9503,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"civil",label:"Infraestructura DC",icon:"🏗️",pct:0.3,color:"#D97706",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:15709,sub:[{label:"Ampliación sala",q:300,p:5184,qd:"Por unidad",pd:"Cotización Directa"},{label:"Energía eléctrica",q:300,p:5184,qd:"Por unidad",pd:"Cotización Directa"},{label:"Cooling",q:300,p:5184,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"mo",label:"Implementación",icon:"👷",pct:0.15,color:"#059669",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:7842,sub:[{label:"Instalación racks",q:300,p:2588,qd:"Por unidad",pd:"Cotización Directa"},{label:"Cableado estructurado",q:300,p:2588,qd:"Por unidad",pd:"Cotización Directa"},{label:"Pruebas",q:300,p:2588,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"Equipos TI datacenter",icon:"🖥️",pct:0.55,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:28798,sub:[{label:"Servidores cliente",q:300,p:9503,qd:"Por unidad",pd:"cotizacion"},{label:"Storage",q:300,p:9503,qd:"Por unidad",pd:"cotizacion"},{label:"Networking 100G",q:300,p:9503,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"civil",label:"Infraestructura DC",icon:"🏗️",pct:0.3,color:"#D97706",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:15709,sub:[{label:"Ampliación sala",q:300,p:5184,qd:"Por unidad",pd:"cotizacion"},{label:"Energía eléctrica",q:300,p:5184,qd:"Por unidad",pd:"cotizacion"},{label:"Cooling",q:300,p:5184,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"mo",label:"Implementación",icon:"👷",pct:0.15,color:"#059669",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:7842,sub:[{label:"Instalación racks",q:300,p:2588,qd:"Por unidad",pd:"cotizacion"},{label:"Cableado estructurado",q:300,p:2588,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas",q:300,p:2588,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "502.02":{
     componentes:[
-    {id:"hw",label:"Servidores y storage",icon:"🖥️",pct:0.65,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:14793,sub:[{label:"Servidores COTS",q:300,p:4882,qd:"Por unidad",pd:"Cotización Directa"},{label:"Storage SAN/NAS",q:300,p:4882,qd:"Por unidad",pd:"Cotización Directa"},{label:"Virtualización",q:300,p:4882,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Servicios profesionales",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:7965,sub:[{label:"Diseño",q:300,p:2628,qd:"Por unidad",pd:"Cotización Directa"},{label:"Implementación",q:300,p:2628,qd:"Por unidad",pd:"Cotización Directa"},{label:"Testing",q:300,p:2628,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"Servidores y storage",icon:"🖥️",pct:0.65,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:14793,sub:[{label:"Servidores COTS",q:300,p:4882,qd:"Por unidad",pd:"cotizacion"},{label:"Storage SAN/NAS",q:300,p:4882,qd:"Por unidad",pd:"cotizacion"},{label:"Virtualización",q:300,p:4882,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Servicios profesionales",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:7965,sub:[{label:"Diseño",q:300,p:2628,qd:"Por unidad",pd:"cotizacion"},{label:"Implementación",q:300,p:2628,qd:"Por unidad",pd:"cotizacion"},{label:"Testing",q:300,p:2628,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "601.01":{
     componentes:[
-    {id:"civil",label:"Infraestructura pasiva",icon:"🏗️",pct:0.38,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:175612,sub:[{label:"Torre/mástil",q:90,p:57952,qd:"Por unidad",pd:"Referencia CRC"},{label:"Shelter",q:90,p:57952,qd:"Por unidad",pd:"Referencia CRC"},{label:"Energía solar off-grid",q:90,p:57952,qd:"Por unidad",pd:"Referencia CRC"}]},
-    {id:"hw",label:"Equipos radio LTE",icon:"📡",pct:0.44,color:"#2563EB",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:203393,sub:[{label:"eNodeB 700/850MHz",q:90,p:67120,qd:"Por unidad",pd:"Referencia CRC"},{label:"Antenas directivas",q:90,p:67120,qd:"Por unidad",pd:"Referencia CRC"},{label:"Backhaul MW",q:90,p:67120,qd:"Por unidad",pd:"Referencia CRC"}]},
-    {id:"reg",label:"Permisos y regulatorio",icon:"⚖️",pct:0.18,color:"#E8182A",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:83191,sub:[{label:"Licencia ANLA",q:90,p:27453,qd:"Por unidad",pd:"Referencia CRC"},{label:"Permiso municipal",q:90,p:27453,qd:"Por unidad",pd:"Referencia CRC"},{label:"Interventoría CRC",q:90,p:27453,qd:"Por unidad",pd:"Referencia CRC"}]}
+    {id:"civil",label:"Infraestructura pasiva",icon:"🏗️",pct:0.38,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:175612,sub:[{label:"Torre/mástil",q:90,p:57952,qd:"Por unidad",pd:"benchmark_crc"},{label:"Shelter",q:90,p:57952,qd:"Por unidad",pd:"benchmark_crc"},{label:"Energía solar off-grid",q:90,p:57952,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"hw",label:"Equipos radio LTE",icon:"📡",pct:0.44,color:"#2563EB",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:203393,sub:[{label:"eNodeB 700/850MHz",q:90,p:67120,qd:"Por unidad",pd:"benchmark_crc"},{label:"Antenas directivas",q:90,p:67120,qd:"Por unidad",pd:"benchmark_crc"},{label:"Backhaul MW",q:90,p:67120,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"reg",label:"Permisos y regulatorio",icon:"⚖️",pct:0.18,color:"#E8182A",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:83191,sub:[{label:"Licencia ANLA",q:90,p:27453,qd:"Por unidad",pd:"benchmark_crc"},{label:"Permiso municipal",q:90,p:27453,qd:"Por unidad",pd:"benchmark_crc"},{label:"Interventoría CRC",q:90,p:27453,qd:"Por unidad",pd:"benchmark_crc"}]}
   ]},
   "601.02":{
     componentes:[
-    {id:"civil",label:"Obra civil 5G",icon:"🏗️",pct:0.35,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:62976,sub:[{label:"Fibra ODH",q:90,p:20782,qd:"Por unidad",pd:"Referencia CRC"},{label:"Obra civil nueva",q:90,p:20782,qd:"Por unidad",pd:"Referencia CRC"},{label:"Energía",q:90,p:20782,qd:"Por unidad",pd:"Referencia CRC"}]},
-    {id:"hw",label:"Equipos gNB",icon:"📡",pct:0.45,color:"#2563EB",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:80934,sub:[{label:"gNB AAU 5G",q:90,p:26708,qd:"Por unidad",pd:"Referencia CRC"},{label:"Antenas massive MIMO",q:90,p:26708,qd:"Por unidad",pd:"Referencia CRC"},{label:"Integración",q:90,p:26708,qd:"Por unidad",pd:"Referencia CRC"}]},
-    {id:"reg",label:"Pago espectro",icon:"⚖️",pct:0.2,color:"#E8182A",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:35977,sub:[{label:"Cargo espectro CRC",q:90,p:11872,qd:"Por unidad",pd:"Referencia CRC"},{label:"Gestión regulatoria",q:90,p:11872,qd:"Por unidad",pd:"Referencia CRC"}]}
+    {id:"civil",label:"Obra civil 5G",icon:"🏗️",pct:0.35,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:62976,sub:[{label:"Fibra ODH",q:90,p:20782,qd:"Por unidad",pd:"benchmark_crc"},{label:"Obra civil nueva",q:90,p:20782,qd:"Por unidad",pd:"benchmark_crc"},{label:"Energía",q:90,p:20782,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"hw",label:"Equipos gNB",icon:"📡",pct:0.45,color:"#2563EB",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:80934,sub:[{label:"gNB AAU 5G",q:90,p:26708,qd:"Por unidad",pd:"benchmark_crc"},{label:"Antenas massive MIMO",q:90,p:26708,qd:"Por unidad",pd:"benchmark_crc"},{label:"Integración",q:90,p:26708,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"reg",label:"Pago espectro",icon:"⚖️",pct:0.2,color:"#E8182A",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:35977,sub:[{label:"Cargo espectro CRC",q:90,p:11872,qd:"Por unidad",pd:"benchmark_crc"},{label:"Gestión regulatoria",q:90,p:11872,qd:"Por unidad",pd:"benchmark_crc"}]}
   ]},
   "601.03":{
     componentes:[
-    {id:"hw",label:"Repetidores y MW",icon:"📡",pct:0.55,color:"#2563EB",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:60606,sub:[{label:"Repetidor activo",q:90,p:20000,qd:"Por unidad",pd:"Referencia CRC"},{label:"Radio MW",q:90,p:20000,qd:"Por unidad",pd:"Referencia CRC"},{label:"Antenas",q:90,p:20000,qd:"Por unidad",pd:"Referencia CRC"}]},
-    {id:"civil",label:"Infraestructura",icon:"🏗️",pct:0.3,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:33090,sub:[{label:"Torre menor",q:90,p:10920,qd:"Por unidad",pd:"Referencia CRC"},{label:"Energía",q:90,p:10920,qd:"Por unidad",pd:"Referencia CRC"},{label:"Instalación",q:90,p:10920,qd:"Por unidad",pd:"Referencia CRC"}]},
-    {id:"reg",label:"Implementación regulatoria",icon:"⚖️",pct:0.15,color:"#E8182A",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:16545,sub:[{label:"Gestión CRC",q:90,p:5460,qd:"Por unidad",pd:"Referencia CRC"},{label:"Reportes",q:90,p:5460,qd:"Por unidad",pd:"Referencia CRC"},{label:"Supervisión",q:90,p:5460,qd:"Por unidad",pd:"Referencia CRC"}]}
+    {id:"hw",label:"Repetidores y MW",icon:"📡",pct:0.55,color:"#2563EB",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:60606,sub:[{label:"Repetidor activo",q:90,p:20000,qd:"Por unidad",pd:"benchmark_crc"},{label:"Radio MW",q:90,p:20000,qd:"Por unidad",pd:"benchmark_crc"},{label:"Antenas",q:90,p:20000,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"civil",label:"Infraestructura",icon:"🏗️",pct:0.3,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:33090,sub:[{label:"Torre menor",q:90,p:10920,qd:"Por unidad",pd:"benchmark_crc"},{label:"Energía",q:90,p:10920,qd:"Por unidad",pd:"benchmark_crc"},{label:"Instalación",q:90,p:10920,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"reg",label:"Implementación regulatoria",icon:"⚖️",pct:0.15,color:"#E8182A",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:16545,sub:[{label:"Gestión CRC",q:90,p:5460,qd:"Por unidad",pd:"benchmark_crc"},{label:"Reportes",q:90,p:5460,qd:"Por unidad",pd:"benchmark_crc"},{label:"Supervisión",q:90,p:5460,qd:"Por unidad",pd:"benchmark_crc"}]}
   ]},
   "601.04":{
     componentes:[
-    {id:"hw",label:"Electrónica nueva banda",icon:"📡",pct:0.65,color:"#2563EB",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:39190,sub:[{label:"eNodeB nueva frecuencia",q:90,p:12933,qd:"Por unidad",pd:"Referencia CRC"},{label:"Antenas wide-band",q:90,p:12933,qd:"Por unidad",pd:"Referencia CRC"},{label:"RRU",q:90,p:12933,qd:"Por unidad",pd:"Referencia CRC"}]},
-    {id:"civil",label:"Energía y adecuación",icon:"🏗️",pct:0.35,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:21095,sub:[{label:"Baterías",q:90,p:6961,qd:"Por unidad",pd:"Referencia CRC"},{label:"Rectificadores",q:90,p:6961,qd:"Por unidad",pd:"Referencia CRC"},{label:"Obra civil menor",q:90,p:6961,qd:"Por unidad",pd:"Referencia CRC"}]}
+    {id:"hw",label:"Electrónica nueva banda",icon:"📡",pct:0.65,color:"#2563EB",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:39190,sub:[{label:"eNodeB nueva frecuencia",q:90,p:12933,qd:"Por unidad",pd:"benchmark_crc"},{label:"Antenas wide-band",q:90,p:12933,qd:"Por unidad",pd:"benchmark_crc"},{label:"RRU",q:90,p:12933,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"civil",label:"Energía y adecuación",icon:"🏗️",pct:0.35,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:21095,sub:[{label:"Baterías",q:90,p:6961,qd:"Por unidad",pd:"benchmark_crc"},{label:"Rectificadores",q:90,p:6961,qd:"Por unidad",pd:"benchmark_crc"},{label:"Obra civil menor",q:90,p:6961,qd:"Por unidad",pd:"benchmark_crc"}]}
   ]},
   "601.05":{
     componentes:[
-    {id:"svc",label:"Servicios medición",icon:"🛠️",pct:1.0,color:"#6B7280",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:5185,sub:[{label:"Drive test CRC",q:90,p:1711,qd:"Por unidad",pd:"Referencia CRC"},{label:"Reportes calidad",q:90,p:1711,qd:"Por unidad",pd:"Referencia CRC"},{label:"Auditoría técnica",q:90,p:1711,qd:"Por unidad",pd:"Referencia CRC"}]}
+    {id:"svc",label:"Servicios medición",icon:"🛠️",pct:1.0,color:"#6B7280",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:5185,sub:[{label:"Drive test CRC",q:90,p:1711,qd:"Por unidad",pd:"benchmark_crc"},{label:"Reportes calidad",q:90,p:1711,qd:"Por unidad",pd:"benchmark_crc"},{label:"Auditoría técnica",q:90,p:1711,qd:"Por unidad",pd:"benchmark_crc"}]}
   ]},
   "701.01":{
     componentes:[
-    {id:"lic",label:"Licencias corporativas",icon:"🔑",pct:0.55,color:"#7C3AED",q_driver:"mantenimiento",p_driver:"ila",Q:1000,Q_unit:"activos",P:20027,sub:[{label:"Microsoft EA",q:1000,p:6609,qd:"Por unidad",pd:"IPC + ILA Telco"},{label:"Oracle",q:1000,p:6609,qd:"Por unidad",pd:"IPC + ILA Telco"},{label:"Red Hat enterprise",q:1000,p:6609,qd:"Por unidad",pd:"IPC + ILA Telco"}]},
-    {id:"lic",label:"Licencias OSS/BSS",icon:"💾",pct:0.45,color:"#0891B2",q_driver:"mantenimiento",p_driver:"ila",Q:1000,Q_unit:"activos",P:16386,sub:[{label:"AMDOCS",q:1000,p:5407,qd:"Por unidad",pd:"IPC + ILA Telco"},{label:"Nokia NSP",q:1000,p:5407,qd:"Por unidad",pd:"IPC + ILA Telco"},{label:"Ericsson OSS",q:1000,p:5407,qd:"Por unidad",pd:"IPC + ILA Telco"}]}
+    {id:"lic",label:"Licencias corporativas",icon:"🔑",pct:0.55,color:"#7C3AED",q_driver:"mantenimiento",p_driver:"ila",Q:1000,Q_unit:"activos",P:20027,sub:[{label:"Microsoft EA",q:1000,p:6609,qd:"Por unidad",pd:"ila"},{label:"Oracle",q:1000,p:6609,qd:"Por unidad",pd:"ila"},{label:"Red Hat enterprise",q:1000,p:6609,qd:"Por unidad",pd:"ila"}]},
+    {id:"lic",label:"Licencias OSS/BSS",icon:"💾",pct:0.45,color:"#0891B2",q_driver:"mantenimiento",p_driver:"ila",Q:1000,Q_unit:"activos",P:16386,sub:[{label:"AMDOCS",q:1000,p:5407,qd:"Por unidad",pd:"ila"},{label:"Nokia NSP",q:1000,p:5407,qd:"Por unidad",pd:"ila"},{label:"Ericsson OSS",q:1000,p:5407,qd:"Por unidad",pd:"ila"}]}
   ]},
   "701.02":{
     componentes:[
-    {id:"sw",label:"Microsoft y productividad",icon:"💾",pct:0.55,color:"#7C3AED",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:4583,sub:[{label:"M365 upgrade",q:1000,p:1512,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Teams",q:1000,p:1512,qd:"Por unidad",pd:"Histórico Contractual"},{label:"SharePoint",q:1000,p:1512,qd:"Por unidad",pd:"Histórico Contractual"}]},
-    {id:"svc",label:"Software y gestión",icon:"🛠️",pct:0.45,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:3750,sub:[{label:"OSS/BSS actualización",q:1000,p:1238,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Consultoría",q:1000,p:1238,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Soporte",q:1000,p:1238,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"sw",label:"Microsoft y productividad",icon:"💾",pct:0.55,color:"#7C3AED",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:4583,sub:[{label:"M365 upgrade",q:1000,p:1512,qd:"Por unidad",pd:"historico"},{label:"Teams",q:1000,p:1512,qd:"Por unidad",pd:"historico"},{label:"SharePoint",q:1000,p:1512,qd:"Por unidad",pd:"historico"}]},
+    {id:"svc",label:"Software y gestión",icon:"🛠️",pct:0.45,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:3750,sub:[{label:"OSS/BSS actualización",q:1000,p:1238,qd:"Por unidad",pd:"historico"},{label:"Consultoría",q:1000,p:1238,qd:"Por unidad",pd:"historico"},{label:"Soporte",q:1000,p:1238,qd:"Por unidad",pd:"historico"}]}
   ]},
   "701.03":{
     componentes:[
-    {id:"hw",label:"Plataformas core",icon:"🖥️",pct:0.55,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:3354,sub:[{label:"Servidores",q:1000,p:1107,qd:"Por unidad",pd:"Cotización Directa"},{label:"Storage",q:1000,p:1107,qd:"Por unidad",pd:"Cotización Directa"},{label:"Virtualización",q:1000,p:1107,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"hw",label:"Cómputo y networking DC",icon:"🌐",pct:0.45,color:"#0891B2",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:2745,sub:[{label:"Servidores blade",q:1000,p:906,qd:"Por unidad",pd:"Cotización Directa"},{label:"Networking 25G",q:1000,p:906,qd:"Por unidad",pd:"Cotización Directa"},{label:"Racks",q:1000,p:906,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"Plataformas core",icon:"🖥️",pct:0.55,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:3354,sub:[{label:"Servidores",q:1000,p:1107,qd:"Por unidad",pd:"cotizacion"},{label:"Storage",q:1000,p:1107,qd:"Por unidad",pd:"cotizacion"},{label:"Virtualización",q:1000,p:1107,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"hw",label:"Cómputo y networking DC",icon:"🌐",pct:0.45,color:"#0891B2",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:2745,sub:[{label:"Servidores blade",q:1000,p:906,qd:"Por unidad",pd:"cotizacion"},{label:"Networking 25G",q:1000,p:906,qd:"Por unidad",pd:"cotizacion"},{label:"Racks",q:1000,p:906,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "701.04":{
     componentes:[
-    {id:"svc",label:"Desarrollo a medida",icon:"💼",pct:0.65,color:"#7C3AED",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:3453,sub:[{label:"Sprints desarrollo",q:1000,p:1139,qd:"Por unidad",pd:"Cotización Directa"},{label:"QA",q:1000,p:1139,qd:"Por unidad",pd:"Cotización Directa"},{label:"DevOps pipeline",q:1000,p:1139,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Gestión y arquitectura",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:1859,sub:[{label:"Arquitectura",q:1000,p:613,qd:"Por unidad",pd:"Cotización Directa"},{label:"PM",q:1000,p:613,qd:"Por unidad",pd:"Cotización Directa"},{label:"Documentación",q:1000,p:613,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"svc",label:"Desarrollo a medida",icon:"💼",pct:0.65,color:"#7C3AED",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:3453,sub:[{label:"Sprints desarrollo",q:1000,p:1139,qd:"Por unidad",pd:"cotizacion"},{label:"QA",q:1000,p:1139,qd:"Por unidad",pd:"cotizacion"},{label:"DevOps pipeline",q:1000,p:1139,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Gestión y arquitectura",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:1859,sub:[{label:"Arquitectura",q:1000,p:613,qd:"Por unidad",pd:"cotizacion"},{label:"PM",q:1000,p:613,qd:"Por unidad",pd:"cotizacion"},{label:"Documentación",q:1000,p:613,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "701.05":{
     componentes:[
-    {id:"svc",label:"Migración técnica",icon:"🛠️",pct:1.0,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:679,sub:[{label:"Planificación",q:1000,p:224,qd:"Por unidad",pd:"Cotización Directa"},{label:"Ejecución",q:1000,p:224,qd:"Por unidad",pd:"Cotización Directa"},{label:"Validación",q:1000,p:224,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"svc",label:"Migración técnica",icon:"🛠️",pct:1.0,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:679,sub:[{label:"Planificación",q:1000,p:224,qd:"Por unidad",pd:"cotizacion"},{label:"Ejecución",q:1000,p:224,qd:"Por unidad",pd:"cotizacion"},{label:"Validación",q:1000,p:224,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "702.01":{
     componentes:[
-    {id:"sw",label:"Plataforma CRM",icon:"💾",pct:0.45,color:"#7C3AED",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:86,sub:[{label:"Salesforce CRM",q:150000,p:28,qd:"Por unidad",pd:"Cotización Directa"},{label:"Marketing Cloud",q:150000,p:28,qd:"Por unidad",pd:"Cotización Directa"},{label:"Analytics",q:150000,p:28,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"sw",label:"Billing convergente",icon:"💾",pct:0.35,color:"#0891B2",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:67,sub:[{label:"Billing engine",q:150000,p:22,qd:"Por unidad",pd:"Cotización Directa"},{label:"Conectores BSS",q:150000,p:22,qd:"Por unidad",pd:"Cotización Directa"},{label:"API gateway",q:150000,p:22,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Implementación",icon:"🛠️",pct:0.2,color:"#6B7280",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:38,sub:[{label:"Configuración",q:150000,p:13,qd:"Por unidad",pd:"Cotización Directa"},{label:"UAT",q:150000,p:13,qd:"Por unidad",pd:"Cotización Directa"},{label:"Capacitación",q:150000,p:13,qd:"Por unidad",pd:"Cotización Directa"},{label:"Go-live",q:150000,p:13,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"sw",label:"Plataforma CRM",icon:"💾",pct:0.45,color:"#7C3AED",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:86,sub:[{label:"Salesforce CRM",q:150000,p:28,qd:"Por unidad",pd:"cotizacion"},{label:"Marketing Cloud",q:150000,p:28,qd:"Por unidad",pd:"cotizacion"},{label:"Analytics",q:150000,p:28,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"sw",label:"Billing convergente",icon:"💾",pct:0.35,color:"#0891B2",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:67,sub:[{label:"Billing engine",q:150000,p:22,qd:"Por unidad",pd:"cotizacion"},{label:"Conectores BSS",q:150000,p:22,qd:"Por unidad",pd:"cotizacion"},{label:"API gateway",q:150000,p:22,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Implementación",icon:"🛠️",pct:0.2,color:"#6B7280",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:38,sub:[{label:"Configuración",q:150000,p:13,qd:"Por unidad",pd:"cotizacion"},{label:"UAT",q:150000,p:13,qd:"Por unidad",pd:"cotizacion"},{label:"Capacitación",q:150000,p:13,qd:"Por unidad",pd:"cotizacion"},{label:"Go-live",q:150000,p:13,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "703.01":{
     componentes:[
-    {id:"sw",label:"Plataforma cloud",icon:"☁️",pct:0.5,color:"#0891B2",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:3648,sub:[{label:"Infraestructura cloud",q:250,p:1204,qd:"Por unidad",pd:"Cotización Directa"},{label:"Virtualización",q:250,p:1204,qd:"Por unidad",pd:"Cotización Directa"},{label:"Orquestación",q:250,p:1204,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"sw",label:"Ciberseguridad",icon:"💾",pct:0.5,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:3648,sub:[{label:"SIEM",q:250,p:1204,qd:"Por unidad",pd:"Cotización Directa"},{label:"EDR/XDR",q:250,p:1204,qd:"Por unidad",pd:"Cotización Directa"},{label:"Firewall NGFW",q:250,p:1204,qd:"Por unidad",pd:"Cotización Directa"},{label:"SOC herramientas",q:250,p:1204,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"sw",label:"Plataforma cloud",icon:"☁️",pct:0.5,color:"#0891B2",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:3648,sub:[{label:"Infraestructura cloud",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"},{label:"Virtualización",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"},{label:"Orquestación",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"sw",label:"Ciberseguridad",icon:"💾",pct:0.5,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:3648,sub:[{label:"SIEM",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"},{label:"EDR/XDR",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"},{label:"Firewall NGFW",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"},{label:"SOC herramientas",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "704.01":{
     componentes:[
-    {id:"sw",label:"Plataforma datos",icon:"📊",pct:0.6,color:"#0891B2",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:9662,sub:[{label:"Databricks/Spark",q:250,p:3188,qd:"Por unidad",pd:"Cotización Directa"},{label:"Data lake",q:250,p:3188,qd:"Por unidad",pd:"Cotización Directa"},{label:"BI tools PowerBI",q:250,p:3188,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Implementación analytics",icon:"🛠️",pct:0.4,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:6441,sub:[{label:"Ingeniería datos",q:250,p:2126,qd:"Por unidad",pd:"Cotización Directa"},{label:"ML models",q:250,p:2126,qd:"Por unidad",pd:"Cotización Directa"},{label:"Dashboards",q:250,p:2126,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"sw",label:"Plataforma datos",icon:"📊",pct:0.6,color:"#0891B2",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:9662,sub:[{label:"Databricks/Spark",q:250,p:3188,qd:"Por unidad",pd:"cotizacion"},{label:"Data lake",q:250,p:3188,qd:"Por unidad",pd:"cotizacion"},{label:"BI tools PowerBI",q:250,p:3188,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Implementación analytics",icon:"🛠️",pct:0.4,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:6441,sub:[{label:"Ingeniería datos",q:250,p:2126,qd:"Por unidad",pd:"cotizacion"},{label:"ML models",q:250,p:2126,qd:"Por unidad",pd:"cotizacion"},{label:"Dashboards",q:250,p:2126,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "704.02":{
     componentes:[
-    {id:"svc",label:"App y canales digitales",icon:"💼",pct:0.65,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:8216,sub:[{label:"App Mi Claro",q:250,p:2711,qd:"Por unidad",pd:"Cotización Directa"},{label:"Canal web",q:250,p:2711,qd:"Por unidad",pd:"Cotización Directa"},{label:"Autogestión",q:250,p:2711,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Integración digital",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:4424,sub:[{label:"APIs",q:250,p:1460,qd:"Por unidad",pd:"Cotización Directa"},{label:"Middleware",q:250,p:1460,qd:"Por unidad",pd:"Cotización Directa"},{label:"Integración CRM",q:250,p:1460,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"svc",label:"App y canales digitales",icon:"💼",pct:0.65,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:8216,sub:[{label:"App Mi Claro",q:250,p:2711,qd:"Por unidad",pd:"cotizacion"},{label:"Canal web",q:250,p:2711,qd:"Por unidad",pd:"cotizacion"},{label:"Autogestión",q:250,p:2711,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Integración digital",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:4424,sub:[{label:"APIs",q:250,p:1460,qd:"Por unidad",pd:"cotizacion"},{label:"Middleware",q:250,p:1460,qd:"Por unidad",pd:"cotizacion"},{label:"Integración CRM",q:250,p:1460,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "705.01":{
     componentes:[
-    {id:"hw",label:"Renovación IAAS",icon:"🖥️",pct:0.65,color:"#2563EB",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:8115,sub:[{label:"Servidores reposición",q:1000,p:2678,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Storage",q:1000,p:2678,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Networking DC",q:1000,p:2678,qd:"Por unidad",pd:"Histórico Contractual"}]},
-    {id:"svc",label:"Soporte y gestión",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:4370,sub:[{label:"Gestión plataforma",q:1000,p:1442,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Soporte 24x7",q:1000,p:1442,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Monitoreo",q:1000,p:1442,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"hw",label:"Renovación IAAS",icon:"🖥️",pct:0.65,color:"#2563EB",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:8115,sub:[{label:"Servidores reposición",q:1000,p:2678,qd:"Por unidad",pd:"historico"},{label:"Storage",q:1000,p:2678,qd:"Por unidad",pd:"historico"},{label:"Networking DC",q:1000,p:2678,qd:"Por unidad",pd:"historico"}]},
+    {id:"svc",label:"Soporte y gestión",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:4370,sub:[{label:"Gestión plataforma",q:1000,p:1442,qd:"Por unidad",pd:"historico"},{label:"Soporte 24x7",q:1000,p:1442,qd:"Por unidad",pd:"historico"},{label:"Monitoreo",q:1000,p:1442,qd:"Por unidad",pd:"historico"}]}
   ]},
   "705.02":{
     componentes:[
-    {id:"hw",label:"Equipos DC críticos",icon:"⚡",pct:0.55,color:"#F59E0B",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:2149,sub:[{label:"UPS",q:1000,p:709,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Generadores",q:1000,p:709,qd:"Por unidad",pd:"Histórico Contractual"},{label:"CRAC cooling",q:1000,p:709,qd:"Por unidad",pd:"Histórico Contractual"}]},
-    {id:"svc",label:"Servicios facilities",icon:"🛠️",pct:0.45,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:1758,sub:[{label:"Mant. preventivo",q:1000,p:580,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Gestión energía",q:1000,p:580,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Seguridad física",q:1000,p:580,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"hw",label:"Equipos DC críticos",icon:"⚡",pct:0.55,color:"#F59E0B",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:2149,sub:[{label:"UPS",q:1000,p:709,qd:"Por unidad",pd:"historico"},{label:"Generadores",q:1000,p:709,qd:"Por unidad",pd:"historico"},{label:"CRAC cooling",q:1000,p:709,qd:"Por unidad",pd:"historico"}]},
+    {id:"svc",label:"Servicios facilities",icon:"🛠️",pct:0.45,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:1758,sub:[{label:"Mant. preventivo",q:1000,p:580,qd:"Por unidad",pd:"historico"},{label:"Gestión energía",q:1000,p:580,qd:"Por unidad",pd:"historico"},{label:"Seguridad física",q:1000,p:580,qd:"Por unidad",pd:"historico"}]}
   ]},
   "801.01":{
     componentes:[
-    {id:"mo",label:"Field force preventivo",icon:"👷",pct:0.45,color:"#059669",q_driver:"mantenimiento",p_driver:"historico",Q:7200,Q_unit:"sitios",P:1366,sub:[{label:"Visita técnica anual",q:7200,p:451,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Limpieza y ajuste",q:7200,p:451,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Actualización SW",q:7200,p:451,qd:"Por unidad",pd:"Histórico Contractual"}]},
-    {id:"svc",label:"NOC y gestión",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:7200,Q_unit:"sitios",P:911,sub:[{label:"Guardia NOC 24x7",q:7200,p:301,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Despacho brigada",q:7200,p:301,qd:"Por unidad",pd:"Histórico Contractual"},{label:"ITSM",q:7200,p:301,qd:"Por unidad",pd:"Histórico Contractual"}]},
-    {id:"hw",label:"Baterías y energía",icon:"⚡",pct:0.25,color:"#F59E0B",q_driver:"mantenimiento",p_driver:"historico",Q:7200,Q_unit:"sitios",P:759,sub:[{label:"Baterías Li-Ion",q:7200,p:250,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Rectificadores",q:7200,p:250,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Repuestos críticos",q:7200,p:250,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"mo",label:"Field force preventivo",icon:"👷",pct:0.45,color:"#059669",q_driver:"mantenimiento",p_driver:"historico",Q:7200,Q_unit:"sitios",P:1366,sub:[{label:"Visita técnica anual",q:7200,p:451,qd:"Por unidad",pd:"historico"},{label:"Limpieza y ajuste",q:7200,p:451,qd:"Por unidad",pd:"historico"},{label:"Actualización SW",q:7200,p:451,qd:"Por unidad",pd:"historico"}]},
+    {id:"svc",label:"NOC y gestión",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:7200,Q_unit:"sitios",P:911,sub:[{label:"Guardia NOC 24x7",q:7200,p:301,qd:"Por unidad",pd:"historico"},{label:"Despacho brigada",q:7200,p:301,qd:"Por unidad",pd:"historico"},{label:"ITSM",q:7200,p:301,qd:"Por unidad",pd:"historico"}]},
+    {id:"hw",label:"Baterías y energía",icon:"⚡",pct:0.25,color:"#F59E0B",q_driver:"mantenimiento",p_driver:"historico",Q:7200,Q_unit:"sitios",P:759,sub:[{label:"Baterías Li-Ion",q:7200,p:250,qd:"Por unidad",pd:"historico"},{label:"Rectificadores",q:7200,p:250,qd:"Por unidad",pd:"historico"},{label:"Repuestos críticos",q:7200,p:250,qd:"Por unidad",pd:"historico"}]}
   ]},
   "801.02":{
     componentes:[
-    {id:"mo",label:"Atención correctiva",icon:"👷",pct:0.5,color:"#059669",q_driver:"mantenimiento",p_driver:"historico",Q:3400,Q_unit:"nodos",P:2975,sub:[{label:"Despacho urgente",q:3400,p:982,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Reparación HFC",q:3400,p:982,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Reparación fibra",q:3400,p:982,qd:"Por unidad",pd:"Histórico Contractual"}]},
-    {id:"hw",label:"Repuestos y materiales",icon:"📡",pct:0.35,color:"#2563EB",q_driver:"mantenimiento",p_driver:"historico",Q:3400,Q_unit:"nodos",P:2082,sub:[{label:"Amplificadores",q:3400,p:687,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Tap y splitter",q:3400,p:687,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Fibra óptica",q:3400,p:687,qd:"Por unidad",pd:"Histórico Contractual"}]},
-    {id:"svc",label:"Servicios capitalizables",icon:"🛠️",pct:0.15,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:3400,Q_unit:"nodos",P:893,sub:[{label:"MO capitalizable",q:3400,p:295,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Materiales",q:3400,p:295,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Documentación",q:3400,p:295,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"mo",label:"Atención correctiva",icon:"👷",pct:0.5,color:"#059669",q_driver:"mantenimiento",p_driver:"historico",Q:3400,Q_unit:"nodos",P:2975,sub:[{label:"Despacho urgente",q:3400,p:982,qd:"Por unidad",pd:"historico"},{label:"Reparación HFC",q:3400,p:982,qd:"Por unidad",pd:"historico"},{label:"Reparación fibra",q:3400,p:982,qd:"Por unidad",pd:"historico"}]},
+    {id:"hw",label:"Repuestos y materiales",icon:"📡",pct:0.35,color:"#2563EB",q_driver:"mantenimiento",p_driver:"historico",Q:3400,Q_unit:"nodos",P:2082,sub:[{label:"Amplificadores",q:3400,p:687,qd:"Por unidad",pd:"historico"},{label:"Tap y splitter",q:3400,p:687,qd:"Por unidad",pd:"historico"},{label:"Fibra óptica",q:3400,p:687,qd:"Por unidad",pd:"historico"}]},
+    {id:"svc",label:"Servicios capitalizables",icon:"🛠️",pct:0.15,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:3400,Q_unit:"nodos",P:893,sub:[{label:"MO capitalizable",q:3400,p:295,qd:"Por unidad",pd:"historico"},{label:"Materiales",q:3400,p:295,qd:"Por unidad",pd:"historico"},{label:"Documentación",q:3400,p:295,qd:"Por unidad",pd:"historico"}]}
   ]},
   "802.01":{
     componentes:[
-    {id:"iru",label:"Derecho uso fibra",icon:"📋",pct:1.0,color:"#B45309",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:7045,sub:[{label:"IRU fibra Internexa",q:1000,p:2325,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Gestión contrato",q:1000,p:2325,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Mantenimiento",q:1000,p:2325,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"iru",label:"Derecho uso fibra",icon:"📋",pct:1.0,color:"#B45309",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:7045,sub:[{label:"IRU fibra Internexa",q:1000,p:2325,qd:"Por unidad",pd:"historico"},{label:"Gestión contrato",q:1000,p:2325,qd:"Por unidad",pd:"historico"},{label:"Mantenimiento",q:1000,p:2325,qd:"Por unidad",pd:"historico"}]}
   ]},
   "802.02":{
     componentes:[
-    {id:"iru",label:"IRU Andired",icon:"📋",pct:0.6,color:"#B45309",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:2786,sub:[{label:"Fibra Andired",q:1000,p:919,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Derechos paso",q:1000,p:919,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Gestión",q:1000,p:919,qd:"Por unidad",pd:"Histórico Contractual"}]},
-    {id:"iru",label:"IRUs otros operadores",icon:"📋",pct:0.4,color:"#D97706",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:1857,sub:[{label:"Azteca y otros",q:1000,p:613,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Contratos marco",q:1000,p:613,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Renovaciones",q:1000,p:613,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"iru",label:"IRU Andired",icon:"📋",pct:0.6,color:"#B45309",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:2786,sub:[{label:"Fibra Andired",q:1000,p:919,qd:"Por unidad",pd:"historico"},{label:"Derechos paso",q:1000,p:919,qd:"Por unidad",pd:"historico"},{label:"Gestión",q:1000,p:919,qd:"Por unidad",pd:"historico"}]},
+    {id:"iru",label:"IRUs otros operadores",icon:"📋",pct:0.4,color:"#D97706",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:1857,sub:[{label:"Azteca y otros",q:1000,p:613,qd:"Por unidad",pd:"historico"},{label:"Contratos marco",q:1000,p:613,qd:"Por unidad",pd:"historico"},{label:"Renovaciones",q:1000,p:613,qd:"Por unidad",pd:"historico"}]}
   ]},
   "802.03":{
     componentes:[
-    {id:"lic",label:"Cloud rights",icon:"🔑",pct:1.0,color:"#7C3AED",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:391,sub:[{label:"Derechos uso nube pública",q:1000,p:129,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Gestión contrato",q:1000,p:129,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"lic",label:"Cloud rights",icon:"🔑",pct:1.0,color:"#7C3AED",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:391,sub:[{label:"Derechos uso nube pública",q:1000,p:129,qd:"Por unidad",pd:"historico"},{label:"Gestión contrato",q:1000,p:129,qd:"Por unidad",pd:"historico"}]}
   ]},
   "802.04":{
     componentes:[
-    {id:"lic",label:"Alianzas estratégicas",icon:"📋",pct:1.0,color:"#B45309",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:97,sub:[{label:"Acuerdos alianza",q:1000,p:32,qd:"Por unidad",pd:"Histórico Contractual"},{label:"Derechos recíprocos",q:1000,p:32,qd:"Por unidad",pd:"Histórico Contractual"}]}
+    {id:"lic",label:"Alianzas estratégicas",icon:"📋",pct:1.0,color:"#B45309",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:97,sub:[{label:"Acuerdos alianza",q:1000,p:32,qd:"Por unidad",pd:"historico"},{label:"Derechos recíprocos",q:1000,p:32,qd:"Por unidad",pd:"historico"}]}
   ]},
   "803.01":{
     componentes:[
-    {id:"civil",label:"Adecuaciones físicas",icon:"🏗️",pct:0.7,color:"#D97706",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:2587,sub:[{label:"Obra civil oficinas",q:1000,p:854,qd:"Por unidad",pd:"Cotización Directa"},{label:"Equipos y mobiliario",q:1000,p:854,qd:"Por unidad",pd:"Cotización Directa"},{label:"Instalaciones",q:1000,p:854,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"mo",label:"Mano de obra",icon:"👷",pct:0.3,color:"#059669",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:1109,sub:[{label:"Instalación",q:1000,p:366,qd:"Por unidad",pd:"Cotización Directa"},{label:"Montaje",q:1000,p:366,qd:"Por unidad",pd:"Cotización Directa"},{label:"Acabados",q:1000,p:366,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"civil",label:"Adecuaciones físicas",icon:"🏗️",pct:0.7,color:"#D97706",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:2587,sub:[{label:"Obra civil oficinas",q:1000,p:854,qd:"Por unidad",pd:"cotizacion"},{label:"Equipos y mobiliario",q:1000,p:854,qd:"Por unidad",pd:"cotizacion"},{label:"Instalaciones",q:1000,p:854,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"mo",label:"Mano de obra",icon:"👷",pct:0.3,color:"#059669",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:1109,sub:[{label:"Instalación",q:1000,p:366,qd:"Por unidad",pd:"cotizacion"},{label:"Montaje",q:1000,p:366,qd:"Por unidad",pd:"cotizacion"},{label:"Acabados",q:1000,p:366,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "803.02":{
     componentes:[
-    {id:"hw",label:"Flota operativa",icon:"🚗",pct:0.85,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:675,sub:[{label:"Vehículos técnicos",q:1000,p:223,qd:"Por unidad",pd:"Cotización Directa"},{label:"GPS",q:1000,p:223,qd:"Por unidad",pd:"Cotización Directa"},{label:"Equipamiento",q:1000,p:223,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Gestión flota",icon:"🛠️",pct:0.15,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:119,sub:[{label:"Seguro",q:1000,p:39,qd:"Por unidad",pd:"Cotización Directa"},{label:"Mantenimiento",q:1000,p:39,qd:"Por unidad",pd:"Cotización Directa"},{label:"Gestión",q:1000,p:39,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"Flota operativa",icon:"🚗",pct:0.85,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:675,sub:[{label:"Vehículos técnicos",q:1000,p:223,qd:"Por unidad",pd:"cotizacion"},{label:"GPS",q:1000,p:223,qd:"Por unidad",pd:"cotizacion"},{label:"Equipamiento",q:1000,p:223,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Gestión flota",icon:"🛠️",pct:0.15,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:119,sub:[{label:"Seguro",q:1000,p:39,qd:"Por unidad",pd:"cotizacion"},{label:"Mantenimiento",q:1000,p:39,qd:"Por unidad",pd:"cotizacion"},{label:"Gestión",q:1000,p:39,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "803.03":{
     componentes:[
-    {id:"mo",label:"Logística traslados",icon:"👷",pct:1.0,color:"#059669",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:706,sub:[{label:"Logística mudanza",q:1000,p:233,qd:"Por unidad",pd:"Cotización Directa"},{label:"Personal",q:1000,p:233,qd:"Por unidad",pd:"Cotización Directa"},{label:"Transporte",q:1000,p:233,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"mo",label:"Logística traslados",icon:"👷",pct:1.0,color:"#059669",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:706,sub:[{label:"Logística mudanza",q:1000,p:233,qd:"Por unidad",pd:"cotizacion"},{label:"Personal",q:1000,p:233,qd:"Por unidad",pd:"cotizacion"},{label:"Transporte",q:1000,p:233,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "803.04":{
     componentes:[
-    {id:"svc",label:"Mantenimiento preventivo",icon:"🛠️",pct:1.0,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:484,sub:[{label:"Mantenimiento edilicio",q:1000,p:160,qd:"Por unidad",pd:"Cotización Directa"},{label:"Sistemas eléctricos",q:1000,p:160,qd:"Por unidad",pd:"Cotización Directa"},{label:"HVAC",q:1000,p:160,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"svc",label:"Mantenimiento preventivo",icon:"🛠️",pct:1.0,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:484,sub:[{label:"Mantenimiento edilicio",q:1000,p:160,qd:"Por unidad",pd:"cotizacion"},{label:"Sistemas eléctricos",q:1000,p:160,qd:"Por unidad",pd:"cotizacion"},{label:"HVAC",q:1000,p:160,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "803.05":{
     componentes:[
-    {id:"hw",label:"Equipos seguridad",icon:"📡",pct:0.65,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:269,sub:[{label:"CCTV",q:1000,p:89,qd:"Por unidad",pd:"Cotización Directa"},{label:"Control acceso",q:1000,p:89,qd:"Por unidad",pd:"Cotización Directa"},{label:"Alarmas",q:1000,p:89,qd:"Por unidad",pd:"Cotización Directa"}]},
-    {id:"svc",label:"Servicios vigilancia",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:145,sub:[{label:"Vigilancia",q:1000,p:48,qd:"Por unidad",pd:"Cotización Directa"},{label:"Monitoreo",q:1000,p:48,qd:"Por unidad",pd:"Cotización Directa"},{label:"Respuesta",q:1000,p:48,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"Equipos seguridad",icon:"📡",pct:0.65,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:269,sub:[{label:"CCTV",q:1000,p:89,qd:"Por unidad",pd:"cotizacion"},{label:"Control acceso",q:1000,p:89,qd:"Por unidad",pd:"cotizacion"},{label:"Alarmas",q:1000,p:89,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Servicios vigilancia",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:145,sub:[{label:"Vigilancia",q:1000,p:48,qd:"Por unidad",pd:"cotizacion"},{label:"Monitoreo",q:1000,p:48,qd:"Por unidad",pd:"cotizacion"},{label:"Respuesta",q:1000,p:48,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
   "803.06":{
     componentes:[
-    {id:"hw",label:"Flota administrativa",icon:"🚗",pct:1.0,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:146,sub:[{label:"Vehículos admin",q:1000,p:48,qd:"Por unidad",pd:"Cotización Directa"},{label:"GPS",q:1000,p:48,qd:"Por unidad",pd:"Cotización Directa"},{label:"Equipamiento",q:1000,p:48,qd:"Por unidad",pd:"Cotización Directa"}]}
+    {id:"hw",label:"Flota administrativa",icon:"🚗",pct:1.0,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:146,sub:[{label:"Vehículos admin",q:1000,p:48,qd:"Por unidad",pd:"cotizacion"},{label:"GPS",q:1000,p:48,qd:"Por unidad",pd:"cotizacion"},{label:"Equipamiento",q:1000,p:48,qd:"Por unidad",pd:"cotizacion"}]}
   ]},
 };
 
@@ -406,101 +402,101 @@ const PXQ_TREE = {
    DATOS — 36 MACROS
 ══════════════════════════════════════════════════════════════════════════ */
 const DATA = [
-  {macro:"Despliegue FTTX",categoria:"Network Rollout",tipo:"Network Rollout",P_base:56449966,proyectos:[
+  {macro:"Despliegue FTTX",categoria:"Network Rollout",tipo:"Network Rollout",tipo:"Network Rollout",P_base:56449966,proyectos:[
     {id:"101.01",n:"Red propia FTTX",m:"homepass",prio:"CRECIMIENTO",P_base:36317143,dt:"expansion_geo",pt:{objetivo:200000,actual:120000},df:"benchmark_amx",pf:{pa:453.96,pb:453.96}},
     {id:"101.02",n:"Nuevas HHPP masivo",m:"homepass",prio:"CRECIMIENTO",P_base:13805722,dt:"expansion_geo",pt:{objetivo:200000,actual:120000},df:"benchmark_amx",pf:{pa:172.57,pb:172.57}},
     {id:"101.03",n:"Red neutra FTTX",m:"homepass",prio:"CRECIMIENTO",P_base:6327101,dt:"expansion_geo",pt:{objetivo:200000,actual:120000},df:"cotizacion",pf:{pa:79.09,pb:79.09}}
   ]},
-  {macro:"Nuevos sitios móvil",categoria:"Network Rollout",tipo:"Network Rollout",P_base:11418103,proyectos:[
+  {macro:"Nuevos sitios móvil",categoria:"Network Rollout",tipo:"Network Rollout",tipo:"Network Rollout",P_base:11418103,proyectos:[
     {id:"102.01",n:"Sitios macro",m:"homepass",prio:"CRECIMIENTO",P_base:10454381,dt:"expansion_geo",pt:{objetivo:200000,actual:120000},df:"benchmark_amx",pf:{pa:130.68,pb:130.68}},
     {id:"102.02",n:"Sitios indoor",m:"homepass",prio:"CRECIMIENTO",P_base:963722,dt:"expansion_geo",pt:{objetivo:200000,actual:120000},df:"benchmark_amx",pf:{pa:12.05,pb:12.05}}
   ]},
-  {macro:"Red internacional",categoria:"Network Rollout",tipo:"Network Rollout",P_base:14389189,proyectos:[
+  {macro:"Red internacional",categoria:"Network Rollout",tipo:"Network Rollout",tipo:"Network Rollout",P_base:14389189,proyectos:[
     {id:"103.01",n:"Capacidad internacional",m:"Gbps",prio:"CRECIMIENTO",P_base:8797939,dt:"crecimiento_trafico",pt:{capacidad_actual:1000,crecimiento_pct:0.25},df:"mercado",pf:{pa:35191.76,pb:35191.76}},
     {id:"103.02",n:"Cable submarino",m:"Gbps",prio:"CRECIMIENTO",P_base:5591250,dt:"crecimiento_trafico",pt:{capacidad_actual:1000,crecimiento_pct:0.25},df:"mercado",pf:{pa:22365.0,pb:22365.0}}
   ]},
-  {macro:"Renovación red móvil",categoria:"Network Modernization",tipo:"Network Modernization",P_base:109594613,proyectos:[
+  {macro:"Renovación red móvil",categoria:"Network Modernization",tipo:"Network Modernization",tipo:"Network Modernization",P_base:109594613,proyectos:[
     {id:"201.01",n:"Sitios 4G",m:"activos",prio:"EBITDA",P_base:71214031,dt:"obsolescencia",pt:{total_activos:1000,pct_eol:0.3,meta_pct:0.1},df:"benchmark_amx",pf:{pa:357859.45,pb:357859.45}},
     {id:"201.02",n:"Sitios 5G",m:"activos",prio:"EBITDA",P_base:29791282,dt:"obsolescencia",pt:{total_activos:1000,pct_eol:0.3,meta_pct:0.1},df:"benchmark_amx",pf:{pa:149704.93,pb:149704.93}},
     {id:"201.03",n:"Telco Cloud",m:"activos",prio:"EBITDA",P_base:8589300,dt:"obsolescencia",pt:{total_activos:1000,pct_eol:0.3,meta_pct:0.1},df:"cotizacion",pf:{pa:43162.31,pb:43162.31}}
   ]},
-  {macro:"Retiro de red legada",categoria:"Network Modernization",tipo:"Network Modernization",P_base:12532936,proyectos:[
+  {macro:"Retiro de red legada",categoria:"Network Modernization",tipo:"Network Modernization",tipo:"Network Modernization",P_base:12532936,proyectos:[
     {id:"202.01",n:"Renovación legado",m:"Gbps",prio:"CRECIMIENTO",P_base:5366294,dt:"crecimiento_trafico",pt:{capacidad_actual:1000,crecimiento_pct:0.25},df:"cotizacion",pf:{pa:21465.18,pb:21465.18}},
     {id:"202.02",n:"Optimización de recursos",m:"Gbps",prio:"CRECIMIENTO",P_base:4056464,dt:"crecimiento_trafico",pt:{capacidad_actual:1000,crecimiento_pct:0.25},df:"cotizacion",pf:{pa:16225.86,pb:16225.86}},
     {id:"202.03",n:"Otros acceso",m:"Gbps",prio:"CRECIMIENTO",P_base:3110178,dt:"crecimiento_trafico",pt:{capacidad_actual:1000,crecimiento_pct:0.25},df:"cotizacion",pf:{pa:12440.71,pb:12440.71}}
   ]},
-  {macro:"Desmantelamientos",categoria:"Network Modernization",tipo:"Network Modernization",P_base:73499,proyectos:[
+  {macro:"Desmantelamientos",categoria:"Network Modernization",tipo:"Network Modernization",tipo:"Network Modernization",P_base:73499,proyectos:[
     {id:"203.01",n:"Desmonte de activos",m:"activos",prio:"PMO",P_base:73499,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"cotizacion",pf:{pa:73.5,pb:73.5}}
   ]},
-  {macro:"Crecimiento de capacidad",categoria:"Capacity Expansion",tipo:"Capacity Expansion",P_base:45681111,proyectos:[
+  {macro:"Crecimiento de capacidad",categoria:"Capacity Expansion",tipo:"Capacity Expansion",tipo:"Capacity Expansion",P_base:45681111,proyectos:[
     {id:"301.01",n:"Capacidad móvil",m:"Gbps",prio:"CRECIMIENTO",P_base:22434910,dt:"crecimiento_trafico",pt:{capacidad_actual:1000,crecimiento_pct:0.25},df:"benchmark_amx",pf:{pa:89739.64,pb:89739.64}},
     {id:"301.02",n:"Capacidad fija",m:"Gbps",prio:"CRECIMIENTO",P_base:20924416,dt:"crecimiento_trafico",pt:{capacidad_actual:1000,crecimiento_pct:0.25},df:"benchmark_amx",pf:{pa:83697.66,pb:83697.66}},
     {id:"301.03",n:"Reubicaciones móvil",m:"Gbps",prio:"CRECIMIENTO",P_base:2014466,dt:"crecimiento_trafico",pt:{capacidad_actual:1000,crecimiento_pct:0.25},df:"cotizacion",pf:{pa:8057.86,pb:8057.86}},
     {id:"301.04",n:"Puertos GPON",m:"Gbps",prio:"CRECIMIENTO",P_base:307320,dt:"crecimiento_trafico",pt:{capacidad_actual:1000,crecimiento_pct:0.25},df:"benchmark_amx",pf:{pa:1229.28,pb:1229.28}}
   ]},
-  {macro:"Iniciativas estratégicas",categoria:"Capacity Expansion",tipo:"Capacity Expansion",P_base:6402658,proyectos:[
+  {macro:"Iniciativas estratégicas",categoria:"Capacity Expansion",tipo:"Capacity Expansion",tipo:"Capacity Expansion",P_base:6402658,proyectos:[
     {id:"302.01",n:"Proyectos estratégicos",m:"contratos",prio:"CRECIMIENTO",P_base:6402658,dt:"pipeline_b2b",pt:{pipeline:500,win_rate:0.6},df:"cotizacion",pf:{pa:21342.19,pb:21342.19}}
   ]},
-  {macro:"Captación masiva",categoria:"Customer Investment",tipo:"Customer Investment",P_base:83644804,proyectos:[
+  {macro:"Captación masiva",categoria:"Customer Investment",tipo:"Customer Investment",tipo:"Customer Investment",P_base:83644804,proyectos:[
     {id:"401.01",n:"Nuevas activaciones",m:"clientes",prio:"CRECIMIENTO",P_base:83644804,dt:"activaciones",pt:{brutas:500000,churn:100000},df:"benchmark_amx",pf:{pa:209.11,pb:209.11}}
   ]},
-  {macro:"Migración masiva",categoria:"Customer Investment",tipo:"Customer Investment",P_base:64674658,proyectos:[
+  {macro:"Migración masiva",categoria:"Customer Investment",tipo:"Customer Investment",tipo:"Customer Investment",P_base:64674658,proyectos:[
     {id:"402.01",n:"Migración a fibra",m:"clientes",prio:"CRECIMIENTO",P_base:39770829,dt:"migraciones",pt:{base_migrable:1000000,tasa:0.15},df:"benchmark_amx",pf:{pa:265.14,pb:265.14}},
     {id:"402.02",n:"Cambio de equipo",m:"clientes",prio:"CRECIMIENTO",P_base:24903829,dt:"migraciones",pt:{base_migrable:1000000,tasa:0.15},df:"benchmark_amx",pf:{pa:166.03,pb:166.03}}
   ]},
-  {macro:"Retención masiva",categoria:"Customer Investment",tipo:"Customer Investment",P_base:21091062,proyectos:[
+  {macro:"Retención masiva",categoria:"Customer Investment",tipo:"Customer Investment",tipo:"Customer Investment",P_base:21091062,proyectos:[
     {id:"403.01",n:"Traslados",m:"activos",prio:"PMO",P_base:12274821,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:12274.82,pb:12274.82}},
     {id:"403.02",n:"Postventa",m:"activos",prio:"PMO",P_base:8816241,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:8816.24,pb:8816.24}}
   ]},
-  {macro:"Clientes corporativos",categoria:"Enterprise & Wholesale",tipo:"Enterprise & Wholesale",P_base:44377534,proyectos:[
+  {macro:"Clientes corporativos",categoria:"Enterprise & Wholesale",tipo:"Enterprise & Wholesale",tipo:"Enterprise & Wholesale",P_base:44377534,proyectos:[
     {id:"501.01",n:"Soluciones corporativas",m:"contratos",prio:"CRECIMIENTO",P_base:35211677,dt:"pipeline_b2b",pt:{pipeline:500,win_rate:0.6},df:"cotizacion",pf:{pa:117372.26,pb:117372.26}},
     {id:"501.02",n:"MINTIC",m:"contratos",prio:"CRECIMIENTO",P_base:8341436,dt:"pipeline_b2b",pt:{pipeline:500,win_rate:0.6},df:"cotizacion",pf:{pa:27804.79,pb:27804.79}},
     {id:"501.03",n:"Ecopetrol",m:"contratos",prio:"CRECIMIENTO",P_base:535752,dt:"pipeline_b2b",pt:{pipeline:500,win_rate:0.6},df:"cotizacion",pf:{pa:1785.84,pb:1785.84}},
     {id:"501.04",n:"Oracle OCI",m:"contratos",prio:"CRECIMIENTO",P_base:288670,dt:"pipeline_b2b",pt:{pipeline:500,win_rate:0.6},df:"cotizacion",pf:{pa:962.23,pb:962.23}}
   ]},
-  {macro:"Datacenter clientes",categoria:"Enterprise & Wholesale",tipo:"Enterprise & Wholesale",P_base:22521032,proyectos:[
+  {macro:"Datacenter clientes",categoria:"Enterprise & Wholesale",tipo:"Enterprise & Wholesale",tipo:"Enterprise & Wholesale",P_base:22521032,proyectos:[
     {id:"502.01",n:"Crecimiento DC",m:"contratos",prio:"CRECIMIENTO",P_base:15684395,dt:"pipeline_b2b",pt:{pipeline:500,win_rate:0.6},df:"cotizacion",pf:{pa:52281.32,pb:52281.32}},
     {id:"502.02",n:"Infraestructura IT DC",m:"contratos",prio:"CRECIMIENTO",P_base:6836637,dt:"pipeline_b2b",pt:{pipeline:500,win_rate:0.6},df:"cotizacion",pf:{pa:22788.79,pb:22788.79}}
   ]},
-  {macro:"Espectro y cobertura regulatoria",categoria:"Regulatory & Spectrum",tipo:"Regulatory & Spectrum",P_base:73590894,proyectos:[
+  {macro:"Espectro y cobertura regulatoria",categoria:"Regulatory & Spectrum",tipo:"Regulatory & Spectrum",tipo:"Regulatory & Spectrum",P_base:73590894,proyectos:[
     {id:"601.01",n:"Cobertura espectro 4G",m:"sitios",prio:"REGULATORIO",P_base:41592430,dt:"cobertura_crc",pt:{comprometido:100,ejecutado:10},df:"benchmark_crc",pf:{pa:462138.11,pb:462138.11}},
     {id:"601.02",n:"Cobertura espectro 5G",m:"sitios",prio:"REGULATORIO",P_base:16179523,dt:"cobertura_crc",pt:{comprometido:100,ejecutado:10},df:"benchmark_crc",pf:{pa:179772.48,pb:179772.48}},
     {id:"601.03",n:"MEDUX",m:"sitios",prio:"REGULATORIO",P_base:9926385,dt:"cobertura_crc",pt:{comprometido:100,ejecutado:10},df:"benchmark_crc",pf:{pa:110293.17,pb:110293.17}},
     {id:"601.04",n:"Renovación espectro 4G",m:"sitios",prio:"REGULATORIO",P_base:5425854,dt:"cobertura_crc",pt:{comprometido:100,ejecutado:10},df:"benchmark_crc",pf:{pa:60287.27,pb:60287.27}},
     {id:"601.05",n:"Mediciones regulatorias",m:"sitios",prio:"REGULATORIO",P_base:466702,dt:"cobertura_crc",pt:{comprometido:100,ejecutado:10},df:"benchmark_crc",pf:{pa:5185.58,pb:5185.58}}
   ]},
-  {macro:"Sostenimiento de plataformas",categoria:"IT & Digital",tipo:"IT & Digital",P_base:56835475,proyectos:[
+  {macro:"Sostenimiento de plataformas",categoria:"IT & Digital",tipo:"IT & Digital",tipo:"IT & Digital",P_base:56835475,proyectos:[
     {id:"701.01",n:"Licenciamiento",m:"activos",prio:"PMO",P_base:36412627,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:36412.63,pb:36412.63}},
     {id:"701.02",n:"Actualización plataformas",m:"activos",prio:"PMO",P_base:8333339,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:8333.34,pb:8333.34}},
     {id:"701.03",n:"Actualización infraestructura",m:"activos",prio:"PMO",P_base:6099003,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"cotizacion",pf:{pa:6099.0,pb:6099.0}},
     {id:"701.04",n:"Fábrica de software",m:"activos",prio:"PMO",P_base:5311822,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"cotizacion",pf:{pa:5311.82,pb:5311.82}},
     {id:"701.05",n:"Upgrades y migraciones",m:"activos",prio:"PMO",P_base:678684,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"cotizacion",pf:{pa:678.68,pb:678.68}}
   ]},
-  {macro:"Transformación sistemas comerciales",categoria:"IT & Digital",tipo:"IT & Digital",P_base:28824446,proyectos:[
+  {macro:"Transformación sistemas comerciales",categoria:"IT & Digital",tipo:"IT & Digital",tipo:"IT & Digital",P_base:28824446,proyectos:[
     {id:"702.01",n:"CRM y Billing",m:"clientes",prio:"CRECIMIENTO",P_base:28824446,dt:"migraciones",pt:{base_migrable:1000000,tasa:0.15},df:"cotizacion",pf:{pa:192.16,pb:192.16}}
   ]},
-  {macro:"Cloud y ciberseguridad",categoria:"IT & Digital",tipo:"IT & Digital",P_base:1824010,proyectos:[
+  {macro:"Cloud y ciberseguridad",categoria:"IT & Digital",tipo:"IT & Digital",tipo:"IT & Digital",P_base:1824010,proyectos:[
     {id:"703.01",n:"Cloud y ciberseguridad",m:"Gbps",prio:"CRECIMIENTO",P_base:1824010,dt:"crecimiento_trafico",pt:{capacidad_actual:1000,crecimiento_pct:0.25},df:"cotizacion",pf:{pa:7296.04,pb:7296.04}}
   ]},
-  {macro:"Analítica y datos",categoria:"IT & Digital",tipo:"IT & Digital",P_base:7185948,proyectos:[
+  {macro:"Analítica y datos",categoria:"IT & Digital",tipo:"IT & Digital",tipo:"IT & Digital",P_base:7185948,proyectos:[
     {id:"704.01",n:"Analítica",m:"Gbps",prio:"CRECIMIENTO",P_base:4025948,dt:"crecimiento_trafico",pt:{capacidad_actual:1000,crecimiento_pct:0.25},df:"cotizacion",pf:{pa:16103.79,pb:16103.79}},
     {id:"704.02",n:"Desarrollo comercial digital",m:"Gbps",prio:"CRECIMIENTO",P_base:3160000,dt:"crecimiento_trafico",pt:{capacidad_actual:1000,crecimiento_pct:0.25},df:"cotizacion",pf:{pa:12640.0,pb:12640.0}}
   ]},
-  {macro:"Operación datacenter",categoria:"IT & Digital",tipo:"IT & Digital",P_base:16391598,proyectos:[
+  {macro:"Operación datacenter",categoria:"IT & Digital",tipo:"IT & Digital",tipo:"IT & Digital",P_base:16391598,proyectos:[
     {id:"705.01",n:"Mantenimiento IAAS",m:"activos",prio:"PMO",P_base:12484972,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:12484.97,pb:12484.97}},
     {id:"705.02",n:"Mantenimiento facilities",m:"activos",prio:"PMO",P_base:3906626,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:3906.63,pb:3906.63}}
   ]},
-  {macro:"Operación y mantenimiento",categoria:"Network Operations",tipo:"Network Operations",P_base:42111446,proyectos:[
+  {macro:"Operación y mantenimiento",categoria:"Network Operations",tipo:"Network Operations",tipo:"Network Operations",P_base:42111446,proyectos:[
     {id:"801.01",n:"Mantenimiento planificado",m:"activos",prio:"PMO",P_base:21881523,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:21881.52,pb:21881.52}},
     {id:"801.02",n:"Mantenimiento correctivo",m:"activos",prio:"PMO",P_base:20229923,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:20229.92,pb:20229.92}}
   ]},
-  {macro:"Derechos de uso e IRUs",categoria:"Network Operations",tipo:"Network Operations",P_base:12175976,proyectos:[
+  {macro:"Derechos de uso e IRUs",categoria:"Network Operations",tipo:"Network Operations",tipo:"Network Operations",P_base:12175976,proyectos:[
     {id:"802.01",n:"IRU Internexa",m:"activos",prio:"PMO",P_base:7044800,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:7044.8,pb:7044.8}},
     {id:"802.02",n:"IRUs regulatorios",m:"activos",prio:"PMO",P_base:4643491,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:4643.49,pb:4643.49}},
     {id:"802.03",n:"Derecho uso nube",m:"activos",prio:"PMO",P_base:391184,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:391.18,pb:391.18}},
     {id:"802.04",n:"Derecho uso alianza",m:"activos",prio:"PMO",P_base:96501,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:96.5,pb:96.5}}
   ]},
-  {macro:"Infraestructura corporativa",categoria:"Gestión Administrativa",tipo:"Gestión Administrativa",P_base:6240763,proyectos:[
+  {macro:"Infraestructura corporativa",categoria:"Network Operations",tipo:"Network Operations",tipo:"Network Operations",P_base:6240763,proyectos:[
     {id:"803.01",n:"Adecuaciones",m:"activos",prio:"PMO",P_base:3695435,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"cotizacion",pf:{pa:3695.43,pb:3695.43}},
     {id:"803.02",n:"Vehículos operación",m:"activos",prio:"PMO",P_base:794812,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"cotizacion",pf:{pa:794.81,pb:794.81}},
     {id:"803.03",n:"Traslados",m:"activos",prio:"PMO",P_base:705834,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"cotizacion",pf:{pa:705.83,pb:705.83}},
@@ -531,7 +527,7 @@ const cc  = v => v<-0.5 ? T.green : v>0.5 ? T.red : T.inkMid;
 
 /* ══════════════════════════════════════════════════════════════════════════
    CATÁLOGOS DE DRIVERS POR NIVEL
-   N1 N1 — Macroproyecto → sin driver editable (es agregación)
+   N1 Macroproyecto → sin driver editable (es agregación)
    N2 Proyecto      → Driver de DEMANDA (¿cuántos necesito?)
    N3 Sub-Proyecto  → Driver de VOLUMEN (¿cuántas unidades físicas?)
    N4 Componente    → Driver de PRECIO  (¿a qué costo unitario?)
@@ -759,7 +755,7 @@ const backCalcPt = (dk,pt,nQ,nivel=2) => {
 
 /* Colores y metadatos de cada nivel */
 const LVL = {
-  1:{c:"#E8182A", bg:"#FFF1F1", bdr:"#FDD8DA", label:"N1 — Macroproyecto", short:"M1"},
+  1:{c:"#E8182A", bg:"#FFF1F1", bdr:"#FDD8DA", label:"Macroproyecto", short:"M1"},
   2:{c:"#2563EB", bg:"#EFF6FF", bdr:"#BFDBFE", label:"Proyecto",      short:"N2"},
   3:{c:"#7C3AED", bg:"#F5F3FF", bdr:"#DDD6FE", label:"Sub-Proyecto",  short:"N3"},
   4:{c:"#059669", bg:"#ECFDF5", bdr:"#A7F3D0", label:"Componente",    short:"N4"},
@@ -838,9 +834,9 @@ function DrTecBlock({dtKey, pt, nivel=2, Q_unit, onChangeDt, onChangePt, onChang
       <div style={{display:"flex",alignItems:"center",gap:6}}>
         <span style={{fontSize:14}}>{DT?.icon}</span>
         <div>
-          <div style={{fontSize:10,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
-            letterSpacing:".1em"}}>N2 — Cantidad a invertir (Q)</div>
-          <div style={{fontSize:12,fontWeight:700,color:DT?.color,lineHeight:1.2}}>
+          <div style={{fontSize:7.5,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
+            letterSpacing:".1em"}}>Cantidad a invertir (Q)</div>
+          <div style={{fontSize:9,fontWeight:700,color:DT?.color,lineHeight:1.2}}>
             {DT?.tag} — {DT?.label}
           </div>
         </div>
@@ -850,14 +846,14 @@ function DrTecBlock({dtKey, pt, nivel=2, Q_unit, onChangeDt, onChangePt, onChang
         onChange={e=>{ const nk=e.target.value; onChangeDt(nk, defs[nk]||{}); }}
         style={{width:"100%",padding:"5px 8px",borderRadius:7,
           border:`1.5px solid ${T.borderSm}`,background:T.card,
-          color:T.ink,fontSize:13,fontWeight:600,outline:"none",
+          color:T.ink,fontSize:9.5,fontWeight:600,outline:"none",
           appearance:"none",cursor:"pointer",fontFamily:"'Outfit',system-ui"}}>
         {Object.entries(cat).map(([k,v])=>(
           <option key={k} value={k}>{v.icon} {v.label}</option>
         ))}
       </select>
       {/* Descripción */}
-      <div style={{fontSize:11.5,color:T.inkSoft,fontStyle:"italic",lineHeight:1.5,
+      <div style={{fontSize:8.5,color:T.inkSoft,fontStyle:"italic",lineHeight:1.5,
         padding:"4px 8px",background:T.card,borderRadius:5,
         borderLeft:`3px solid ${DT?.color||lc.c}`}}>
         {DT?.desc}
@@ -869,7 +865,7 @@ function DrTecBlock({dtKey, pt, nivel=2, Q_unit, onChangeDt, onChangePt, onChang
             padding:"5px 9px",
             background:i%2===0?T.card:"#FAFAF8",
             borderBottom:i<(DT.params.length-1)?`1px solid ${T.borderSm}`:"none"}}>
-            <span style={{fontSize:12,color:T.inkMid,maxWidth:"55%",lineHeight:1.3}}>{l}</span>
+            <span style={{fontSize:9,color:T.inkMid,maxWidth:"55%",lineHeight:1.3}}>{l}</span>
             <EN v={pt[k]??0} pct={p} color={DT?.color||lc.c} onChange={val=>onChangePt(k,val)}/>
           </div>
         ))}
@@ -877,12 +873,12 @@ function DrTecBlock({dtKey, pt, nivel=2, Q_unit, onChangeDt, onChangePt, onChang
       {/* Q resultante */}
       <div style={{background:`${DT?.color||lc.c}14`,borderRadius:7,padding:"6px 10px",
         display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-        <div style={{fontSize:10,fontWeight:700,color:DT?.color||lc.c,
+        <div style={{fontSize:7.5,fontWeight:700,color:DT?.color||lc.c,
           textTransform:"uppercase",letterSpacing:".1em"}}>Q calculado</div>
         <div style={{display:"flex",alignItems:"baseline",gap:4}}>
           <EN v={Q} onChange={nQ=>onChangeQ(backCalcPt(dtKey,pt,nQ,nivel))}
             size={16} color={DT?.color||lc.c}/>
-          <span style={{fontSize:11,color:T.inkMid}}>{Q_unit}</span>
+          <span style={{fontSize:8,color:T.inkMid}}>{Q_unit}</span>
         </div>
       </div>
     </div>
@@ -909,9 +905,9 @@ function DrFinBlock({dfKey, pa, pb, Q_unit, nivel=2, color, onChangeDf, onChange
       <div style={{display:"flex",alignItems:"center",gap:6}}>
         <span style={{fontSize:14}}>💰</span>
         <div>
-          <div style={{fontSize:10,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
-            letterSpacing:".1em"}}>N2 — Precio unitario (P)</div>
-          <div style={{fontSize:12,fontWeight:700,color:c,lineHeight:1.2}}>
+          <div style={{fontSize:7.5,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
+            letterSpacing:".1em"}}>Precio / Costo unitario (P)</div>
+          <div style={{fontSize:9,fontWeight:700,color:c,lineHeight:1.2}}>
             Precio / Costo unitario
           </div>
         </div>
@@ -920,14 +916,14 @@ function DrFinBlock({dfKey, pa, pb, Q_unit, nivel=2, color, onChangeDf, onChange
       <select value={dfKey} onChange={e=>onChangeDf(e.target.value)}
         style={{width:"100%",padding:"5px 8px",borderRadius:7,
           border:`1.5px solid ${T.borderSm}`,background:T.card,
-          color:T.ink,fontSize:13,fontWeight:600,outline:"none",
+          color:T.ink,fontSize:9.5,fontWeight:600,outline:"none",
           appearance:"none",cursor:"pointer",fontFamily:"'Outfit',system-ui"}}>
         {Object.entries(cat).map(([k,v])=>(
           <option key={k} value={k}>{v.label}</option>
         ))}
       </select>
       {/* Descripción */}
-      <div style={{fontSize:11.5,color:T.inkSoft,fontStyle:"italic",lineHeight:1.5,
+      <div style={{fontSize:8.5,color:T.inkSoft,fontStyle:"italic",lineHeight:1.5,
         padding:"4px 8px",background:T.card,borderRadius:5,
         borderLeft:`3px solid ${DF?.color||c}`}}>
         {DF?.desc}
@@ -940,10 +936,10 @@ function DrFinBlock({dfKey, pa, pb, Q_unit, nivel=2, color, onChangeDf, onChange
             padding:"5px 9px",
             background:i===0?T.card:"#FAFAF8",
             borderBottom:i===0?`1px solid ${T.borderSm}`:"none"}}>
-            <span style={{fontSize:12,color:T.inkMid}}>{l}</span>
+            <span style={{fontSize:9,color:T.inkMid}}>{l}</span>
             <div style={{display:"flex",gap:3,alignItems:"baseline"}}>
               <EN v={v??0} color={faded?T.inkSoft:c} onChange={set}/>
-              <span style={{fontSize:10,color:T.inkSoft}}>/{Q_unit}</span>
+              <span style={{fontSize:7.5,color:T.inkSoft}}>/{Q_unit}</span>
             </div>
           </div>
         ))}
@@ -952,18 +948,18 @@ function DrFinBlock({dfKey, pa, pb, Q_unit, nivel=2, color, onChangeDf, onChange
       <div style={{background:`${c}12`,borderRadius:7,padding:"6px 10px",
         display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <div>
-          <div style={{fontSize:10,fontWeight:700,color:c,textTransform:"uppercase",letterSpacing:".1em"}}>
+          <div style={{fontSize:7.5,fontWeight:700,color:c,textTransform:"uppercase",letterSpacing:".1em"}}>
             P driver
           </div>
           {Math.abs(gap)>.1&&(
-            <div style={{fontSize:11.5,fontWeight:700,color:gap<0?T.green:T.red}}>
+            <div style={{fontSize:8.5,fontWeight:700,color:gap<0?T.green:T.red}}>
               {sg(gap)}{gap.toFixed(1)}% vs actual
             </div>
           )}
         </div>
         <div style={{display:"flex",alignItems:"baseline",gap:4}}>
           <EN v={pb??0} onChange={onChangePb} size={16} color={c}/>
-          <span style={{fontSize:11,color:T.inkMid}}>/{Q_unit}</span>
+          <span style={{fontSize:8,color:T.inkMid}}>/{Q_unit}</span>
         </div>
       </div>
     </div>
@@ -1066,53 +1062,59 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
   return(
     <div style={{display:"flex",flexDirection:"column",height:"100%"}}>
 
-      {/* ════ HEADER — limpio, acento lateral ════ */}
-      <div style={{background:"#fff",borderBottom:`1px solid ${T.borderSm}`,
-        padding:"16px 20px",flexShrink:0,position:"relative"}}>
-        {/* Barra de color por categoría */}
-        <div style={{position:"absolute",left:0,top:0,bottom:0,width:4,
-          background:cfg.c,borderRadius:"0 0 0 0"}}/>
-        <div style={{paddingLeft:8}}>
-          {/* Breadcrumb */}
-          <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:10,flexWrap:"wrap"}}>
+      {/* ════ HEADER ════ */}
+      <div style={{background:`linear-gradient(135deg,${T.redDk},${T.red})`,
+        padding:"14px 18px",position:"relative",overflow:"hidden",flexShrink:0}}>
+        <NoiseSVG/>
+        <div style={{position:"relative",zIndex:1}}>
+          {/* Breadcrumb jerárquico */}
+          <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:8,flexWrap:"wrap"}}>
             {macroData&&<>
-              <span style={{fontSize:11,color:T.inkSoft,fontWeight:500}}>{macroData.macro}</span>
-              <span style={{color:T.borderSm,fontSize:11}}>›</span>
+              <span style={{fontSize:8,fontWeight:700,color:"rgba(255,255,255,.4)",
+                background:"rgba(255,255,255,.08)",borderRadius:99,padding:"1px 7px"}}>
+                N1 · {macroData.macro}
+              </span>
+              <span style={{color:"rgba(255,255,255,.25)",fontSize:9}}>›</span>
             </>}
-            <span style={{fontSize:11,fontWeight:700,color:cfg.c}}>N2 — Proyecto: {proy.n}</span>
+            <span style={{fontSize:8,fontWeight:700,color:"rgba(255,255,255,.8)",
+              background:"rgba(255,255,255,.15)",borderRadius:99,padding:"1px 7px"}}>
+              N2 · {proy.id} {proy.n}
+            </span>
           </div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
             <div>
-              <div style={{fontSize:18,fontWeight:800,color:T.ink,
-                letterSpacing:"-.02em",marginBottom:6,lineHeight:1.2}}>{proy.n}</div>
-              <div style={{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
+              <div style={{fontSize:15,fontWeight:800,color:"#fff",
+                letterSpacing:"-.015em",marginBottom:5}}>{proy.n}</div>
+              <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
                 <TipoBadge tipo={macroTipo} sm/>
                 {proy.prio&&proy.prio!=="—"&&
-                  <span style={{fontSize:10,fontWeight:700,color:T.inkSoft,
-                    textTransform:"uppercase",letterSpacing:".08em"}}>{proy.prio}</span>}
+                  <span style={{background:"rgba(255,255,255,.12)",border:"1px solid rgba(255,255,255,.2)",
+                    borderRadius:99,padding:"2px 9px",fontSize:8.5,fontWeight:700,
+                    color:"rgba(255,255,255,.8)",textTransform:"uppercase"}}>{proy.prio}</span>}
               </div>
             </div>
-            <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:8,flexShrink:0}}>
+            <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6,flexShrink:0,marginLeft:12}}>
               <div style={{textAlign:"right"}}>
-                <div style={{fontSize:10,color:T.inkSoft,textTransform:"uppercase",
+                <div style={{fontSize:7.5,color:"rgba(255,255,255,.45)",textTransform:"uppercase",
                   letterSpacing:".1em",marginBottom:2}}>CAPEX DVB</div>
                 <EN v={treeTotal} onChange={nC=>{if(Q2>0)onChange({pf:{...pf2,pb:nC/Q2}});}}
-                  size={22} color={T.ink}/>
-                {Math.abs(dProy)>.1&&<div style={{fontSize:11,fontWeight:700,
-                  color:dProy<0?T.green:T.red,marginTop:2}}>
+                  size={19} color="#fff"/>
+                {Math.abs(dProy)>.1&&<div style={{fontSize:9,fontWeight:700,
+                  color:dProy<0?"#86EFAC":"#FCA5A5",marginTop:1}}>
                   {sg(dProy)}{dProy.toFixed(1)}% vs base
                 </div>}
               </div>
+              {/* Botón Guardar */}
               <button onClick={handleSave}
-                style={{display:"flex",alignItems:"center",gap:6,padding:"7px 16px",
-                  borderRadius:99,cursor:"pointer",fontFamily:"'Outfit',system-ui",
-                  fontWeight:700,fontSize:13,letterSpacing:"-.01em",
-                  border:`1.5px solid ${saved?"#10B981":isDirty?cfg.c:T.borderSm}`,
-                  background: saved?"#ECFDF5": isDirty?cfg.c:"#fff",
-                  color: saved?"#10B981": isDirty?"#fff":T.inkSoft,
-                  transition:"all .2s",transform:isDirty&&!saved?"scale(1.03)":"scale(1)"}}>
-                <span style={{fontSize:12}}>{saved?"✓":"💾"}</span>
-                {saved?"Guardado":isDirty?"Guardar cambios":"Sin cambios"}
+                style={{display:"flex",alignItems:"center",gap:5,padding:"6px 14px",
+                  borderRadius:99,border:"none",cursor:"pointer",fontFamily:"'Outfit',system-ui",
+                  fontWeight:700,fontSize:11,letterSpacing:"-.01em",
+                  background: saved ? "rgba(45,200,120,0.9)" : isDirty ? "#fff" : "rgba(255,255,255,.25)",
+                  color: saved ? "#fff" : isDirty ? T.red : "rgba(255,255,255,.7)",
+                  boxShadow: isDirty&&!saved ? "0 4px 16px rgba(0,0,0,0.2)" : "none",
+                  transition:"all .2s",transform: isDirty&&!saved ? "scale(1.04)" : "scale(1)"}}>
+                <span style={{fontSize:13}}>{saved?"✅":"💾"}</span>
+                {saved ? "Guardado" : isDirty ? "Guardar cambios" : "Sin cambios"}
               </button>
             </div>
           </div>
@@ -1124,27 +1126,35 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
 
         {/* ══ N1: MACROPROYECTO — contexto ══ */}
         {macroData&&(
-          <div style={{marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.borderSm}`}}>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,marginBottom:8}}>
-              <div style={{display:"flex",alignItems:"center",gap:6}}>
-                <span style={{fontSize:10,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
-                  letterSpacing:".1em"}}>N1 — Macroproyecto</span>
-                <span style={{fontSize:13,fontWeight:700,color:T.ink}}>{macroData.macro}</span>
-              </div>
+          <div style={{marginBottom:12,padding:"10px 14px",borderRadius:12,
+            background:LVL[1].bg, border:`1.5px solid ${LVL[1].bdr}`}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
               <div style={{display:"flex",alignItems:"center",gap:8}}>
-                <span style={{fontSize:10,color:T.inkSoft}}>{fu(macroData.P_base)}</span>
-                {Math.abs(dMacro)>.1&&<span style={{fontSize:11,fontWeight:700,color:cc(dMacro)}}>
-                  {sg(dMacro)}{dMacro.toFixed(1)}%
-                </span>}
+                <div style={{width:28,height:28,borderRadius:8,background:LVL[1].c,
+                  display:"flex",alignItems:"center",justifyContent:"center",
+                  fontSize:13,flexShrink:0}}>🏗</div>
+                <div>
+                  <div style={{fontSize:8,fontWeight:700,color:LVL[1].c,textTransform:"uppercase",
+                    letterSpacing:".1em"}}>N1 · Macroproyecto</div>
+                  <div style={{fontSize:11,fontWeight:800,color:T.ink}}>{macroData.macro}</div>
+                </div>
+              </div>
+              <div style={{textAlign:"right",flexShrink:0}}>
+                <div style={{fontSize:7.5,color:T.inkSoft,textTransform:"uppercase"}}>Base macro</div>
+                <div style={{fontSize:12,fontWeight:900,color:T.inkMid}}>{fu(macroData.P_base)}</div>
+                {Math.abs(dMacro)>.1&&<div style={{fontSize:8,fontWeight:700,color:cc(dMacro)}}>
+                  {sg(dMacro)}{dMacro.toFixed(1)}% este proyecto
+                </div>}
               </div>
             </div>
-            <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
+            {/* Pills de proyectos hermanos */}
+            <div style={{marginTop:8,display:"flex",gap:4,flexWrap:"wrap"}}>
               {macroData.proyectos.map(p=>(
-                <span key={p.id} style={{fontSize:11,padding:"3px 10px",borderRadius:99,
+                <span key={p.id} style={{fontSize:8,padding:"2px 8px",borderRadius:99,
                   fontWeight:p.id===proy.id?700:400,
-                  background:p.id===proy.id?cfg.c:"transparent",
-                  border:`1px solid ${p.id===proy.id?cfg.c:T.borderSm}`,
-                  color:p.id===proy.id?"#fff":T.inkSoft,transition:"all .15s"}}>
+                  background:p.id===proy.id?"rgba(232,24,42,.1)":T.surface,
+                  border:`1px solid ${p.id===proy.id?T.red:T.borderSm}`,
+                  color:p.id===proy.id?T.red:T.inkSoft}}>
                   {p.id} · {p.n}
                 </span>
               ))}
@@ -1155,17 +1165,20 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
         {/* ══ N2: PROYECTO — Drivers de Demanda × Precio estratégico ══ */}
         <div style={{marginBottom:14}}>
           {/* Nodo N2 */}
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",
-            gap:8,marginBottom:10}}>
-            <div>
-              <div style={{fontSize:11,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
-                letterSpacing:".1em",marginBottom:3}}>N2 — Proyecto: {proy.n}</div>
-              <div style={{fontSize:13,color:T.inkMid}}>
-                Q×P = <b style={{color:T.ink}}>{fn(Q2)}</b> {proy.m}
-                <span style={{margin:"0 5px",color:T.inkXsoft}}>×</span>
-                <b style={{color:T.ink}}>{fu(P2)}/{proy.m}</b>
-                <span style={{margin:"0 5px",color:T.inkXsoft}}>=</span>
-                <b style={{color:cfg.c}}>{fu(Q2>0&&P2>0?Q2*P2:proy.P_base)}</b>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+            <div style={{width:28,height:28,borderRadius:8,background:LVL[2].c,
+              display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}>
+              📁
+            </div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:8,fontWeight:700,color:LVL[2].c,textTransform:"uppercase",
+                letterSpacing:".1em"}}>N2 · Proyecto — Drivers de Demanda</div>
+              <div style={{fontSize:9.5,color:T.inkSoft}}>
+                Q×P = <b style={{color:LVL[2].c}}>{fn(Q2)}</b> {proy.m}
+                <span style={{margin:"0 4px",color:T.inkXsoft}}>×</span>
+                <b style={{color:LVL[2].c}}>{fu(P2)}/{proy.m}</b>
+                <span style={{margin:"0 4px",color:T.inkXsoft}}>=</span>
+                <b style={{color:T.red}}>{fu(Q2>0&&P2>0?Q2*P2:proy.P_base)}</b>
               </div>
             </div>
           </div>
@@ -1189,13 +1202,19 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
         {/* ══ N3 + N4: SUB-PROYECTOS y COMPONENTES ══ */}
         {baseTree ? (<>
           {/* Cabecera N3 */}
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",
-            gap:8,marginBottom:8,paddingTop:4}}>
-            <div style={{fontSize:11,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
-              letterSpacing:".1em"}}>
-              N3 — Componentes: {baseTree.componentes.length} líneas de inversión
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+            <div style={{width:28,height:28,borderRadius:8,background:LVL[3].c,
+              display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}>
+              📂
             </div>
-            <b style={{fontSize:13,color:cfg.c}}>{fu(treeTotal)}</b>
+            <div style={{flex:1}}>
+              <div style={{fontSize:8,fontWeight:700,color:LVL[3].c,textTransform:"uppercase",
+                letterSpacing:".1em"}}>N3 · Sub-Proyectos — Drivers de Volumen físico</div>
+              <div style={{fontSize:9,color:T.inkSoft}}>
+                {baseTree.componentes.length} sub-proyectos · Total árbol:
+                <b style={{color:T.red,marginLeft:4}}>{fu(treeTotal)}</b>
+              </div>
+            </div>
           </div>
 
           {/* Barra composición */}
@@ -1212,7 +1231,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
               return(
                 <div key={sp.id} style={{display:"flex",alignItems:"center",gap:3}}>
                   <div style={{width:6,height:6,borderRadius:2,background:sp.color,flexShrink:0}}/>
-                  <span style={{fontSize:11,color:T.inkMid,fontWeight:600}}>
+                  <span style={{fontSize:8,color:T.inkMid,fontWeight:600}}>
                     {sp.label} <span style={{color:sp.color,fontWeight:700}}>{fu(t)}</span>
                     <span style={{color:T.inkXsoft}}> {treeTotal>0?(t/treeTotal*100).toFixed(0):0}%</span>
                   </span>
@@ -1239,33 +1258,49 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
 
                     {/* Cabecera N3 */}
                     <div onClick={()=>{setOpenN3(isOpenN?null:sp.id); setOpenN4(null);}}
-                      style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",
-                        borderRadius:10,cursor:"pointer",background:"#fff",
-                        border:`1px solid ${isOpenN?sp.color:T.borderSm}`,
-                        boxShadow:isOpenN?`0 2px 10px ${sp.color}15`:"none",
+                      style={{display:"flex",alignItems:"center",gap:7,padding:"8px 10px",
+                        borderRadius:11,cursor:"pointer",
+                        background:isOpenN?`${sp.color}10`:T.card,
+                        border:`1.5px solid ${isOpenN?sp.color:T.borderSm}`,
+                        boxShadow:isOpenN?`0 2px 12px ${sp.color}18`:"0 1px 3px rgba(0,0,0,0.04)",
                         transition:"all .18s"}}>
-                      <span style={{fontSize:18,flexShrink:0,opacity:isOpenN?1:0.7}}>{sp.icon}</span>
+                      <div style={{width:30,height:30,borderRadius:8,flexShrink:0,
+                        background:isOpenN?sp.color:`${sp.color}15`,fontSize:15,
+                        display:"flex",alignItems:"center",justifyContent:"center",
+                        transition:"background .18s"}}>{sp.icon}</div>
                       <div style={{flex:1,minWidth:0}}>
-                        <div style={{fontSize:13,fontWeight:700,
-                          color:isOpenN?sp.color:T.ink,marginBottom:2,
-                          overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
-                          {sp.label}
+                        <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:2}}>
+                          <span style={{fontSize:11,fontWeight:700,
+                            color:isOpenN?sp.color:T.ink,transition:"color .15s",
+                            overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                            {sp.label}
+                          </span>
+                          <LvlBadge n={3}/>
                         </div>
-                        <div style={{fontSize:11,color:T.inkSoft}}>
-                          Q:{fn(spQ)} {sp.Q_unit}
-                          <span style={{margin:"0 5px",color:T.borderSm}}>·</span>
-                          P:{fu(spv.pb??sp.P)}
+                        <div style={{fontSize:8.5,color:T.inkSoft,display:"flex",gap:5}}>
+                          <span style={{color:spDT?.color,fontWeight:600}}>
+                            {spDT?.icon} Q:{fn(spQ)} {sp.Q_unit}
+                          </span>
+                          <span style={{color:T.inkXsoft}}>·</span>
+                          <span style={{color:spDF?.color||T.blue,fontWeight:600}}>
+                            💰 P:{fu(spv.pb??sp.P)}
+                          </span>
                         </div>
                       </div>
                       <div style={{textAlign:"right",flexShrink:0}}>
-                        <div style={{fontSize:15,fontWeight:800,color:isOpenN?sp.color:T.ink}}>{fu(spTotal)}</div>
-                        <div style={{fontSize:11,color:T.inkSoft}}>
+                        <div style={{fontSize:14,fontWeight:900,color:sp.color}}>{fu(spTotal)}</div>
+                        <div style={{fontSize:8,color:T.inkSoft}}>
                           {treeTotal>0?(spTotal/treeTotal*100).toFixed(0):0}%
                         </div>
                       </div>
-                      <span style={{fontSize:13,color:isOpenN?sp.color:T.inkSoft,fontWeight:700,
-                        transform:isOpenN?"rotate(90deg)":"none",
-                        display:"block",transition:"transform .2s",lineHeight:1,flexShrink:0}}>›</span>
+                      <div style={{width:18,height:18,borderRadius:"50%",flexShrink:0,
+                        background:isOpenN?`${sp.color}20`:T.borderSm,
+                        display:"flex",alignItems:"center",justifyContent:"center",
+                        transition:"all .18s"}}>
+                        <span style={{fontSize:10,color:isOpenN?sp.color:T.inkSoft,fontWeight:700,
+                          transform:isOpenN?"rotate(90deg)":"none",
+                          display:"block",transition:"transform .2s",lineHeight:1}}>›</span>
+                      </div>
                     </div>
 
                     {/* N3 EXPANDIDO */}
@@ -1274,13 +1309,13 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                         paddingLeft:12,borderLeft:`2px solid ${sp.color}35`}}>
 
                         {/* Drivers N3 */}
-                        <div style={{fontSize:11,fontWeight:700,color:LVL[3].c,
+                        <div style={{fontSize:8,fontWeight:700,color:LVL[3].c,
                           textTransform:"uppercase",letterSpacing:".1em",
                           marginBottom:7,display:"flex",alignItems:"center",gap:4}}>
                           <span style={{width:14,height:14,borderRadius:4,background:LVL[3].c,
                             display:"inline-flex",alignItems:"center",justifyContent:"center",
-                            fontSize:10,fontWeight:900,color:"#fff",flexShrink:0}}>3</span>
-                          N3 — Componente: {sp.label}
+                            fontSize:7,fontWeight:900,color:"#fff",flexShrink:0}}>3</span>
+                          Drivers de Volumen · {sp.label}
                         </div>
                         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7,marginBottom:10}}>
                           <DrTecBlock
@@ -1302,12 +1337,12 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                         </div>
 
                         {/* Componentes N4 */}
-                        <div style={{fontSize:11,fontWeight:700,color:LVL[4].c,
+                        <div style={{fontSize:8,fontWeight:700,color:LVL[4].c,
                           textTransform:"uppercase",letterSpacing:".1em",
                           marginBottom:6,display:"flex",alignItems:"center",gap:4}}>
                           <span style={{width:14,height:14,borderRadius:4,background:LVL[4].c,
                             display:"inline-flex",alignItems:"center",justifyContent:"center",
-                            fontSize:10,fontWeight:900,color:"#fff",flexShrink:0}}>4</span>
+                            fontSize:7,fontWeight:900,color:"#fff",flexShrink:0}}>4</span>
                           Componentes de Costo · Driver de Precio unitario
                         </div>
 
@@ -1352,14 +1387,14 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                     {/* Label + badge driver precio */}
                                     <div style={{flex:1,minWidth:0}}>
                                       <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:1}}>
-                                        <span style={{fontSize:13,fontWeight:isOC?700:500,
+                                        <span style={{fontSize:10,fontWeight:isOC?700:500,
                                           color:isOC?sp.color:T.ink,transition:"color .15s",
                                           overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
                                           {comp.label}
                                         </span>
-                                        
+                                        <LvlBadge n={4}/>
                                       </div>
-                                      <span style={{fontSize:10,fontWeight:700,
+                                      <span style={{fontSize:7.5,fontWeight:700,
                                         color:cDF?.color||T.green,
                                         background:`${cDF?.color||T.green}12`,
                                         borderRadius:99,padding:"1px 6px",
@@ -1369,24 +1404,24 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                     </div>
                                     {/* Q inline */}
                                     <div style={{textAlign:"right",flexShrink:0,minWidth:48}}>
-                                      <div style={{fontSize:10,color:T.inkSoft,marginBottom:1}}>Q</div>
+                                      <div style={{fontSize:7.5,color:T.inkSoft,marginBottom:1}}>Q</div>
                                       <EN v={cQ} onChange={v=>updN4(sp.id,ci,{q:v})} size={11} color={T.ink}/>
-                                      <div style={{fontSize:10,color:T.inkSoft}}>{sp.Q_unit}</div>
+                                      <div style={{fontSize:7,color:T.inkSoft}}>{sp.Q_unit}</div>
                                     </div>
                                     {/* P inline */}
                                     <div style={{textAlign:"right",flexShrink:0,minWidth:56}}>
-                                      <div style={{fontSize:10,color:T.inkSoft,marginBottom:1}}>P unit.</div>
+                                      <div style={{fontSize:7.5,color:T.inkSoft,marginBottom:1}}>P unit.</div>
                                       <EN v={cPb} onChange={v=>updN4(sp.id,ci,{pb:v})} size={11} color={LVL[4].c}/>
-                                      {Math.abs(dCP)>.3&&<div style={{fontSize:10,fontWeight:700,color:cc(dCP)}}>
+                                      {Math.abs(dCP)>.3&&<div style={{fontSize:7,fontWeight:700,color:cc(dCP)}}>
                                         {sg(dCP)}{dCP.toFixed(0)}%
                                       </div>}
                                     </div>
                                     {/* Subtotal — live */}
                                     <div style={{textAlign:"right",flexShrink:0,minWidth:60}}>
-                                      <div style={{fontSize:10,color:T.inkSoft,marginBottom:1}}>Subtotal</div>
+                                      <div style={{fontSize:7.5,color:T.inkSoft,marginBottom:1}}>Subtotal</div>
                                       <div style={{fontSize:12,fontWeight:800,color:sp.color}}>{fu(cTot)}</div>
                                       {Math.abs(dp(cTot,comp.q*comp.p))>.3&&
-                                        <div style={{fontSize:10,fontWeight:700,color:cc(dp(cTot,comp.q*comp.p))}}>
+                                        <div style={{fontSize:7,fontWeight:700,color:cc(dp(cTot,comp.q*comp.p))}}>
                                           {sg(dp(cTot,comp.q*comp.p))}{dp(cTot,comp.q*comp.p).toFixed(0)}%
                                         </div>}
                                     </div>
@@ -1395,7 +1430,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                       background:isOC?`${sp.color}18`:T.borderSm,
                                       display:"flex",alignItems:"center",justifyContent:"center",
                                       transition:"all .15s"}}>
-                                      <span style={{fontSize:11,color:isOC?sp.color:T.inkSoft,fontWeight:700,
+                                      <span style={{fontSize:8,color:isOC?sp.color:T.inkSoft,fontWeight:700,
                                         transform:isOC?"rotate(90deg)":"none",
                                         display:"block",transition:"transform .18s",lineHeight:1}}>›</span>
                                     </div>
@@ -1406,13 +1441,13 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                     <div className="fi" style={{marginTop:4,marginLeft:6,
                                       paddingLeft:10,borderLeft:`2px solid ${sp.color}28`,
                                       paddingBottom:4}}>
-                                      <div style={{fontSize:11,fontWeight:700,color:LVL[4].c,
+                                      <div style={{fontSize:8,fontWeight:700,color:LVL[4].c,
                                         textTransform:"uppercase",letterSpacing:".1em",
                                         marginBottom:6,display:"flex",alignItems:"center",gap:4}}>
                                         <span style={{width:14,height:14,borderRadius:4,background:LVL[4].c,
                                           display:"inline-flex",alignItems:"center",justifyContent:"center",
-                                          fontSize:10,fontWeight:900,color:"#fff",flexShrink:0}}>4</span>
-                                        N4 — Subcomponente: {comp.label}
+                                          fontSize:7,fontWeight:900,color:"#fff",flexShrink:0}}>4</span>
+                                        Driver de Precio · {comp.label}
                                       </div>
                                       <DrFinBlock
                                         dfKey={cv.df||"precio_lista"}
@@ -1426,7 +1461,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                       <div style={{marginTop:7,background:T.card,borderRadius:8,
                                         padding:"7px 10px",border:`1.5px solid ${sp.color}22`,
                                         display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                                        <div style={{fontSize:12,color:T.inkMid}}>
+                                        <div style={{fontSize:9,color:T.inkMid}}>
                                           <b style={{color:T.ink}}>{fn(cQ)}</b>
                                           <span style={{color:T.inkXsoft,margin:"0 4px"}}>×</span>
                                           <b style={{color:LVL[4].c}}>{fu(cPb)}</b>
@@ -1435,7 +1470,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                         <div style={{textAlign:"right"}}>
                                           <div style={{fontSize:15,fontWeight:900,color:sp.color}}>{fu(cTot)}</div>
                                           {Math.abs(dp(cTot,comp.q*comp.p))>.3&&
-                                            <div style={{fontSize:11,fontWeight:700,color:cc(dp(cTot,comp.q*comp.p))}}>
+                                            <div style={{fontSize:8,fontWeight:700,color:cc(dp(cTot,comp.q*comp.p))}}>
                                               {sg(dp(cTot,comp.q*comp.p))}{dp(cTot,comp.q*comp.p).toFixed(1)}% vs base {fu(comp.q*comp.p)}
                                             </div>}
                                         </div>
@@ -1449,13 +1484,19 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                         </div>
 
                         {/* Total N3 */}
-                        <div style={{marginTop:8,padding:"8px 12px",borderRadius:8,
-                          background:T.surface,
+                        <div style={{marginTop:7,background:`${sp.color}10`,borderRadius:10,
+                          padding:"8px 12px",border:`1.5px solid ${sp.color}22`,
                           display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                          <span style={{fontSize:11,color:T.inkSoft}}>
-                            Total · {(sp.sub||[]).length} componentes
-                          </span>
-                          <span style={{fontSize:14,fontWeight:800,color:sp.color}}>{fu(spTotal)}</span>
+                          <div>
+                            <div style={{fontSize:7.5,fontWeight:700,color:sp.color,
+                              textTransform:"uppercase",letterSpacing:".1em"}}>
+                              Total N3 · {sp.label}
+                            </div>
+                            <div style={{fontSize:8.5,color:T.inkMid,marginTop:1}}>
+                              {(sp.sub||[]).length} componentes (N4)
+                            </div>
+                          </div>
+                          <div style={{fontSize:16,fontWeight:900,color:sp.color}}>{fu(spTotal)}</div>
                         </div>
                       </div>
                     )}
@@ -1466,29 +1507,27 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
           </div>
 
           {/* ── TOTAL ÁRBOL ── */}
-          <div style={{marginTop:12,padding:"12px 16px",borderRadius:12,
-            background:T.surface,border:`1px solid ${T.borderSm}`,
+          <div style={{marginTop:10,marginLeft:36,background:T.redXsoft,borderRadius:13,
+            border:`1.5px solid ${T.redSoft}`,padding:"11px 15px",
             display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <div>
-              <div style={{fontSize:10,color:T.inkSoft,textTransform:"uppercase",
-                letterSpacing:".12em",marginBottom:4}}>N2 — CAPEX DVB = Σ Q×P</div>
-              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+              <div style={{fontSize:8,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
+                letterSpacing:".12em",marginBottom:3}}>CAPEX DVB = Σ N4 (Q×P)</div>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
                 {baseTree.componentes.map(sp=>(
-                  <span key={sp.id} style={{fontSize:11,color:T.inkMid}}>
-                    <span style={{display:"inline-block",width:6,height:6,borderRadius:"50%",
-                      background:sp.color,marginRight:3,verticalAlign:"middle"}}/>
-                    {fu(n3Total(sp))}
+                  <span key={sp.id} style={{fontSize:8,color:sp.color,fontWeight:700}}>
+                    {sp.label.split(" ")[0]}: {fu(n3Total(sp))}
                   </span>
                 ))}
               </div>
             </div>
-            <div style={{textAlign:"right",flexShrink:0,marginLeft:16}}>
-              <div style={{fontSize:24,fontWeight:900,color:cfg.c,letterSpacing:"-.025em"}}>
+            <div style={{textAlign:"right",flexShrink:0,marginLeft:10}}>
+              <div style={{fontSize:22,fontWeight:900,color:T.red,letterSpacing:"-.025em"}}>
                 {fu(treeTotal)}
               </div>
-              {Math.abs(dProy)>.1&&<div style={{fontSize:12,fontWeight:700,color:cc(dProy),marginTop:2}}>
-                {sg(dProy)}{dProy.toFixed(1)}% vs base
-              </div>}
+              <div style={{fontSize:9,fontWeight:700,color:cc(dProy),marginTop:2}}>
+                {sg(dProy)}{dProy.toFixed(1)}% vs base {fu(proy.P_base)}
+              </div>
             </div>
           </div>
         </>):(
@@ -1498,7 +1537,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
             <div style={{fontSize:12,fontWeight:700,color:T.ink,marginBottom:3}}>
               Sub-Proyectos (N3) en construcción
             </div>
-            <div style={{fontSize:14,color:T.inkSoft,lineHeight:1.7,maxWidth:280,margin:"0 auto"}}>
+            <div style={{fontSize:10.5,color:T.inkSoft,lineHeight:1.7,maxWidth:280,margin:"0 auto"}}>
               Los N3 y N4 serán levantados en talleres con los directores de área responsables.
             </div>
           </div>
@@ -1513,53 +1552,28 @@ function Drawer({proy,macroData,macroTipo,ov,onChange,onClose}){
   const dragging = useRef(false);
   const startX   = useRef(0);
   const startW   = useRef(0);
-
   const onMouseDown = (e) => {
-    dragging.current = true;
-    startX.current   = e.clientX;
-    startW.current   = width;
-    document.body.style.cursor = "ew-resize";
-    document.body.style.userSelect = "none";
+    dragging.current=true; startX.current=e.clientX; startW.current=width;
+    document.body.style.cursor="ew-resize"; document.body.style.userSelect="none";
   };
-
   useEffect(() => {
-    const onMove = (e) => {
-      if (!dragging.current) return;
-      const delta = startX.current - e.clientX;
-      const newW  = Math.min(Math.max(startW.current + delta, 420), window.innerWidth * 0.92);
-      setWidth(Math.round(newW));
+    const onMove=(e)=>{ if(!dragging.current) return;
+      const delta=startX.current-e.clientX;
+      setWidth(Math.round(Math.min(Math.max(startW.current+delta,420),window.innerWidth*0.92)));
     };
-    const onUp = () => {
-      dragging.current = false;
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
-    };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-    };
-  }, []);
-
+    const onUp=()=>{ dragging.current=false; document.body.style.cursor=""; document.body.style.userSelect=""; };
+    window.addEventListener("mousemove",onMove); window.addEventListener("mouseup",onUp);
+    return()=>{ window.removeEventListener("mousemove",onMove); window.removeEventListener("mouseup",onUp); };
+  },[]);
   return(
     <div style={{position:"fixed",inset:0,zIndex:400,display:"flex"}}>
       <div style={{flex:1,background:"rgba(0,0,0,.44)",backdropFilter:"blur(5px)"}} onClick={onClose}/>
       <div className="sr" style={{width,minWidth:420,background:T.card,borderLeft:`1px solid ${T.borderSm}`,display:"flex",flexDirection:"column",overflow:"hidden",boxShadow:"-20px 0 60px rgba(0,0,0,0.12)",position:"relative"}}>
-        {/* Handle de resize — borde izquierdo arrastrable */}
-        <div
-          onMouseDown={onMouseDown}
-          style={{position:"absolute",left:0,top:0,bottom:0,width:6,cursor:"ew-resize",zIndex:10,
-            background:"transparent",transition:"background .15s"}}
+        <div onMouseDown={onMouseDown} style={{position:"absolute",left:0,top:0,bottom:0,width:6,cursor:"ew-resize",zIndex:10,background:"transparent",transition:"background .15s"}}
           onMouseEnter={e=>e.currentTarget.style.background="rgba(232,24,42,0.18)"}
-          onMouseLeave={e=>e.currentTarget.style.background="transparent"}
-        >
-          {/* Grip visual */}
-          <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",
-            display:"flex",flexDirection:"column",gap:3}}>
-            {[0,1,2].map(i=>(
-              <div key={i} style={{width:2,height:16,borderRadius:99,background:"rgba(156,154,149,0.5)"}}/>
-            ))}
+          onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+          <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",display:"flex",flexDirection:"column",gap:3}}>
+            {[0,1,2].map(i=>(<div key={i} style={{width:2,height:16,borderRadius:99,background:"rgba(156,154,149,0.5)"}}/>))}
           </div>
         </div>
         <div style={{flexShrink:0,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",background:T.surface,borderBottom:`1px solid ${T.borderSm}`}}>
@@ -1774,7 +1788,7 @@ function ResetModal({overrides, onApply, onClose}){
 
             return(
               <div key={m.macro} style={{borderBottom:`1px solid ${T.borderSm}`}}>
-                {/* Fila N1 — Macroproyecto */}
+                {/* Fila Macroproyecto */}
                 <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 22px",
                   cursor:"pointer",background:mState==="all"?"#FFF8F7":T.card,
                   transition:"background .12s"}}
@@ -1920,7 +1934,7 @@ function ResetModal({overrides, onApply, onClose}){
 }
 
 
-function ViewTablero({overrides,setOverrides,auditLog=[],session,onChangeLog}){
+function ViewTablero({overrides,setOverrides}){
   const[drawer,setDrawer]=useState(null);
   const[fTipo,setFTipo]=useState(null);
   const[inverso,setInverso]=useState(false);
@@ -1946,17 +1960,7 @@ function ViewTablero({overrides,setOverrides,auditLog=[],session,onChangeLog}){
   }),[overrides]);
 
   const filtered=useMemo(()=>DATA.filter(m=>(fTipo?m.tipo===fTipo:true)&&(!search||m.macro.toLowerCase().includes(search.toLowerCase()))),[fTipo,search]);
-  const handleChange=useCallback((id,patch)=>{
-    setOverrides(p=>{
-      const prev=p[id]||{};
-      const next={...prev,...patch,
-        pt:patch.pt?{...(prev.pt||{}),...patch.pt}:prev.pt,
-        pf:patch.pf?{...(prev.pf||{}),...patch.pf}:prev.pf};
-      return {...p,[id]:next};
-    });
-  },[setOverrides]);
-
-
+  const handleChange=useCallback((id,patch)=>{setOverrides(p=>({...p,[id]:{...p[id],...patch,pt:patch.pt?{...(p[id]?.pt||{}),...patch.pt}:p[id]?.pt,pf:patch.pf?{...(p[id]?.pf||{}),...patch.pf}:p[id]?.pf}}));},[setOverrides]);
 
   return(
     <div style={{maxWidth:1200,margin:"0 auto",padding:"24px 28px 60px"}}>
@@ -1990,26 +1994,26 @@ function ViewTablero({overrides,setOverrides,auditLog=[],session,onChangeLog}){
       {/* ── MINI-KPIs POR TIPO ── */}
       <div className="fu1" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:22}}>
         {porTipo.map(({tipo,cfg,base,dvb,d,count,pct})=>{
-          const isActive = fTipo===tipo;
-          const isDimmed = fTipo && !isActive;
+          const isActive=fTipo===tipo;
+          const isDimmed=fTipo&&!isActive;
           return(
           <div key={tipo} onClick={()=>setFTipo(fTipo===tipo?null:tipo)}
-            style={{background:isDimmed?"#F5F5F4":T.card,borderRadius:18,padding:"18px 20px",
-              border:`1.5px solid ${isActive?cfg.c:isDimmed?"#E5E5E3":T.borderSm}`,
+            style={{background:isDimmed?"#F5F5F3":T.card,borderRadius:18,padding:"18px 20px",
+              border:`1.5px solid ${isActive?cfg.c:isDimmed?"#E5E3DF":T.borderSm}`,
               boxShadow:isActive?`0 8px 28px ${cfg.c}28`:"0 2px 8px rgba(0,0,0,0.04)",
               cursor:"pointer",position:"relative",overflow:"hidden",
-              transition:"all .22s cubic-bezier(.22,1,.36,1)",
-              opacity:isDimmed?0.45:1,
-              transform:isActive?"translateY(-2px) scale(1.01)":"translateY(0) scale(1)"}}>
+              opacity:isDimmed?0.42:1,
+              transform:isActive?"translateY(-2px) scale(1.015)":"translateY(0) scale(1)",
+              transition:"all .22s cubic-bezier(.22,1,.36,1)"}}>
             <div style={{position:"absolute",top:-10,right:-10,width:56,height:56,borderRadius:"50%",
               background:isDimmed?"transparent":`${cfg.c}10`,pointerEvents:"none"}}/>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}}>
               <TipoBadge tipo={tipo}/>
-              {isActive&&<div style={{width:8,height:8,borderRadius:"50%",background:cfg.c,marginTop:3}}/>}
+              {isActive&&<div style={{width:8,height:8,borderRadius:"50%",background:cfg.c,marginTop:3,flexShrink:0}}/>}
             </div>
             <div style={{fontSize:24,fontWeight:900,color:isDimmed?T.inkSoft:T.ink,letterSpacing:"-.02em",marginBottom:4}}>{fu(dvb)}</div>
             <div style={{fontSize:10,color:T.inkSoft,marginBottom:10}}>{fu(base)} base · {count} proy. · {(pct*100).toFixed(1)}%</div>
-            <PBar pct={pct*100*3.5} color={isDimmed?"#D4D2CC":cfg.c} h={3}/>
+            <PBar pct={pct*100*3.5} color={isDimmed?"#D4D0CA":cfg.c} h={3}/>
             <div style={{fontSize:10,fontWeight:700,color:isDimmed?T.inkSoft:cc(d),marginTop:6}}>{sg(d)}{d.toFixed(1)}% vs base</div>
           </div>
         );})}
@@ -2018,7 +2022,7 @@ function ViewTablero({overrides,setOverrides,auditLog=[],session,onChangeLog}){
       {/* ── TOOLBAR ── */}
       <div className="fu2" style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:10}}>
         <div>
-          <div style={{fontSize:16,fontWeight:800,color:T.ink,letterSpacing:"-.02em"}}>N1 — Macroproyectos · CAPEX 2026</div>
+          <div style={{fontSize:16,fontWeight:800,color:T.ink,letterSpacing:"-.02em"}}>Macroproyectos · CAPEX 2026</div>
           <div style={{fontSize:11,color:T.inkSoft,marginTop:2}}>{filtered.length} macros · {filtered.reduce((s,m)=>s+m.proyectos.length,0)} proyectos</div>
         </div>
         <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
@@ -2096,24 +2100,6 @@ function ViewTablero({overrides,setOverrides,auditLog=[],session,onChangeLog}){
                         <div style={{fontSize:11,fontWeight:700,color:cc(dP)}}>{fu(cap)}</div>
                         {Math.abs(dP)>.3&&<div style={{fontSize:8.5,fontWeight:700,color:cc(dP)}}>{sg(dP)}{dP.toFixed(1)}%</div>}
                       </div>
-                      {/* Badge último ajuste */}
-                      {(()=>{
-                        const last=auditLog.find(a=>a.project_id===p.id);
-                        if(!last) return null;
-                        const who=last.user_email?.split("@")[0]||"";
-                        const when=new Date(last.created_at);
-                        const diff=Math.round((Date.now()-when)/60000);
-                        const timeStr=diff<60?`hace ${diff}m`:diff<1440?`hace ${Math.round(diff/60)}h`:`hace ${Math.round(diff/1440)}d`;
-                        return(
-                          <div style={{fontSize:9,color:T.inkSoft,display:"flex",alignItems:"center",
-                            gap:3,marginTop:2}}>
-                            <span>✏️</span>
-                            <span style={{fontWeight:600,color:T.inkMid}}>{who}</span>
-                            <span>·</span>
-                            <span>{timeStr}</span>
-                          </div>
-                        );
-                      })()}
                       <button onClick={()=>setDrawer({proy:{...p},macroData:m,macroTipo:m.tipo})}
                         className="btn-primary"
                         style={{padding:"5px 10px",borderRadius:9,border:hasO?"none":`1.5px solid ${T.borderSm}`,
@@ -2140,7 +2126,7 @@ function ViewTablero({overrides,setOverrides,auditLog=[],session,onChangeLog}){
       </div>
 
       {drawer&&<Drawer proy={drawer.proy} macroData={drawer.macroData} macroTipo={drawer.macroTipo} ov={overrides[drawer.proy.id]}
-        onChange={patch=>onChangeLog?onChangeLog(drawer.proy.id,patch,drawer.proy,drawer.macroData,drawer.macroTipo):handleChange(drawer.proy.id,patch)} onClose={()=>setDrawer(null)}/>}
+        onChange={patch=>handleChange(drawer.proy.id,patch)} onClose={()=>setDrawer(null)}/>}
       {resetModal&&<ResetModal overrides={overrides} onApply={ids=>{setOverrides(p=>{const n={...p};ids.forEach(id=>delete n[id]);return n;});setResetModal(false);}} onClose={()=>setResetModal(false)}/>}
       {inverso&&<InverseModal overrides={overrides}
         onApply={upd=>setOverrides(p=>({...p,...Object.fromEntries(Object.entries(upd).map(([id,ov])=>[id,{...p[id],...ov}]))}))}
@@ -2155,7 +2141,7 @@ function ViewTablero({overrides,setOverrides,auditLog=[],session,onChangeLog}){
 function ViewMetodologia(){
   const[open,setOpen]=useState(null);
   const ETAPAS=[
-    {n:"01",title:"Línea Base",             statusC:T.green,   status:"COMPLETADO", output:"Mapa de inversiones",      body:"Se categoriza el CAPEX en paquetes, sub-paquetes y actividades. Se mapea el presupuesto, su pareto de gasto y las metas estratégicas del negocio.",bullets:["36 N1 — Macroproyectos · CAPEX total Apollo v04","101 proyectos con P actual y Q implícito","Categorización por tipo: RED, CLIENTE, IT, ADMIN","Jerarquía: Macro → Proyecto → Componente → Sub"]},
+    {n:"01",title:"Línea Base",             statusC:T.green,   status:"COMPLETADO", output:"Mapa de inversiones",      body:"Se categoriza el CAPEX en paquetes, sub-paquetes y actividades. Se mapea el presupuesto, su pareto de gasto y las metas estratégicas del negocio.",bullets:["36 Macroproyectos · CAPEX total Apollo v04","101 proyectos con P actual y Q implícito","Categorización por tipo: RED, CLIENTE, IT, ADMIN","Jerarquía: Macro → Proyecto → Componente → Sub"]},
     {n:"02",title:"Drivers Técnicos → Q",   statusC:"#D97706", status:"EN CURSO",   output:"Q aspiracional por nivel",  body:"Se definen drivers técnicos para cada nivel del árbol y se dimensiona la necesidad Q de cada proyecto y componente con parámetros reales.",bullets:["9 tipos de driver: EoL, congestión, CRC, activaciones, migraciones…","Q calculado automáticamente desde parámetros IBP / plan","Bidireccional: editar Q → ajusta parámetro del driver","Árbol PxQ: Q propio por componente (no solo proyecto)"]},
     {n:"03",title:"Árboles P×Q por Niveles",statusC:"#D97706", status:"EN CURSO",   output:"Inductores por componente", body:"Se construyen árboles a 3 niveles. Cada nivel tiene Q (driver técnico) y P (driver financiero) propios, permitiendo optimizar en el nivel correcto.",bullets:["Nivel 1 — Proyecto: Q_total × P_promedio = CAPEX","Nivel 2 — Componente: HW, Civiles, M.O., O&M, SW (% asignado)","Nivel 3 — Sub-componente: línea de costo específica con qd + pd","CAPEX = Σ (Q_comp × P_comp) acumulado desde nivel 3"]},
     {n:"04",title:"Drivers Financieros → P", statusC:"#D97706", status:"EN CURSO",   output:"P benchmark por nivel",    body:"Se comparan los árboles de costo contra benchmarks financieros en cada nivel y se define el P objetivo por componente y sub-componente.",bullets:["6 drivers: AMX LatAm, cotización, histórico, CRC, IPC+ILA, spot","Gap visible por nivel: P_actual vs P_driver","Edición directa de P → recalcula CAPEX en cascada","Drill-down: oportunidad real en HW vs Civiles vs M.O."]},
@@ -2723,7 +2709,8 @@ function generateXLSX(proyRows, overrides){
 /* ══════════════════════════════════════════════════════════════════════════
    TAB CONTROL — Carga / Descarga plantilla + parámetros globales
 ══════════════════════════════════════════════════════════════════════════ */
-function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, globalParams, setGlobalParams, auditLog=[], session, profile}){
+function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, globalParams, setGlobalParams}){
+  const {useState,useRef,useCallback}=React;
   const fileRef=useRef();
   const [parsing,setParsing]=useState(false);
   const [parseResult,setParseResult]=useState(null); // {ok, rows, errors}
@@ -2875,99 +2862,6 @@ function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, global
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:22}}>
 
         {/* ── COLUMNA IZQUIERDA: Carga ── */}
-        {/* ══ HISTORIAL DE CAMBIOS ══ */}
-        <div style={{marginBottom:28,background:T.card,borderRadius:16,
-          border:`1px solid ${T.borderSm}`,overflow:"hidden",
-          boxShadow:"0 2px 8px rgba(0,0,0,0.04)"}}>
-          <div style={{padding:"14px 20px",borderBottom:`1px solid ${T.borderSm}`,
-            display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <div>
-              <div style={{fontSize:13,fontWeight:700,color:T.ink}}>Historial de ajustes</div>
-              <div style={{fontSize:10,color:T.inkSoft,marginTop:2}}>
-                Registro de cambios realizados en esta sesión
-              </div>
-            </div>
-            <span style={{fontSize:11,fontWeight:700,color:T.inkSoft,
-              background:T.surface,padding:"3px 10px",borderRadius:99,
-              border:`1px solid ${T.borderSm}`}}>
-              {auditLog.length} registros
-            </span>
-          </div>
-          {auditLog.length===0 ? (
-            <div style={{padding:"32px",textAlign:"center"}}>
-              <div style={{fontSize:24,marginBottom:8}}>📋</div>
-              <div style={{fontSize:12,fontWeight:600,color:T.ink,marginBottom:4}}>Sin ajustes todavía</div>
-              <div style={{fontSize:11,color:T.inkSoft}}>
-                Cada vez que modifiques un Q o P en el tablero quedará registrado aquí
-              </div>
-            </div>
-          ) : (<>
-            {/* Headers */}
-            <div style={{display:"grid",gridTemplateColumns:"120px 1fr 140px 100px 120px",
-              padding:"8px 20px",background:T.surface,
-              borderBottom:`1px solid ${T.borderSm}`}}>
-              {["Cuándo","Proyecto","Campo ajustado","Valor nuevo","Quién"].map(h=>(
-                <span key={h} style={{fontSize:9,fontWeight:700,color:T.inkSoft,
-                  textTransform:"uppercase",letterSpacing:".07em"}}>{h}</span>
-              ))}
-            </div>
-            {/* Filas */}
-            {auditLog.slice(0,100).map((a,i)=>{
-              const who  = a.user_email?.split("@")[0]||"";
-              const when = new Date(a.created_at);
-              const diff = Math.round((Date.now()-when)/60000);
-              const timeStr = diff<1?"ahora mismo":diff<60?`hace ${diff} min`:
-                              diff<1440?`hace ${Math.round(diff/60)}h`:
-                              when.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
-              const valNew = a.value_after?.v!=null
-                ? typeof a.value_after.v==="number"
-                  ? a.value_after.v>10000?`$${(a.value_after.v/1e3).toFixed(0)}K`:`${a.value_after.v}`
-                  : String(a.value_after.v)
-                : "—";
-              const isMe = a.user_id===session?.user?.id;
-              return(
-                <div key={a.id} style={{display:"grid",
-                  gridTemplateColumns:"120px 1fr 140px 100px 120px",
-                  padding:"10px 20px",
-                  background:i%2===0?T.card:"#FAFAF9",
-                  borderBottom:i<Math.min(auditLog.length,100)-1?`1px solid ${T.borderSm}`:"none",
-                  alignItems:"center"}}>
-                  <span style={{fontSize:10,color:T.inkSoft}}>{timeStr}</span>
-                  <div>
-                    <div style={{fontSize:11,fontWeight:600,color:T.ink,
-                      overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",
-                      maxWidth:200}}>
-                      {a.project_name||a.project_id}
-                    </div>
-                    <div style={{fontSize:9,color:T.inkSoft}}>{a.macro_name||""}</div>
-                  </div>
-                  <span style={{fontSize:10,color:T.inkMid,
-                    overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
-                    {a.field}
-                  </span>
-                  <span style={{fontSize:12,fontWeight:800,color:T.green}}>
-                    {valNew}
-                  </span>
-                  <div style={{display:"flex",alignItems:"center",gap:6}}>
-                    <div style={{width:22,height:22,borderRadius:"50%",flexShrink:0,
-                      background:isMe?T.red:"#E5E7EB",
-                      display:"flex",alignItems:"center",justifyContent:"center",
-                      fontSize:9,fontWeight:800,
-                      color:isMe?"#fff":T.inkSoft}}>
-                      {who.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <div style={{fontSize:10,fontWeight:isMe?700:500,color:T.ink}}>
-                        {who}{isMe&&<span style={{color:T.inkSoft,fontWeight:400}}> (tú)</span>}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </>)}
-        </div>
-
         <div>
           <div style={S.card}>
             <div style={S.sectionTitle}>
@@ -3196,7 +3090,8 @@ function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, global
 /* ══════════════════════════════════════════════════════════════════════════
    TAB ESCENARIOS — Multi-escenario con comparación
 ══════════════════════════════════════════════════════════════════════════ */
-function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, setOverrides, session, onSaveDb, onDeleteDb}){
+function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, setOverrides}){
+  const {useState,useMemo}=React;
   const [compareA,setCompareA]=useState(null);
   const [compareB,setCompareB]=useState(null);
   const [newName,setNewName]=useState('');
@@ -3207,19 +3102,13 @@ function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, s
   const scenTotal=(ov)=>DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+calcCap(p,ov[p.id]),0),0);
 
   const createScenario=(name,fromOv={})=>{
-    const localId='scen_'+Date.now();
-    const ns={id:localId,name:name||`Escenario ${escenarios.length+1}`,
+    const id='scen_'+Date.now();
+    const ns={id,name:name||`Escenario ${escenarios.length+1}`,
               overrides:{...fromOv},
               createdAt:new Date().toLocaleString('es-CO'),
               color:['#E8182A','#2563EB','#059669','#7C3AED','#D97706'][escenarios.length%5]};
-    // Guardar en Supabase si hay sesión
-    if(onSaveDb){
-      onSaveDb({...ns, totalCapex:null}).then(data=>{
-        if(data?.id) setEscenarios(prev=>prev.map(s=>s.id===localId?{...s,id:data.id}:s));
-      });
-    }
     setEscenarios(prev=>[...prev,ns]);
-    return localId;
+    return id;
   };
 
   const deleteScenario=(id)=>{
@@ -3537,115 +3426,19 @@ function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, s
 
 
 export default function App(){
-  // ══ 1. AUTH STATES — primero de todo ══
-  const [session,   setSession]   = useState(null);
-  const [profile,   setProfile]   = useState(null);
-  const [authReady, setAuthReady] = useState(false);
+  const[overrides,setOverrides]=useState({});
+  const[tab,setTab]=useState("tablero");
+  const[escenarios,setEscenarios]=useState([]);
+  const[activeScen,setActiveScen]=useState(null);
+  const[loadedFile,setLoadedFile]=useState(null);
+  const[globalParams,setGlobalParams]=useState({ipc:5.2,ila:3.8,trm:4180,delta_amx:0,contingencia:3.0});
 
-  // ══ 2. APP STATES ══
-  const [overrides,    setOverrides]    = useState({});
-  const [auditLog,     setAuditLog]     = useState([]);
-  const [tab,          setTab]          = useState("tablero");
-  const [escenarios,   setEscenarios]   = useState([]);
-  const [activeScen,   setActiveScen]   = useState(null);
-  const [loadedFile,   setLoadedFile]   = useState(null);
-  const [globalParams, setGlobalParams] = useState({ipc:5.2,ila:3.8,trm:4180,delta_amx:0,contingencia:3.0});
-
-  // ══ 3. EFFECTS — todos antes de cualquier return ══
-  // Estilos globales
   useEffect(()=>{
     const s=document.createElement("style");s.textContent=GS;document.head.appendChild(s);
+    // SheetJS importado via npm
     return()=>s.remove();
   },[]);
 
-  // Auth listener
-  useEffect(()=>{
-    supabase.auth.getSession().then(({data:{session}})=>{
-      setSession(session);
-      if(session) loadProfile(session.user.id);
-      setAuthReady(true);
-    });
-    const {data:{subscription}} = supabase.auth.onAuthStateChange((_,session)=>{
-      setSession(session);
-      if(session) loadProfile(session.user.id);
-      else setProfile(null);
-    });
-    return ()=>subscription.unsubscribe();
-  },[]);
-
-  // Cargar datos de Supabase al iniciar sesión
-  useEffect(()=>{
-    if(!session) return;
-    loadAuditLog();
-    loadDbScenarios();
-  },[session?.user?.id]);
-
-  // ══ 4. HANDLERS Y HELPERS ══
-  const loadProfile = async (userId)=>{
-    const {data} = await getProfile(userId);
-    setProfile(data);
-    updateLastSeen(userId);
-  };
-
-  const loadAuditLog = async ()=>{
-    if(!session) return;
-    const {data} = await getAuditLog(session.user.id, 200);
-    setAuditLog(data||[]);
-  };
-
-  const loadDbScenarios = async ()=>{
-    if(!session) return;
-    const {data} = await getScenarios(session.user.id);
-    if(data?.length){
-      setEscenarios(data.map((s,idx)=>({
-        id:s.id, name:s.name, description:s.description,
-        overrides:s.overrides||{}, createdAt:s.created_at,
-        color:['#E8182A','#2563EB','#059669','#7C3AED','#D97706'][idx%5]
-      })));
-    }
-  };
-
-  const handleSignOut = async ()=>{
-    await signOut();
-    setSession(null); setProfile(null);
-  };
-
-  const handleChange = useCallback((id,patch)=>{
-    setOverrides(p=>{
-      const prev=p[id]||{};
-      const next={...prev,...patch,
-        pt:patch.pt?{...(prev.pt||{}),...patch.pt}:prev.pt,
-        pf:patch.pf?{...(prev.pf||{}),...patch.pf}:prev.pf};
-      return {...p,[id]:next};
-    });
-  },[]);
-
-  const handleChangeWithLog = useCallback((id,patch,proy,macro,categoria)=>{
-    handleChange(id,patch);
-    if(!session) return;
-    const field = patch.pf?.pb!==undefined?'P unitario':
-                  patch.pf?.pa!==undefined?'P actual':
-                  patch.pt?'Parámetros Q':
-                  patch.dt?'Driver Q':patch.df?'Driver P':'ajuste';
-    logAdjustment({
-      userId:session.user.id, userEmail:session.user.email,
-      projectId:id, projectName:proy?.n||id,
-      macroName:macro?.macro||'', categoria:categoria||'',
-      field, valueBefore:undefined,
-      valueAfter:patch.pf?.pb??patch.pf?.pa??null,
-    }).then(()=>loadAuditLog());
-  },[session, handleChange]);
-
-  // ══ 5. GUARDS — SIEMPRE al final, después de todos los hooks ══
-  if(!authReady) return(
-    <div style={{minHeight:"100vh",background:"#F7F6F3",display:"flex",
-      alignItems:"center",justifyContent:"center"}}>
-      <div style={{fontSize:13,color:"#9CA3AF",fontFamily:"'Outfit',system-ui"}}>Cargando...</div>
-    </div>
-  );
-  if(!session) return <AuthLogin onAuth={(s)=>setSession(s)}/>;
-
-  // ══ 6. DERIVADOS (no son hooks) ══
   const tBase=DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+p.P_base,0),0);
   const tDVB=DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+calcCap(p,overrides[p.id]),0),0);
   const dT=dp(tDVB,tBase);
@@ -3677,24 +3470,6 @@ const TABS=[{id:"tablero",label:"Tablero DVB",icon:"📊"},{id:"eficiencias",lab
             <div style={{fontSize:9.5,color:T.inkSoft}}>Drivers Value Budgeting · CAPEX 2026</div>
           </div>
           <div style={{width:1,height:26,background:T.borderSm}}/>
-          {/* Usuario logueado */}
-          <div style={{display:"flex",alignItems:"center",gap:8,marginLeft:"auto"}}>
-            <div style={{textAlign:"right"}}>
-              <div style={{fontSize:11,fontWeight:700,color:T.ink}}>
-                {profile?.full_name||session?.user?.email?.split("@")[0]||""}
-              </div>
-              <div style={{fontSize:9,color:T.inkSoft,textTransform:"capitalize"}}>
-                {profile?.role||"viewer"}
-              </div>
-            </div>
-            <button onClick={handleSignOut}
-              style={{padding:"5px 10px",borderRadius:7,border:`1px solid ${T.borderSm}`,
-                background:"transparent",color:T.inkSoft,fontSize:10,fontWeight:600,
-                cursor:"pointer",whiteSpace:"nowrap"}}>
-              Salir
-            </button>
-          </div>
-          <div style={{width:1,height:26,background:T.borderSm}}/>
           {/* Live totals en header */}
           <div style={{display:"flex",gap:6}}>
             {[{l:"Base",v:fu(tBase),c:T.inkMid},{l:"DVB",v:fu(tDVB),c:cc(dT)},...(Math.abs(dT)>.1?[{l:"Δ",v:`${dT>=0?"+":""}${dT.toFixed(1)}%`,c:cc(dT)}]:[])].map(k=>(
@@ -3721,10 +3496,10 @@ const TABS=[{id:"tablero",label:"Tablero DVB",icon:"📊"},{id:"eficiencias",lab
 
       {/* CONTENT */}
       <div style={{flex:1,overflow:"auto"}}>
-        {tab==="tablero"    &&<ViewTablero overrides={overrides} setOverrides={setOverrides} auditLog={auditLog} session={session} onChangeLog={handleChangeWithLog}/>}
+        {tab==="tablero"    &&<ViewTablero overrides={overrides} setOverrides={setOverrides}/>}
         {tab==="eficiencias"&&<ViewEficiencias overrides={overrides} tBase={tBase} tDVB={tDVB}/>}
-        {tab==="escenarios" &&<ViewEscenarios escenarios={escenarios} setEscenarios={setEscenarios} activeScen={activeScen} setActiveScen={setActiveScen} setOverrides={setOverrides} session={session} onSaveDb={async(scen)=>{const{data}=await saveScenario(session.user.id,scen);return data;}} onDeleteDb={async(id)=>deleteScenario(session.user.id,id)}/>}
-        {tab==="control"    &&<ViewControl overrides={overrides} setOverrides={setOverrides} loadedFile={loadedFile} setLoadedFile={setLoadedFile} globalParams={globalParams} setGlobalParams={setGlobalParams} auditLog={auditLog} session={session} profile={profile}/>}
+        {tab==="escenarios" &&<ViewEscenarios escenarios={escenarios} setEscenarios={setEscenarios} activeScen={activeScen} setActiveScen={setActiveScen} setOverrides={setOverrides}/>}
+        {tab==="control"    &&<ViewControl overrides={overrides} setOverrides={setOverrides} loadedFile={loadedFile} setLoadedFile={setLoadedFile} globalParams={globalParams} setGlobalParams={setGlobalParams}/>}
         {tab==="metodologia"&&<ViewMetodologia/>}
       </div>
 
