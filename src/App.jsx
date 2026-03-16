@@ -833,9 +833,9 @@ function DrTecBlock({dtKey, pt, nivel=2, Q_unit, onChangeDt, onChangePt, onChang
       <div style={{display:"flex",alignItems:"center",gap:6}}>
         <span style={{fontSize:14}}>{DT?.icon}</span>
         <div>
-          <div style={{fontSize:7.5,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
+          <div style={{fontSize:10,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
             letterSpacing:".1em"}}>Driver Técnico Q · {lc.label}</div>
-          <div style={{fontSize:9,fontWeight:700,color:DT?.color,lineHeight:1.2}}>
+          <div style={{fontSize:12,fontWeight:700,color:DT?.color,lineHeight:1.2}}>
             {DT?.tag} — {DT?.label}
           </div>
         </div>
@@ -845,14 +845,14 @@ function DrTecBlock({dtKey, pt, nivel=2, Q_unit, onChangeDt, onChangePt, onChang
         onChange={e=>{ const nk=e.target.value; onChangeDt(nk, defs[nk]||{}); }}
         style={{width:"100%",padding:"5px 8px",borderRadius:7,
           border:`1.5px solid ${T.borderSm}`,background:T.card,
-          color:T.ink,fontSize:9.5,fontWeight:600,outline:"none",
+          color:T.ink,fontSize:13,fontWeight:600,outline:"none",
           appearance:"none",cursor:"pointer",fontFamily:"'Outfit',system-ui"}}>
         {Object.entries(cat).map(([k,v])=>(
           <option key={k} value={k}>{v.icon} {v.label}</option>
         ))}
       </select>
       {/* Descripción */}
-      <div style={{fontSize:8.5,color:T.inkSoft,fontStyle:"italic",lineHeight:1.5,
+      <div style={{fontSize:11.5,color:T.inkSoft,fontStyle:"italic",lineHeight:1.5,
         padding:"4px 8px",background:T.card,borderRadius:5,
         borderLeft:`3px solid ${DT?.color||lc.c}`}}>
         {DT?.desc}
@@ -864,7 +864,7 @@ function DrTecBlock({dtKey, pt, nivel=2, Q_unit, onChangeDt, onChangePt, onChang
             padding:"5px 9px",
             background:i%2===0?T.card:"#FAFAF8",
             borderBottom:i<(DT.params.length-1)?`1px solid ${T.borderSm}`:"none"}}>
-            <span style={{fontSize:9,color:T.inkMid,maxWidth:"55%",lineHeight:1.3}}>{l}</span>
+            <span style={{fontSize:12,color:T.inkMid,maxWidth:"55%",lineHeight:1.3}}>{l}</span>
             <EN v={pt[k]??0} pct={p} color={DT?.color||lc.c} onChange={val=>onChangePt(k,val)}/>
           </div>
         ))}
@@ -872,12 +872,12 @@ function DrTecBlock({dtKey, pt, nivel=2, Q_unit, onChangeDt, onChangePt, onChang
       {/* Q resultante */}
       <div style={{background:`${DT?.color||lc.c}14`,borderRadius:7,padding:"6px 10px",
         display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-        <div style={{fontSize:7.5,fontWeight:700,color:DT?.color||lc.c,
+        <div style={{fontSize:10,fontWeight:700,color:DT?.color||lc.c,
           textTransform:"uppercase",letterSpacing:".1em"}}>Q calculado</div>
         <div style={{display:"flex",alignItems:"baseline",gap:4}}>
           <EN v={Q} onChange={nQ=>onChangeQ(backCalcPt(dtKey,pt,nQ,nivel))}
             size={16} color={DT?.color||lc.c}/>
-          <span style={{fontSize:8,color:T.inkMid}}>{Q_unit}</span>
+          <span style={{fontSize:11,color:T.inkMid}}>{Q_unit}</span>
         </div>
       </div>
     </div>
@@ -904,9 +904,9 @@ function DrFinBlock({dfKey, pa, pb, Q_unit, nivel=2, color, onChangeDf, onChange
       <div style={{display:"flex",alignItems:"center",gap:6}}>
         <span style={{fontSize:14}}>💰</span>
         <div>
-          <div style={{fontSize:7.5,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
+          <div style={{fontSize:10,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
             letterSpacing:".1em"}}>Driver Financiero P · {lc.label}</div>
-          <div style={{fontSize:9,fontWeight:700,color:c,lineHeight:1.2}}>
+          <div style={{fontSize:12,fontWeight:700,color:c,lineHeight:1.2}}>
             Precio / Costo unitario
           </div>
         </div>
@@ -915,14 +915,14 @@ function DrFinBlock({dfKey, pa, pb, Q_unit, nivel=2, color, onChangeDf, onChange
       <select value={dfKey} onChange={e=>onChangeDf(e.target.value)}
         style={{width:"100%",padding:"5px 8px",borderRadius:7,
           border:`1.5px solid ${T.borderSm}`,background:T.card,
-          color:T.ink,fontSize:9.5,fontWeight:600,outline:"none",
+          color:T.ink,fontSize:13,fontWeight:600,outline:"none",
           appearance:"none",cursor:"pointer",fontFamily:"'Outfit',system-ui"}}>
         {Object.entries(cat).map(([k,v])=>(
           <option key={k} value={k}>{v.label}</option>
         ))}
       </select>
       {/* Descripción */}
-      <div style={{fontSize:8.5,color:T.inkSoft,fontStyle:"italic",lineHeight:1.5,
+      <div style={{fontSize:11.5,color:T.inkSoft,fontStyle:"italic",lineHeight:1.5,
         padding:"4px 8px",background:T.card,borderRadius:5,
         borderLeft:`3px solid ${DF?.color||c}`}}>
         {DF?.desc}
@@ -935,10 +935,10 @@ function DrFinBlock({dfKey, pa, pb, Q_unit, nivel=2, color, onChangeDf, onChange
             padding:"5px 9px",
             background:i===0?T.card:"#FAFAF8",
             borderBottom:i===0?`1px solid ${T.borderSm}`:"none"}}>
-            <span style={{fontSize:9,color:T.inkMid}}>{l}</span>
+            <span style={{fontSize:12,color:T.inkMid}}>{l}</span>
             <div style={{display:"flex",gap:3,alignItems:"baseline"}}>
               <EN v={v??0} color={faded?T.inkSoft:c} onChange={set}/>
-              <span style={{fontSize:7.5,color:T.inkSoft}}>/{Q_unit}</span>
+              <span style={{fontSize:10,color:T.inkSoft}}>/{Q_unit}</span>
             </div>
           </div>
         ))}
@@ -947,18 +947,18 @@ function DrFinBlock({dfKey, pa, pb, Q_unit, nivel=2, color, onChangeDf, onChange
       <div style={{background:`${c}12`,borderRadius:7,padding:"6px 10px",
         display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <div>
-          <div style={{fontSize:7.5,fontWeight:700,color:c,textTransform:"uppercase",letterSpacing:".1em"}}>
+          <div style={{fontSize:10,fontWeight:700,color:c,textTransform:"uppercase",letterSpacing:".1em"}}>
             P driver
           </div>
           {Math.abs(gap)>.1&&(
-            <div style={{fontSize:8.5,fontWeight:700,color:gap<0?T.green:T.red}}>
+            <div style={{fontSize:11.5,fontWeight:700,color:gap<0?T.green:T.red}}>
               {sg(gap)}{gap.toFixed(1)}% vs actual
             </div>
           )}
         </div>
         <div style={{display:"flex",alignItems:"baseline",gap:4}}>
           <EN v={pb??0} onChange={onChangePb} size={16} color={c}/>
-          <span style={{fontSize:8,color:T.inkMid}}>/{Q_unit}</span>
+          <span style={{fontSize:11,color:T.inkMid}}>/{Q_unit}</span>
         </div>
       </div>
     </div>
@@ -1069,13 +1069,13 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
           {/* Breadcrumb jerárquico */}
           <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:8,flexWrap:"wrap"}}>
             {macroData&&<>
-              <span style={{fontSize:8,fontWeight:700,color:"rgba(255,255,255,.4)",
+              <span style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,.4)",
                 background:"rgba(255,255,255,.08)",borderRadius:99,padding:"1px 7px"}}>
                 N1 · {macroData.macro}
               </span>
-              <span style={{color:"rgba(255,255,255,.25)",fontSize:9}}>›</span>
+              <span style={{color:"rgba(255,255,255,.25)",fontSize:12}}>›</span>
             </>}
-            <span style={{fontSize:8,fontWeight:700,color:"rgba(255,255,255,.8)",
+            <span style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,.8)",
               background:"rgba(255,255,255,.15)",borderRadius:99,padding:"1px 7px"}}>
               N2 · {proy.id} {proy.n}
             </span>
@@ -1088,17 +1088,17 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                 <TipoBadge tipo={macroTipo} sm/>
                 {proy.prio&&proy.prio!=="—"&&
                   <span style={{background:"rgba(255,255,255,.12)",border:"1px solid rgba(255,255,255,.2)",
-                    borderRadius:99,padding:"2px 9px",fontSize:8.5,fontWeight:700,
+                    borderRadius:99,padding:"2px 9px",fontSize:11.5,fontWeight:700,
                     color:"rgba(255,255,255,.8)",textTransform:"uppercase"}}>{proy.prio}</span>}
               </div>
             </div>
             <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6,flexShrink:0,marginLeft:12}}>
               <div style={{textAlign:"right"}}>
-                <div style={{fontSize:7.5,color:"rgba(255,255,255,.45)",textTransform:"uppercase",
+                <div style={{fontSize:10,color:"rgba(255,255,255,.45)",textTransform:"uppercase",
                   letterSpacing:".1em",marginBottom:2}}>CAPEX DVB</div>
                 <EN v={treeTotal} onChange={nC=>{if(Q2>0)onChange({pf:{...pf2,pb:nC/Q2}});}}
                   size={19} color="#fff"/>
-                {Math.abs(dProy)>.1&&<div style={{fontSize:9,fontWeight:700,
+                {Math.abs(dProy)>.1&&<div style={{fontSize:12,fontWeight:700,
                   color:dProy<0?"#86EFAC":"#FCA5A5",marginTop:1}}>
                   {sg(dProy)}{dProy.toFixed(1)}% vs base
                 </div>}
@@ -1107,7 +1107,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
               <button onClick={handleSave}
                 style={{display:"flex",alignItems:"center",gap:5,padding:"6px 14px",
                   borderRadius:99,border:"none",cursor:"pointer",fontFamily:"'Outfit',system-ui",
-                  fontWeight:700,fontSize:11,letterSpacing:"-.01em",
+                  fontWeight:700,fontSize:14,letterSpacing:"-.01em",
                   background: saved ? "rgba(45,200,120,0.9)" : isDirty ? "#fff" : "rgba(255,255,255,.25)",
                   color: saved ? "#fff" : isDirty ? T.red : "rgba(255,255,255,.7)",
                   boxShadow: isDirty&&!saved ? "0 4px 16px rgba(0,0,0,0.2)" : "none",
@@ -1133,15 +1133,15 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                   display:"flex",alignItems:"center",justifyContent:"center",
                   fontSize:13,flexShrink:0}}>🏗</div>
                 <div>
-                  <div style={{fontSize:8,fontWeight:700,color:LVL[1].c,textTransform:"uppercase",
+                  <div style={{fontSize:11,fontWeight:700,color:LVL[1].c,textTransform:"uppercase",
                     letterSpacing:".1em"}}>N1 · Macroproyecto</div>
-                  <div style={{fontSize:11,fontWeight:800,color:T.ink}}>{macroData.macro}</div>
+                  <div style={{fontSize:14,fontWeight:800,color:T.ink}}>{macroData.macro}</div>
                 </div>
               </div>
               <div style={{textAlign:"right",flexShrink:0}}>
-                <div style={{fontSize:7.5,color:T.inkSoft,textTransform:"uppercase"}}>Base macro</div>
+                <div style={{fontSize:10,color:T.inkSoft,textTransform:"uppercase"}}>Base macro</div>
                 <div style={{fontSize:12,fontWeight:900,color:T.inkMid}}>{fu(macroData.P_base)}</div>
-                {Math.abs(dMacro)>.1&&<div style={{fontSize:8,fontWeight:700,color:cc(dMacro)}}>
+                {Math.abs(dMacro)>.1&&<div style={{fontSize:11,fontWeight:700,color:cc(dMacro)}}>
                   {sg(dMacro)}{dMacro.toFixed(1)}% este proyecto
                 </div>}
               </div>
@@ -1149,7 +1149,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
             {/* Pills de proyectos hermanos */}
             <div style={{marginTop:8,display:"flex",gap:4,flexWrap:"wrap"}}>
               {macroData.proyectos.map(p=>(
-                <span key={p.id} style={{fontSize:8,padding:"2px 8px",borderRadius:99,
+                <span key={p.id} style={{fontSize:11,padding:"2px 8px",borderRadius:99,
                   fontWeight:p.id===proy.id?700:400,
                   background:p.id===proy.id?"rgba(232,24,42,.1)":T.surface,
                   border:`1px solid ${p.id===proy.id?T.red:T.borderSm}`,
@@ -1170,9 +1170,9 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
               📁
             </div>
             <div style={{flex:1}}>
-              <div style={{fontSize:8,fontWeight:700,color:LVL[2].c,textTransform:"uppercase",
+              <div style={{fontSize:11,fontWeight:700,color:LVL[2].c,textTransform:"uppercase",
                 letterSpacing:".1em"}}>N2 · Proyecto — Drivers de Demanda</div>
-              <div style={{fontSize:9.5,color:T.inkSoft}}>
+              <div style={{fontSize:13,color:T.inkSoft}}>
                 Q×P = <b style={{color:LVL[2].c}}>{fn(Q2)}</b> {proy.m}
                 <span style={{margin:"0 4px",color:T.inkXsoft}}>×</span>
                 <b style={{color:LVL[2].c}}>{fu(P2)}/{proy.m}</b>
@@ -1207,9 +1207,9 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
               📂
             </div>
             <div style={{flex:1}}>
-              <div style={{fontSize:8,fontWeight:700,color:LVL[3].c,textTransform:"uppercase",
+              <div style={{fontSize:11,fontWeight:700,color:LVL[3].c,textTransform:"uppercase",
                 letterSpacing:".1em"}}>N3 · Sub-Proyectos — Drivers de Volumen físico</div>
-              <div style={{fontSize:9,color:T.inkSoft}}>
+              <div style={{fontSize:12,color:T.inkSoft}}>
                 {baseTree.componentes.length} sub-proyectos · Total árbol:
                 <b style={{color:T.red,marginLeft:4}}>{fu(treeTotal)}</b>
               </div>
@@ -1230,7 +1230,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
               return(
                 <div key={sp.id} style={{display:"flex",alignItems:"center",gap:3}}>
                   <div style={{width:6,height:6,borderRadius:2,background:sp.color,flexShrink:0}}/>
-                  <span style={{fontSize:8,color:T.inkMid,fontWeight:600}}>
+                  <span style={{fontSize:11,color:T.inkMid,fontWeight:600}}>
                     {sp.label} <span style={{color:sp.color,fontWeight:700}}>{fu(t)}</span>
                     <span style={{color:T.inkXsoft}}> {treeTotal>0?(t/treeTotal*100).toFixed(0):0}%</span>
                   </span>
@@ -1269,14 +1269,14 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                         transition:"background .18s"}}>{sp.icon}</div>
                       <div style={{flex:1,minWidth:0}}>
                         <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:2}}>
-                          <span style={{fontSize:11,fontWeight:700,
+                          <span style={{fontSize:14,fontWeight:700,
                             color:isOpenN?sp.color:T.ink,transition:"color .15s",
                             overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
                             {sp.label}
                           </span>
                           <LvlBadge n={3}/>
                         </div>
-                        <div style={{fontSize:8.5,color:T.inkSoft,display:"flex",gap:5}}>
+                        <div style={{fontSize:11.5,color:T.inkSoft,display:"flex",gap:5}}>
                           <span style={{color:spDT?.color,fontWeight:600}}>
                             {spDT?.icon} Q:{fn(spQ)} {sp.Q_unit}
                           </span>
@@ -1288,7 +1288,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                       </div>
                       <div style={{textAlign:"right",flexShrink:0}}>
                         <div style={{fontSize:14,fontWeight:900,color:sp.color}}>{fu(spTotal)}</div>
-                        <div style={{fontSize:8,color:T.inkSoft}}>
+                        <div style={{fontSize:11,color:T.inkSoft}}>
                           {treeTotal>0?(spTotal/treeTotal*100).toFixed(0):0}%
                         </div>
                       </div>
@@ -1296,7 +1296,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                         background:isOpenN?`${sp.color}20`:T.borderSm,
                         display:"flex",alignItems:"center",justifyContent:"center",
                         transition:"all .18s"}}>
-                        <span style={{fontSize:10,color:isOpenN?sp.color:T.inkSoft,fontWeight:700,
+                        <span style={{fontSize:13,color:isOpenN?sp.color:T.inkSoft,fontWeight:700,
                           transform:isOpenN?"rotate(90deg)":"none",
                           display:"block",transition:"transform .2s",lineHeight:1}}>›</span>
                       </div>
@@ -1308,12 +1308,12 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                         paddingLeft:12,borderLeft:`2px solid ${sp.color}35`}}>
 
                         {/* Drivers N3 */}
-                        <div style={{fontSize:8,fontWeight:700,color:LVL[3].c,
+                        <div style={{fontSize:11,fontWeight:700,color:LVL[3].c,
                           textTransform:"uppercase",letterSpacing:".1em",
                           marginBottom:7,display:"flex",alignItems:"center",gap:4}}>
                           <span style={{width:14,height:14,borderRadius:4,background:LVL[3].c,
                             display:"inline-flex",alignItems:"center",justifyContent:"center",
-                            fontSize:7,fontWeight:900,color:"#fff",flexShrink:0}}>3</span>
+                            fontSize:10,fontWeight:900,color:"#fff",flexShrink:0}}>3</span>
                           Drivers de Volumen · {sp.label}
                         </div>
                         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7,marginBottom:10}}>
@@ -1336,12 +1336,12 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                         </div>
 
                         {/* Componentes N4 */}
-                        <div style={{fontSize:8,fontWeight:700,color:LVL[4].c,
+                        <div style={{fontSize:11,fontWeight:700,color:LVL[4].c,
                           textTransform:"uppercase",letterSpacing:".1em",
                           marginBottom:6,display:"flex",alignItems:"center",gap:4}}>
                           <span style={{width:14,height:14,borderRadius:4,background:LVL[4].c,
                             display:"inline-flex",alignItems:"center",justifyContent:"center",
-                            fontSize:7,fontWeight:900,color:"#fff",flexShrink:0}}>4</span>
+                            fontSize:10,fontWeight:900,color:"#fff",flexShrink:0}}>4</span>
                           Componentes de Costo · Driver de Precio unitario
                         </div>
 
@@ -1386,14 +1386,14 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                     {/* Label + badge driver precio */}
                                     <div style={{flex:1,minWidth:0}}>
                                       <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:1}}>
-                                        <span style={{fontSize:10,fontWeight:isOC?700:500,
+                                        <span style={{fontSize:13,fontWeight:isOC?700:500,
                                           color:isOC?sp.color:T.ink,transition:"color .15s",
                                           overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
                                           {comp.label}
                                         </span>
                                         <LvlBadge n={4}/>
                                       </div>
-                                      <span style={{fontSize:7.5,fontWeight:700,
+                                      <span style={{fontSize:10,fontWeight:700,
                                         color:cDF?.color||T.green,
                                         background:`${cDF?.color||T.green}12`,
                                         borderRadius:99,padding:"1px 6px",
@@ -1403,24 +1403,24 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                     </div>
                                     {/* Q inline */}
                                     <div style={{textAlign:"right",flexShrink:0,minWidth:48}}>
-                                      <div style={{fontSize:7.5,color:T.inkSoft,marginBottom:1}}>Q</div>
+                                      <div style={{fontSize:10,color:T.inkSoft,marginBottom:1}}>Q</div>
                                       <EN v={cQ} onChange={v=>updN4(sp.id,ci,{q:v})} size={11} color={T.ink}/>
-                                      <div style={{fontSize:7,color:T.inkSoft}}>{sp.Q_unit}</div>
+                                      <div style={{fontSize:10,color:T.inkSoft}}>{sp.Q_unit}</div>
                                     </div>
                                     {/* P inline */}
                                     <div style={{textAlign:"right",flexShrink:0,minWidth:56}}>
-                                      <div style={{fontSize:7.5,color:T.inkSoft,marginBottom:1}}>P unit.</div>
+                                      <div style={{fontSize:10,color:T.inkSoft,marginBottom:1}}>P unit.</div>
                                       <EN v={cPb} onChange={v=>updN4(sp.id,ci,{pb:v})} size={11} color={LVL[4].c}/>
-                                      {Math.abs(dCP)>.3&&<div style={{fontSize:7,fontWeight:700,color:cc(dCP)}}>
+                                      {Math.abs(dCP)>.3&&<div style={{fontSize:10,fontWeight:700,color:cc(dCP)}}>
                                         {sg(dCP)}{dCP.toFixed(0)}%
                                       </div>}
                                     </div>
                                     {/* Subtotal — live */}
                                     <div style={{textAlign:"right",flexShrink:0,minWidth:60}}>
-                                      <div style={{fontSize:7.5,color:T.inkSoft,marginBottom:1}}>Subtotal</div>
+                                      <div style={{fontSize:10,color:T.inkSoft,marginBottom:1}}>Subtotal</div>
                                       <div style={{fontSize:12,fontWeight:800,color:sp.color}}>{fu(cTot)}</div>
                                       {Math.abs(dp(cTot,comp.q*comp.p))>.3&&
-                                        <div style={{fontSize:7,fontWeight:700,color:cc(dp(cTot,comp.q*comp.p))}}>
+                                        <div style={{fontSize:10,fontWeight:700,color:cc(dp(cTot,comp.q*comp.p))}}>
                                           {sg(dp(cTot,comp.q*comp.p))}{dp(cTot,comp.q*comp.p).toFixed(0)}%
                                         </div>}
                                     </div>
@@ -1429,7 +1429,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                       background:isOC?`${sp.color}18`:T.borderSm,
                                       display:"flex",alignItems:"center",justifyContent:"center",
                                       transition:"all .15s"}}>
-                                      <span style={{fontSize:8,color:isOC?sp.color:T.inkSoft,fontWeight:700,
+                                      <span style={{fontSize:11,color:isOC?sp.color:T.inkSoft,fontWeight:700,
                                         transform:isOC?"rotate(90deg)":"none",
                                         display:"block",transition:"transform .18s",lineHeight:1}}>›</span>
                                     </div>
@@ -1440,12 +1440,12 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                     <div className="fi" style={{marginTop:4,marginLeft:6,
                                       paddingLeft:10,borderLeft:`2px solid ${sp.color}28`,
                                       paddingBottom:4}}>
-                                      <div style={{fontSize:8,fontWeight:700,color:LVL[4].c,
+                                      <div style={{fontSize:11,fontWeight:700,color:LVL[4].c,
                                         textTransform:"uppercase",letterSpacing:".1em",
                                         marginBottom:6,display:"flex",alignItems:"center",gap:4}}>
                                         <span style={{width:14,height:14,borderRadius:4,background:LVL[4].c,
                                           display:"inline-flex",alignItems:"center",justifyContent:"center",
-                                          fontSize:7,fontWeight:900,color:"#fff",flexShrink:0}}>4</span>
+                                          fontSize:10,fontWeight:900,color:"#fff",flexShrink:0}}>4</span>
                                         Driver de Precio · {comp.label}
                                       </div>
                                       <DrFinBlock
@@ -1460,7 +1460,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                       <div style={{marginTop:7,background:T.card,borderRadius:8,
                                         padding:"7px 10px",border:`1.5px solid ${sp.color}22`,
                                         display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                                        <div style={{fontSize:9,color:T.inkMid}}>
+                                        <div style={{fontSize:12,color:T.inkMid}}>
                                           <b style={{color:T.ink}}>{fn(cQ)}</b>
                                           <span style={{color:T.inkXsoft,margin:"0 4px"}}>×</span>
                                           <b style={{color:LVL[4].c}}>{fu(cPb)}</b>
@@ -1469,7 +1469,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                         <div style={{textAlign:"right"}}>
                                           <div style={{fontSize:15,fontWeight:900,color:sp.color}}>{fu(cTot)}</div>
                                           {Math.abs(dp(cTot,comp.q*comp.p))>.3&&
-                                            <div style={{fontSize:8,fontWeight:700,color:cc(dp(cTot,comp.q*comp.p))}}>
+                                            <div style={{fontSize:11,fontWeight:700,color:cc(dp(cTot,comp.q*comp.p))}}>
                                               {sg(dp(cTot,comp.q*comp.p))}{dp(cTot,comp.q*comp.p).toFixed(1)}% vs base {fu(comp.q*comp.p)}
                                             </div>}
                                         </div>
@@ -1487,11 +1487,11 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                           padding:"8px 12px",border:`1.5px solid ${sp.color}22`,
                           display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                           <div>
-                            <div style={{fontSize:7.5,fontWeight:700,color:sp.color,
+                            <div style={{fontSize:10,fontWeight:700,color:sp.color,
                               textTransform:"uppercase",letterSpacing:".1em"}}>
                               Total N3 · {sp.label}
                             </div>
-                            <div style={{fontSize:8.5,color:T.inkMid,marginTop:1}}>
+                            <div style={{fontSize:11.5,color:T.inkMid,marginTop:1}}>
                               {(sp.sub||[]).length} componentes (N4)
                             </div>
                           </div>
@@ -1510,11 +1510,11 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
             border:`1.5px solid ${T.redSoft}`,padding:"11px 15px",
             display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <div>
-              <div style={{fontSize:8,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
+              <div style={{fontSize:11,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
                 letterSpacing:".12em",marginBottom:3}}>CAPEX DVB = Σ N4 (Q×P)</div>
               <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
                 {baseTree.componentes.map(sp=>(
-                  <span key={sp.id} style={{fontSize:8,color:sp.color,fontWeight:700}}>
+                  <span key={sp.id} style={{fontSize:11,color:sp.color,fontWeight:700}}>
                     {sp.label.split(" ")[0]}: {fu(n3Total(sp))}
                   </span>
                 ))}
@@ -1524,7 +1524,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
               <div style={{fontSize:22,fontWeight:900,color:T.red,letterSpacing:"-.025em"}}>
                 {fu(treeTotal)}
               </div>
-              <div style={{fontSize:9,fontWeight:700,color:cc(dProy),marginTop:2}}>
+              <div style={{fontSize:12,fontWeight:700,color:cc(dProy),marginTop:2}}>
                 {sg(dProy)}{dProy.toFixed(1)}% vs base {fu(proy.P_base)}
               </div>
             </div>
@@ -1536,7 +1536,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
             <div style={{fontSize:12,fontWeight:700,color:T.ink,marginBottom:3}}>
               Sub-Proyectos (N3) en construcción
             </div>
-            <div style={{fontSize:10.5,color:T.inkSoft,lineHeight:1.7,maxWidth:280,margin:"0 auto"}}>
+            <div style={{fontSize:14,color:T.inkSoft,lineHeight:1.7,maxWidth:280,margin:"0 auto"}}>
               Los N3 y N4 serán levantados en talleres con los directores de área responsables.
             </div>
           </div>
@@ -2734,7 +2734,6 @@ function generateXLSX(proyRows, overrides){
    TAB CONTROL — Carga / Descarga plantilla + parámetros globales
 ══════════════════════════════════════════════════════════════════════════ */
 function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, globalParams, setGlobalParams}){
-  const {useState,useRef,useCallback}=React;
   const fileRef=useRef();
   const [parsing,setParsing]=useState(false);
   const [parseResult,setParseResult]=useState(null); // {ok, rows, errors}
@@ -3115,7 +3114,6 @@ function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, global
    TAB ESCENARIOS — Multi-escenario con comparación
 ══════════════════════════════════════════════════════════════════════════ */
 function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, setOverrides}){
-  const {useState,useMemo}=React;
   const [compareA,setCompareA]=useState(null);
   const [compareB,setCompareB]=useState(null);
   const [newName,setNewName]=useState('');
