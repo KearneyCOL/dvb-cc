@@ -526,7 +526,7 @@ const cc  = v => v<-0.5 ? T.green : v>0.5 ? T.red : T.inkMid;
 
 /* ══════════════════════════════════════════════════════════════════════════
    CATÁLOGOS DE DRIVERS POR NIVEL
-   N1 Macroproyecto → sin driver editable (es agregación)
+   N1 N1 — Macroproyecto → sin driver editable (es agregación)
    N2 Proyecto      → Driver de DEMANDA (¿cuántos necesito?)
    N3 Sub-Proyecto  → Driver de VOLUMEN (¿cuántas unidades físicas?)
    N4 Componente    → Driver de PRECIO  (¿a qué costo unitario?)
@@ -754,7 +754,7 @@ const backCalcPt = (dk,pt,nQ,nivel=2) => {
 
 /* Colores y metadatos de cada nivel */
 const LVL = {
-  1:{c:"#E8182A", bg:"#FFF1F1", bdr:"#FDD8DA", label:"Macroproyecto", short:"M1"},
+  1:{c:"#E8182A", bg:"#FFF1F1", bdr:"#FDD8DA", label:"N1 — Macroproyecto", short:"M1"},
   2:{c:"#2563EB", bg:"#EFF6FF", bdr:"#BFDBFE", label:"Proyecto",      short:"N2"},
   3:{c:"#7C3AED", bg:"#F5F3FF", bdr:"#DDD6FE", label:"Sub-Proyecto",  short:"N3"},
   4:{c:"#059669", bg:"#ECFDF5", bdr:"#A7F3D0", label:"Componente",    short:"N4"},
@@ -834,7 +834,7 @@ function DrTecBlock({dtKey, pt, nivel=2, Q_unit, onChangeDt, onChangePt, onChang
         <span style={{fontSize:14}}>{DT?.icon}</span>
         <div>
           <div style={{fontSize:10,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
-            letterSpacing:".1em"}}>Driver Técnico Q · {lc.label}</div>
+            letterSpacing:".1em"}}>N2 — Cantidad a invertir (Q)</div>
           <div style={{fontSize:12,fontWeight:700,color:DT?.color,lineHeight:1.2}}>
             {DT?.tag} — {DT?.label}
           </div>
@@ -905,7 +905,7 @@ function DrFinBlock({dfKey, pa, pb, Q_unit, nivel=2, color, onChangeDf, onChange
         <span style={{fontSize:14}}>💰</span>
         <div>
           <div style={{fontSize:10,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
-            letterSpacing:".1em"}}>Driver Financiero P · {lc.label}</div>
+            letterSpacing:".1em"}}>N2 — Precio unitario (P)</div>
           <div style={{fontSize:12,fontWeight:700,color:c,lineHeight:1.2}}>
             Precio / Costo unitario
           </div>
@@ -1074,7 +1074,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
               <span style={{fontSize:11,color:T.inkSoft,fontWeight:500}}>{macroData.macro}</span>
               <span style={{color:T.borderSm,fontSize:11}}>›</span>
             </>}
-            <span style={{fontSize:11,fontWeight:700,color:cfg.c}}>{proy.id} · {proy.n}</span>
+            <span style={{fontSize:11,fontWeight:700,color:cfg.c}}>N2 — Proyecto: {proy.n}</span>
           </div>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
             <div>
@@ -1123,7 +1123,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,marginBottom:8}}>
               <div style={{display:"flex",alignItems:"center",gap:6}}>
                 <span style={{fontSize:10,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
-                  letterSpacing:".1em"}}>N1 · Macroproyecto</span>
+                  letterSpacing:".1em"}}>N1 — Macroproyecto</span>
                 <span style={{fontSize:13,fontWeight:700,color:T.ink}}>{macroData.macro}</span>
               </div>
               <div style={{display:"flex",alignItems:"center",gap:8}}>
@@ -1154,7 +1154,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
             gap:8,marginBottom:10}}>
             <div>
               <div style={{fontSize:11,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
-                letterSpacing:".1em",marginBottom:3}}>N2 · Drivers de Demanda × Precio</div>
+                letterSpacing:".1em",marginBottom:3}}>N2 — Proyecto: {proy.n}</div>
               <div style={{fontSize:13,color:T.inkMid}}>
                 Q×P = <b style={{color:T.ink}}>{fn(Q2)}</b> {proy.m}
                 <span style={{margin:"0 5px",color:T.inkXsoft}}>×</span>
@@ -1188,7 +1188,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
             gap:8,marginBottom:8,paddingTop:4}}>
             <div style={{fontSize:11,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
               letterSpacing:".1em"}}>
-              N3 · Componentes — {baseTree.componentes.length} sub-proyectos
+              N3 — Componentes: {baseTree.componentes.length} líneas de inversión
             </div>
             <b style={{fontSize:13,color:cfg.c}}>{fu(treeTotal)}</b>
           </div>
@@ -1275,7 +1275,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                           <span style={{width:14,height:14,borderRadius:4,background:LVL[3].c,
                             display:"inline-flex",alignItems:"center",justifyContent:"center",
                             fontSize:10,fontWeight:900,color:"#fff",flexShrink:0}}>3</span>
-                          Drivers de Volumen · {sp.label}
+                          N3 — Componente: {sp.label}
                         </div>
                         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7,marginBottom:10}}>
                           <DrTecBlock
@@ -1352,7 +1352,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                           overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
                                           {comp.label}
                                         </span>
-                                        <LvlBadge n={4}/>
+                                        
                                       </div>
                                       <span style={{fontSize:10,fontWeight:700,
                                         color:cDF?.color||T.green,
@@ -1407,7 +1407,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                                         <span style={{width:14,height:14,borderRadius:4,background:LVL[4].c,
                                           display:"inline-flex",alignItems:"center",justifyContent:"center",
                                           fontSize:10,fontWeight:900,color:"#fff",flexShrink:0}}>4</span>
-                                        Driver de Precio · {comp.label}
+                                        N4 — Subcomponente: {comp.label}
                                       </div>
                                       <DrFinBlock
                                         dfKey={cv.df||"precio_lista"}
@@ -1466,7 +1466,7 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
             display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <div>
               <div style={{fontSize:10,color:T.inkSoft,textTransform:"uppercase",
-                letterSpacing:".12em",marginBottom:4}}>CAPEX DVB = Σ Q×P</div>
+                letterSpacing:".12em",marginBottom:4}}>N2 — CAPEX DVB = Σ Q×P</div>
               <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
                 {baseTree.componentes.map(sp=>(
                   <span key={sp.id} style={{fontSize:11,color:T.inkMid}}>
@@ -1769,7 +1769,7 @@ function ResetModal({overrides, onApply, onClose}){
 
             return(
               <div key={m.macro} style={{borderBottom:`1px solid ${T.borderSm}`}}>
-                {/* Fila Macroproyecto */}
+                {/* Fila N1 — Macroproyecto */}
                 <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 22px",
                   cursor:"pointer",background:mState==="all"?"#FFF8F7":T.card,
                   transition:"background .12s"}}
@@ -2003,7 +2003,7 @@ function ViewTablero({overrides,setOverrides}){
       {/* ── TOOLBAR ── */}
       <div className="fu2" style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:10}}>
         <div>
-          <div style={{fontSize:16,fontWeight:800,color:T.ink,letterSpacing:"-.02em"}}>Macroproyectos · CAPEX 2026</div>
+          <div style={{fontSize:16,fontWeight:800,color:T.ink,letterSpacing:"-.02em"}}>N1 — Macroproyectos · CAPEX 2026</div>
           <div style={{fontSize:11,color:T.inkSoft,marginTop:2}}>{filtered.length} macros · {filtered.reduce((s,m)=>s+m.proyectos.length,0)} proyectos</div>
         </div>
         <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
@@ -2122,7 +2122,7 @@ function ViewTablero({overrides,setOverrides}){
 function ViewMetodologia(){
   const[open,setOpen]=useState(null);
   const ETAPAS=[
-    {n:"01",title:"Línea Base",             statusC:T.green,   status:"COMPLETADO", output:"Mapa de inversiones",      body:"Se categoriza el CAPEX en paquetes, sub-paquetes y actividades. Se mapea el presupuesto, su pareto de gasto y las metas estratégicas del negocio.",bullets:["36 Macroproyectos · CAPEX total Apollo v04","101 proyectos con P actual y Q implícito","Categorización por tipo: RED, CLIENTE, IT, ADMIN","Jerarquía: Macro → Proyecto → Componente → Sub"]},
+    {n:"01",title:"Línea Base",             statusC:T.green,   status:"COMPLETADO", output:"Mapa de inversiones",      body:"Se categoriza el CAPEX en paquetes, sub-paquetes y actividades. Se mapea el presupuesto, su pareto de gasto y las metas estratégicas del negocio.",bullets:["36 N1 — Macroproyectos · CAPEX total Apollo v04","101 proyectos con P actual y Q implícito","Categorización por tipo: RED, CLIENTE, IT, ADMIN","Jerarquía: Macro → Proyecto → Componente → Sub"]},
     {n:"02",title:"Drivers Técnicos → Q",   statusC:"#D97706", status:"EN CURSO",   output:"Q aspiracional por nivel",  body:"Se definen drivers técnicos para cada nivel del árbol y se dimensiona la necesidad Q de cada proyecto y componente con parámetros reales.",bullets:["9 tipos de driver: EoL, congestión, CRC, activaciones, migraciones…","Q calculado automáticamente desde parámetros IBP / plan","Bidireccional: editar Q → ajusta parámetro del driver","Árbol PxQ: Q propio por componente (no solo proyecto)"]},
     {n:"03",title:"Árboles P×Q por Niveles",statusC:"#D97706", status:"EN CURSO",   output:"Inductores por componente", body:"Se construyen árboles a 3 niveles. Cada nivel tiene Q (driver técnico) y P (driver financiero) propios, permitiendo optimizar en el nivel correcto.",bullets:["Nivel 1 — Proyecto: Q_total × P_promedio = CAPEX","Nivel 2 — Componente: HW, Civiles, M.O., O&M, SW (% asignado)","Nivel 3 — Sub-componente: línea de costo específica con qd + pd","CAPEX = Σ (Q_comp × P_comp) acumulado desde nivel 3"]},
     {n:"04",title:"Drivers Financieros → P", statusC:"#D97706", status:"EN CURSO",   output:"P benchmark por nivel",    body:"Se comparan los árboles de costo contra benchmarks financieros en cada nivel y se define el P objetivo por componente y sub-componente.",bullets:["6 drivers: AMX LatAm, cotización, histórico, CRC, IPC+ILA, spot","Gap visible por nivel: P_actual vs P_driver","Edición directa de P → recalcula CAPEX en cascada","Drill-down: oportunidad real en HW vs Civiles vs M.O."]},
