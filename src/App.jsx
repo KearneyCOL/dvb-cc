@@ -1920,7 +1920,7 @@ function ResetModal({overrides, onApply, onClose}){
 }
 
 
-function ViewTablero({overrides,setOverrides,auditLog=[],session}){
+function ViewTablero({overrides,setOverrides,auditLog=[],session,onChangeLog}){
   const[drawer,setDrawer]=useState(null);
   const[fTipo,setFTipo]=useState(null);
   const[inverso,setInverso]=useState(false);
@@ -1956,26 +1956,7 @@ function ViewTablero({overrides,setOverrides,auditLog=[],session}){
     });
   },[setOverrides]);
 
-  const handleChangeWithLog=useCallback((id,patch,proy,macro,categoria)=>{
-    handleChange(id,patch);
-    if(!session) return;
-    // Determinar qué campo cambió
-    const field = patch.pf?.pb!==undefined?'P unitario (pb)':
-                  patch.pf?.pa!==undefined?'P actual (pa)':
-                  patch.pt?'Parámetros Q':
-                  patch.dt?'Driver Q':patch.df?'Driver P':'override';
-    logAdjustment({
-      userId:session.user.id,
-      userEmail:session.user.email,
-      projectId:id,
-      projectName:proy?.n||id,
-      macroName:macro?.macro||'',
-      categoria:categoria||'',
-      field,
-      valueBefore:undefined,
-      valueAfter:patch.pf?.pb??patch.pf?.pa??null,
-    }).then(()=>loadAuditLog());
-  },[session,handleChange]);
+
 
   return(
     <div style={{maxWidth:1200,margin:"0 auto",padding:"24px 28px 60px"}}>
@@ -2159,7 +2140,7 @@ function ViewTablero({overrides,setOverrides,auditLog=[],session}){
       </div>
 
       {drawer&&<Drawer proy={drawer.proy} macroData={drawer.macroData} macroTipo={drawer.macroTipo} ov={overrides[drawer.proy.id]}
-        onChange={patch=>handleChangeWithLog(drawer.proy.id,patch,drawer.proy,drawer.macroData,drawer.macroTipo)} onClose={()=>setDrawer(null)}/>}
+        onChange={patch=>onChangeLog?onChangeLog(drawer.proy.id,patch,drawer.proy,drawer.macroData,drawer.macroTipo):handleChange(drawer.proy.id,patch)} onClose={()=>setDrawer(null)}/>}
       {resetModal&&<ResetModal overrides={overrides} onApply={ids=>{setOverrides(p=>{const n={...p};ids.forEach(id=>delete n[id]);return n;});setResetModal(false);}} onClose={()=>setResetModal(false)}/>}
       {inverso&&<InverseModal overrides={overrides}
         onApply={upd=>setOverrides(p=>({...p,...Object.fromEntries(Object.entries(upd).map(([id,ov])=>[id,{...p[id],...ov}]))}))}
@@ -3556,39 +3537,28 @@ function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, s
 
 
 export default function App(){
-  const[overrides,setOverrides]=useState({});
-  const[auditLog,setAuditLog]=useState([]);
-  const[dbScenarios,setDbScenarios]=useState([]);
+  // ══ 1. AUTH STATES — primero de todo ══
+  const [session,   setSession]   = useState(null);
+  const [profile,   setProfile]   = useState(null);
+  const [authReady, setAuthReady] = useState(false);
 
-  // Cargar escenarios y audit log al iniciar sesión
+  // ══ 2. APP STATES ══
+  const [overrides,    setOverrides]    = useState({});
+  const [auditLog,     setAuditLog]     = useState([]);
+  const [tab,          setTab]          = useState("tablero");
+  const [escenarios,   setEscenarios]   = useState([]);
+  const [activeScen,   setActiveScen]   = useState(null);
+  const [loadedFile,   setLoadedFile]   = useState(null);
+  const [globalParams, setGlobalParams] = useState({ipc:5.2,ila:3.8,trm:4180,delta_amx:0,contingencia:3.0});
+
+  // ══ 3. EFFECTS — todos antes de cualquier return ══
+  // Estilos globales
   useEffect(()=>{
-    if(!session) return;
-    loadAuditLog();
-    loadDbScenarios();
-  },[session]);
+    const s=document.createElement("style");s.textContent=GS;document.head.appendChild(s);
+    return()=>s.remove();
+  },[]);
 
-  const loadAuditLog = async ()=>{
-    const {data} = await getAuditLog(session.user.id, 200);
-    setAuditLog(data||[]);
-  };
-
-  const loadDbScenarios = async ()=>{
-    const {data} = await getScenarios(session.user.id);
-    if(data?.length){
-      setDbScenarios(data);
-      // Restaurar escenarios en el estado local
-      setEscenarios(data.map(s=>({
-        id:s.id, name:s.name, description:s.description,
-        overrides:s.overrides, createdAt:s.created_at,
-        color:['#E8182A','#2563EB','#059669','#7C3AED','#D97706'][Math.floor(Math.random()*5)]
-      })));
-    }
-  };
-  // ── Auth state ──────────────────────────────────────────────────
-  const [session,  setSession]  = useState(null);
-  const [profile,  setProfile]  = useState(null);
-  const [authReady,setAuthReady]= useState(false);
-
+  // Auth listener
   useEffect(()=>{
     supabase.auth.getSession().then(({data:{session}})=>{
       setSession(session);
@@ -3603,10 +3573,36 @@ export default function App(){
     return ()=>subscription.unsubscribe();
   },[]);
 
+  // Cargar datos de Supabase al iniciar sesión
+  useEffect(()=>{
+    if(!session) return;
+    loadAuditLog();
+    loadDbScenarios();
+  },[session?.user?.id]);
+
+  // ══ 4. HANDLERS Y HELPERS ══
   const loadProfile = async (userId)=>{
     const {data} = await getProfile(userId);
     setProfile(data);
     updateLastSeen(userId);
+  };
+
+  const loadAuditLog = async ()=>{
+    if(!session) return;
+    const {data} = await getAuditLog(session.user.id, 200);
+    setAuditLog(data||[]);
+  };
+
+  const loadDbScenarios = async ()=>{
+    if(!session) return;
+    const {data} = await getScenarios(session.user.id);
+    if(data?.length){
+      setEscenarios(data.map((s,idx)=>({
+        id:s.id, name:s.name, description:s.description,
+        overrides:s.overrides||{}, createdAt:s.created_at,
+        color:['#E8182A','#2563EB','#059669','#7C3AED','#D97706'][idx%5]
+      })));
+    }
   };
 
   const handleSignOut = async ()=>{
@@ -3614,27 +3610,42 @@ export default function App(){
     setSession(null); setProfile(null);
   };
 
-  const[tab,setTab]=useState("tablero");
-  const[escenarios,setEscenarios]=useState([]);
-  const[activeScen,setActiveScen]=useState(null);
-  const[loadedFile,setLoadedFile]=useState(null);
-  const[globalParams,setGlobalParams]=useState({ipc:5.2,ila:3.8,trm:4180,delta_amx:0,contingencia:3.0});
-
-  // Inyectar estilos globales (hook — debe estar antes de cualquier return)
-  useEffect(()=>{
-    const s=document.createElement("style");s.textContent=GS;document.head.appendChild(s);
-    return()=>s.remove();
+  const handleChange = useCallback((id,patch)=>{
+    setOverrides(p=>{
+      const prev=p[id]||{};
+      const next={...prev,...patch,
+        pt:patch.pt?{...(prev.pt||{}),...patch.pt}:prev.pt,
+        pf:patch.pf?{...(prev.pf||{}),...patch.pf}:prev.pf};
+      return {...p,[id]:next};
+    });
   },[]);
 
-  // ── Guards (después de TODOS los hooks) ───────────────────────────
+  const handleChangeWithLog = useCallback((id,patch,proy,macro,categoria)=>{
+    handleChange(id,patch);
+    if(!session) return;
+    const field = patch.pf?.pb!==undefined?'P unitario':
+                  patch.pf?.pa!==undefined?'P actual':
+                  patch.pt?'Parámetros Q':
+                  patch.dt?'Driver Q':patch.df?'Driver P':'ajuste';
+    logAdjustment({
+      userId:session.user.id, userEmail:session.user.email,
+      projectId:id, projectName:proy?.n||id,
+      macroName:macro?.macro||'', categoria:categoria||'',
+      field, valueBefore:undefined,
+      valueAfter:patch.pf?.pb??patch.pf?.pa??null,
+    }).then(()=>loadAuditLog());
+  },[session, handleChange]);
+
+  // ══ 5. GUARDS — SIEMPRE al final, después de todos los hooks ══
   if(!authReady) return(
     <div style={{minHeight:"100vh",background:"#F7F6F3",display:"flex",
       alignItems:"center",justifyContent:"center"}}>
-      <div style={{fontSize:13,color:"#9CA3AF"}}>Cargando...</div>
+      <div style={{fontSize:13,color:"#9CA3AF",fontFamily:"'Outfit',system-ui"}}>Cargando...</div>
     </div>
   );
   if(!session) return <AuthLogin onAuth={(s)=>setSession(s)}/>;
 
+  // ══ 6. DERIVADOS (no son hooks) ══
   const tBase=DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+p.P_base,0),0);
   const tDVB=DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+calcCap(p,overrides[p.id]),0),0);
   const dT=dp(tDVB,tBase);
@@ -3710,7 +3721,7 @@ const TABS=[{id:"tablero",label:"Tablero DVB",icon:"📊"},{id:"eficiencias",lab
 
       {/* CONTENT */}
       <div style={{flex:1,overflow:"auto"}}>
-        {tab==="tablero"    &&<ViewTablero overrides={overrides} setOverrides={setOverrides} auditLog={auditLog} session={session}/>}
+        {tab==="tablero"    &&<ViewTablero overrides={overrides} setOverrides={setOverrides} auditLog={auditLog} session={session} onChangeLog={handleChangeWithLog}/>}
         {tab==="eficiencias"&&<ViewEficiencias overrides={overrides} tBase={tBase} tDVB={tDVB}/>}
         {tab==="escenarios" &&<ViewEscenarios escenarios={escenarios} setEscenarios={setEscenarios} activeScen={activeScen} setActiveScen={setActiveScen} setOverrides={setOverrides} session={session} onSaveDb={async(scen)=>{const{data}=await saveScenario(session.user.id,scen);return data;}} onDeleteDb={async(id)=>deleteScenario(session.user.id,id)}/>}
         {tab==="control"    &&<ViewControl overrides={overrides} setOverrides={setOverrides} loadedFile={loadedFile} setLoadedFile={setLoadedFile} globalParams={globalParams} setGlobalParams={setGlobalParams} auditLog={auditLog} session={session} profile={profile}/>}
