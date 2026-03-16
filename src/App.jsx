@@ -3614,7 +3614,19 @@ export default function App(){
     setSession(null); setProfile(null);
   };
 
-  // ── Guard ────────────────────────────────────────────────────────
+  const[tab,setTab]=useState("tablero");
+  const[escenarios,setEscenarios]=useState([]);
+  const[activeScen,setActiveScen]=useState(null);
+  const[loadedFile,setLoadedFile]=useState(null);
+  const[globalParams,setGlobalParams]=useState({ipc:5.2,ila:3.8,trm:4180,delta_amx:0,contingencia:3.0});
+
+  // Inyectar estilos globales (hook — debe estar antes de cualquier return)
+  useEffect(()=>{
+    const s=document.createElement("style");s.textContent=GS;document.head.appendChild(s);
+    return()=>s.remove();
+  },[]);
+
+  // ── Guards (después de TODOS los hooks) ───────────────────────────
   if(!authReady) return(
     <div style={{minHeight:"100vh",background:"#F7F6F3",display:"flex",
       alignItems:"center",justifyContent:"center"}}>
@@ -3622,18 +3634,6 @@ export default function App(){
     </div>
   );
   if(!session) return <AuthLogin onAuth={(s)=>setSession(s)}/>;
-
-    const[tab,setTab]=useState("tablero");
-  const[escenarios,setEscenarios]=useState([]);
-  const[activeScen,setActiveScen]=useState(null);
-  const[loadedFile,setLoadedFile]=useState(null);
-  const[globalParams,setGlobalParams]=useState({ipc:5.2,ila:3.8,trm:4180,delta_amx:0,contingencia:3.0});
-
-  useEffect(()=>{
-    const s=document.createElement("style");s.textContent=GS;document.head.appendChild(s);
-    // SheetJS importado via npm
-    return()=>s.remove();
-  },[]);
 
   const tBase=DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+p.P_base,0),0);
   const tDVB=DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+calcCap(p,overrides[p.id]),0),0);
