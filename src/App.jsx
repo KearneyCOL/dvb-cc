@@ -1974,7 +1974,7 @@ function ViewTablero({overrides,setOverrides}){
       </div>
 
       {/* ── MINI-KPIs POR TIPO ── */}
-      <div className="fu1" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:22}}>
+      <div className="fu1" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:22}}>
         {porTipo.map(({tipo,cfg,base,dvb,d,count,pct})=>{
           const isActive = fTipo===tipo;
           const isDimmed = fTipo && !isActive;
