@@ -1,6 +1,10 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import "./index.css";
 import * as XLSX from "xlsx";
+import { supabase, getProfile, updateLastSeen, saveScenario,
+         getScenarios, deleteScenario, logAdjustment, getAuditLog,
+         getAdminAuditLog, signOut } from "./supabase";
+import AuthLogin from "./AuthLogin";
 
 /* ══════════════════════════════════════════════════════════════════════════
    DVB COMMAND CENTER · Kearney × Claro Colombia · CAPEX 2026
@@ -3407,7 +3411,46 @@ function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, s
 
 export default function App(){
   const[overrides,setOverrides]=useState({});
-  const[tab,setTab]=useState("tablero");
+  // ── Auth state ──────────────────────────────────────────────────
+  const [session,  setSession]  = useState(null);
+  const [profile,  setProfile]  = useState(null);
+  const [authReady,setAuthReady]= useState(false);
+
+  useEffect(()=>{
+    supabase.auth.getSession().then(({data:{session}})=>{
+      setSession(session);
+      if(session) loadProfile(session.user.id);
+      setAuthReady(true);
+    });
+    const {data:{subscription}} = supabase.auth.onAuthStateChange((_,session)=>{
+      setSession(session);
+      if(session) loadProfile(session.user.id);
+      else setProfile(null);
+    });
+    return ()=>subscription.unsubscribe();
+  },[]);
+
+  const loadProfile = async (userId)=>{
+    const {data} = await getProfile(userId);
+    setProfile(data);
+    updateLastSeen(userId);
+  };
+
+  const handleSignOut = async ()=>{
+    await signOut();
+    setSession(null); setProfile(null);
+  };
+
+  // ── Guard ────────────────────────────────────────────────────────
+  if(!authReady) return(
+    <div style={{minHeight:"100vh",background:"#F7F6F3",display:"flex",
+      alignItems:"center",justifyContent:"center"}}>
+      <div style={{fontSize:13,color:"#9CA3AF"}}>Cargando...</div>
+    </div>
+  );
+  if(!session) return <AuthLogin onAuth={(s)=>setSession(s)}/>;
+
+    const[tab,setTab]=useState("tablero");
   const[escenarios,setEscenarios]=useState([]);
   const[activeScen,setActiveScen]=useState(null);
   const[loadedFile,setLoadedFile]=useState(null);
@@ -3448,6 +3491,24 @@ const TABS=[{id:"tablero",label:"Tablero DVB",icon:"📊"},{id:"eficiencias",lab
           <div>
             <div style={{fontSize:12,fontWeight:700,color:T.ink,letterSpacing:"-.01em"}}>Claro Colombia · DVB Command Center</div>
             <div style={{fontSize:9.5,color:T.inkSoft}}>Drivers Value Budgeting · CAPEX 2026</div>
+          </div>
+          <div style={{width:1,height:26,background:T.borderSm}}/>
+          {/* Usuario logueado */}
+          <div style={{display:"flex",alignItems:"center",gap:8,marginLeft:"auto"}}>
+            <div style={{textAlign:"right"}}>
+              <div style={{fontSize:11,fontWeight:700,color:T.ink}}>
+                {profile?.full_name||session?.user?.email?.split("@")[0]||""}
+              </div>
+              <div style={{fontSize:9,color:T.inkSoft,textTransform:"capitalize"}}>
+                {profile?.role||"viewer"}
+              </div>
+            </div>
+            <button onClick={handleSignOut}
+              style={{padding:"5px 10px",borderRadius:7,border:`1px solid ${T.borderSm}`,
+                background:"transparent",color:T.inkSoft,fontSize:10,fontWeight:600,
+                cursor:"pointer",whiteSpace:"nowrap"}}>
+              Salir
+            </button>
           </div>
           <div style={{width:1,height:26,background:T.borderSm}}/>
           {/* Live totals en header */}
