@@ -75,10 +75,11 @@ const TIPO_CFG = {
   "Regulatory & Spectrum":  {c:"#B45309",bg:"#FFFBEB",bdr:"#FCD34D",label:"Regulatorio Y Espectro",abv:"REG"},
   "IT & Digital":           {c:"#0891B2",bg:"#ECFEFF",bdr:"#A5F3FC",label:"TI Y Digital",abv:"ITD"},
   "Network Operations":     {c:"#6B7280",bg:"#F9FAFB",bdr:"#E5E7EB",label:"Operaciones De Red",abv:"NOP"},
+  "Gestión Administrativa":{c:"#92400E",bg:"#FEF3C7",bdr:"#FDE68A",label:"Gestión Administrativa",abv:"ADM"},
   RED:           {c:"#2563EB",bg:"#EFF6FF",bdr:"#BFDBFE",label:"Despliegue De Red",abv:"NRO"},
   CLIENTE:       {c:"#E8182A",bg:"#FFF1F1",bdr:"#FDD8DA",label:"Inversión En Clientes",abv:"CUI"},
   IT:            {c:"#0891B2",bg:"#ECFEFF",bdr:"#A5F3FC",label:"TI Y Digital",abv:"ITD"},
-  ADMINISTRATIVA:{c:"#6B7280",bg:"#F9FAFB",bdr:"#E5E7EB",label:"Operaciones De Red",abv:"NOP"},
+  ADMINISTRATIVA:{c:"#92400E",bg:"#FEF3C7",bdr:"#FDE68A",label:"Gestión Administrativa",abv:"ADM"},
 };
 const CATEGORIA_CFG = TIPO_CFG;
 
@@ -495,7 +496,7 @@ const DATA = [
     {id:"802.03",n:"Derecho uso nube",m:"activos",prio:"PMO",P_base:391184,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:391.18,pb:391.18}},
     {id:"802.04",n:"Derecho uso alianza",m:"activos",prio:"PMO",P_base:96501,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"historico",pf:{pa:96.5,pb:96.5}}
   ]},
-  {macro:"Infraestructura corporativa",categoria:"Network Operations",tipo:"Network Operations",P_base:6240763,proyectos:[
+  {macro:"Infraestructura corporativa",categoria:"Gestión Administrativa",tipo:"Gestión Administrativa",P_base:6240763,proyectos:[
     {id:"803.01",n:"Adecuaciones",m:"activos",prio:"PMO",P_base:3695435,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"cotizacion",pf:{pa:3695.43,pb:3695.43}},
     {id:"803.02",n:"Vehículos operación",m:"activos",prio:"PMO",P_base:794812,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"cotizacion",pf:{pa:794.81,pb:794.81}},
     {id:"803.03",n:"Traslados",m:"activos",prio:"PMO",P_base:705834,dt:"mantenimiento",pt:{activos:1000,frecuencia:1},df:"cotizacion",pf:{pa:705.83,pb:705.83}},
@@ -1931,7 +1932,7 @@ function ViewTablero({overrides,setOverrides}){
   const nOv=Object.keys(overrides).length;
   const tProj=DATA.reduce((s,m)=>s+m.proyectos.length,0);
 
-  const CAT_KEYS=["Network Rollout","Network Modernization","Capacity Expansion","Customer Investment","Enterprise & Wholesale","Regulatory & Spectrum","IT & Digital","Network Operations"];
+  const CAT_KEYS=["Network Rollout","Network Modernization","Capacity Expansion","Customer Investment","Enterprise & Wholesale","Regulatory & Spectrum","IT & Digital","Network Operations","Gestión Administrativa"];
   const porTipo=useMemo(()=>CAT_KEYS.map(k=>{
     const cfg=TIPO_CFG[k];
     const ms=DATA.filter(m=>m.tipo===k);
@@ -3342,7 +3343,7 @@ function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, s
                   .filter(r=>Math.abs(r.dA)>100||Math.abs(r.dB)>100)
                   .sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff))
                   .map((r,i)=>{
-                    const TIPO_C={'Network Rollout':'#2563EB','Network Modernization':'#D97706','Capacity Expansion':'#059669','Customer Investment':'#E8182A','Enterprise & Wholesale':'#7C3AED','Regulatory & Spectrum':'#B45309','IT & Digital':'#0891B2','Network Operations':'#6B7280'};
+                    const TIPO_C={'Network Rollout':'#2563EB','Network Modernization':'#D97706','Capacity Expansion':'#059669','Customer Investment':'#E8182A','Enterprise & Wholesale':'#7C3AED','Regulatory & Spectrum':'#B45309','IT & Digital':'#0891B2','Network Operations':'#6B7280','Gestión Administrativa':'#92400E'};
                     return(
                       <tr key={r.id} style={{background:i%2===0?T.surface:T.card,
                                              borderBottom:`1px solid ${T.borderSm}`}}>
