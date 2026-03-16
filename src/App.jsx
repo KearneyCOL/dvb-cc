@@ -1061,59 +1061,53 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
   return(
     <div style={{display:"flex",flexDirection:"column",height:"100%"}}>
 
-      {/* ════ HEADER ════ */}
-      <div style={{background:`linear-gradient(135deg,${T.redDk},${T.red})`,
-        padding:"14px 18px",position:"relative",overflow:"hidden",flexShrink:0}}>
-        <NoiseSVG/>
-        <div style={{position:"relative",zIndex:1}}>
-          {/* Breadcrumb jerárquico */}
-          <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:8,flexWrap:"wrap"}}>
+      {/* ════ HEADER — limpio, acento lateral ════ */}
+      <div style={{background:"#fff",borderBottom:`1px solid ${T.borderSm}`,
+        padding:"16px 20px",flexShrink:0,position:"relative"}}>
+        {/* Barra de color por categoría */}
+        <div style={{position:"absolute",left:0,top:0,bottom:0,width:4,
+          background:cfg.c,borderRadius:"0 0 0 0"}}/>
+        <div style={{paddingLeft:8}}>
+          {/* Breadcrumb */}
+          <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:10,flexWrap:"wrap"}}>
             {macroData&&<>
-              <span style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,.4)",
-                background:"rgba(255,255,255,.08)",borderRadius:99,padding:"1px 7px"}}>
-                N1 · {macroData.macro}
-              </span>
-              <span style={{color:"rgba(255,255,255,.25)",fontSize:12}}>›</span>
+              <span style={{fontSize:11,color:T.inkSoft,fontWeight:500}}>{macroData.macro}</span>
+              <span style={{color:T.borderSm,fontSize:11}}>›</span>
             </>}
-            <span style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,.8)",
-              background:"rgba(255,255,255,.15)",borderRadius:99,padding:"1px 7px"}}>
-              N2 · {proy.id} {proy.n}
-            </span>
+            <span style={{fontSize:11,fontWeight:700,color:cfg.c}}>{proy.id} · {proy.n}</span>
           </div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
             <div>
-              <div style={{fontSize:15,fontWeight:800,color:"#fff",
-                letterSpacing:"-.015em",marginBottom:5}}>{proy.n}</div>
-              <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
+              <div style={{fontSize:18,fontWeight:800,color:T.ink,
+                letterSpacing:"-.02em",marginBottom:6,lineHeight:1.2}}>{proy.n}</div>
+              <div style={{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
                 <TipoBadge tipo={macroTipo} sm/>
                 {proy.prio&&proy.prio!=="—"&&
-                  <span style={{background:"rgba(255,255,255,.12)",border:"1px solid rgba(255,255,255,.2)",
-                    borderRadius:99,padding:"2px 9px",fontSize:11.5,fontWeight:700,
-                    color:"rgba(255,255,255,.8)",textTransform:"uppercase"}}>{proy.prio}</span>}
+                  <span style={{fontSize:10,fontWeight:700,color:T.inkSoft,
+                    textTransform:"uppercase",letterSpacing:".08em"}}>{proy.prio}</span>}
               </div>
             </div>
-            <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6,flexShrink:0,marginLeft:12}}>
+            <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:8,flexShrink:0}}>
               <div style={{textAlign:"right"}}>
-                <div style={{fontSize:10,color:"rgba(255,255,255,.45)",textTransform:"uppercase",
+                <div style={{fontSize:10,color:T.inkSoft,textTransform:"uppercase",
                   letterSpacing:".1em",marginBottom:2}}>CAPEX DVB</div>
                 <EN v={treeTotal} onChange={nC=>{if(Q2>0)onChange({pf:{...pf2,pb:nC/Q2}});}}
-                  size={19} color="#fff"/>
-                {Math.abs(dProy)>.1&&<div style={{fontSize:12,fontWeight:700,
-                  color:dProy<0?"#86EFAC":"#FCA5A5",marginTop:1}}>
+                  size={22} color={T.ink}/>
+                {Math.abs(dProy)>.1&&<div style={{fontSize:11,fontWeight:700,
+                  color:dProy<0?T.green:T.red,marginTop:2}}>
                   {sg(dProy)}{dProy.toFixed(1)}% vs base
                 </div>}
               </div>
-              {/* Botón Guardar */}
               <button onClick={handleSave}
-                style={{display:"flex",alignItems:"center",gap:5,padding:"6px 14px",
-                  borderRadius:99,border:"none",cursor:"pointer",fontFamily:"'Outfit',system-ui",
-                  fontWeight:700,fontSize:14,letterSpacing:"-.01em",
-                  background: saved ? "rgba(45,200,120,0.9)" : isDirty ? "#fff" : "rgba(255,255,255,.25)",
-                  color: saved ? "#fff" : isDirty ? T.red : "rgba(255,255,255,.7)",
-                  boxShadow: isDirty&&!saved ? "0 4px 16px rgba(0,0,0,0.2)" : "none",
-                  transition:"all .2s",transform: isDirty&&!saved ? "scale(1.04)" : "scale(1)"}}>
-                <span style={{fontSize:13}}>{saved?"✅":"💾"}</span>
-                {saved ? "Guardado" : isDirty ? "Guardar cambios" : "Sin cambios"}
+                style={{display:"flex",alignItems:"center",gap:6,padding:"7px 16px",
+                  borderRadius:99,cursor:"pointer",fontFamily:"'Outfit',system-ui",
+                  fontWeight:700,fontSize:13,letterSpacing:"-.01em",
+                  border:`1.5px solid ${saved?"#10B981":isDirty?cfg.c:T.borderSm}`,
+                  background: saved?"#ECFDF5": isDirty?cfg.c:"#fff",
+                  color: saved?"#10B981": isDirty?"#fff":T.inkSoft,
+                  transition:"all .2s",transform:isDirty&&!saved?"scale(1.03)":"scale(1)"}}>
+                <span style={{fontSize:12}}>{saved?"✓":"💾"}</span>
+                {saved?"Guardado":isDirty?"Guardar cambios":"Sin cambios"}
               </button>
             </div>
           </div>
@@ -1125,35 +1119,27 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
 
         {/* ══ N1: MACROPROYECTO — contexto ══ */}
         {macroData&&(
-          <div style={{marginBottom:12,padding:"10px 14px",borderRadius:12,
-            background:LVL[1].bg, border:`1.5px solid ${LVL[1].bdr}`}}>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
-              <div style={{display:"flex",alignItems:"center",gap:8}}>
-                <div style={{width:28,height:28,borderRadius:8,background:LVL[1].c,
-                  display:"flex",alignItems:"center",justifyContent:"center",
-                  fontSize:13,flexShrink:0}}>🏗</div>
-                <div>
-                  <div style={{fontSize:11,fontWeight:700,color:LVL[1].c,textTransform:"uppercase",
-                    letterSpacing:".1em"}}>N1 · Macroproyecto</div>
-                  <div style={{fontSize:14,fontWeight:800,color:T.ink}}>{macroData.macro}</div>
-                </div>
+          <div style={{marginBottom:14,paddingBottom:14,borderBottom:`1px solid ${T.borderSm}`}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,marginBottom:8}}>
+              <div style={{display:"flex",alignItems:"center",gap:6}}>
+                <span style={{fontSize:10,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
+                  letterSpacing:".1em"}}>N1 · Macroproyecto</span>
+                <span style={{fontSize:13,fontWeight:700,color:T.ink}}>{macroData.macro}</span>
               </div>
-              <div style={{textAlign:"right",flexShrink:0}}>
-                <div style={{fontSize:10,color:T.inkSoft,textTransform:"uppercase"}}>Base macro</div>
-                <div style={{fontSize:12,fontWeight:900,color:T.inkMid}}>{fu(macroData.P_base)}</div>
-                {Math.abs(dMacro)>.1&&<div style={{fontSize:11,fontWeight:700,color:cc(dMacro)}}>
-                  {sg(dMacro)}{dMacro.toFixed(1)}% este proyecto
-                </div>}
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <span style={{fontSize:10,color:T.inkSoft}}>{fu(macroData.P_base)}</span>
+                {Math.abs(dMacro)>.1&&<span style={{fontSize:11,fontWeight:700,color:cc(dMacro)}}>
+                  {sg(dMacro)}{dMacro.toFixed(1)}%
+                </span>}
               </div>
             </div>
-            {/* Pills de proyectos hermanos */}
-            <div style={{marginTop:8,display:"flex",gap:4,flexWrap:"wrap"}}>
+            <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
               {macroData.proyectos.map(p=>(
-                <span key={p.id} style={{fontSize:11,padding:"2px 8px",borderRadius:99,
+                <span key={p.id} style={{fontSize:11,padding:"3px 10px",borderRadius:99,
                   fontWeight:p.id===proy.id?700:400,
-                  background:p.id===proy.id?"rgba(232,24,42,.1)":T.surface,
-                  border:`1px solid ${p.id===proy.id?T.red:T.borderSm}`,
-                  color:p.id===proy.id?T.red:T.inkSoft}}>
+                  background:p.id===proy.id?cfg.c:"transparent",
+                  border:`1px solid ${p.id===proy.id?cfg.c:T.borderSm}`,
+                  color:p.id===proy.id?"#fff":T.inkSoft,transition:"all .15s"}}>
                   {p.id} · {p.n}
                 </span>
               ))}
@@ -1164,20 +1150,17 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
         {/* ══ N2: PROYECTO — Drivers de Demanda × Precio estratégico ══ */}
         <div style={{marginBottom:14}}>
           {/* Nodo N2 */}
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
-            <div style={{width:28,height:28,borderRadius:8,background:LVL[2].c,
-              display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}>
-              📁
-            </div>
-            <div style={{flex:1}}>
-              <div style={{fontSize:11,fontWeight:700,color:LVL[2].c,textTransform:"uppercase",
-                letterSpacing:".1em"}}>N2 · Proyecto — Drivers de Demanda</div>
-              <div style={{fontSize:13,color:T.inkSoft}}>
-                Q×P = <b style={{color:LVL[2].c}}>{fn(Q2)}</b> {proy.m}
-                <span style={{margin:"0 4px",color:T.inkXsoft}}>×</span>
-                <b style={{color:LVL[2].c}}>{fu(P2)}/{proy.m}</b>
-                <span style={{margin:"0 4px",color:T.inkXsoft}}>=</span>
-                <b style={{color:T.red}}>{fu(Q2>0&&P2>0?Q2*P2:proy.P_base)}</b>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",
+            gap:8,marginBottom:10}}>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
+                letterSpacing:".1em",marginBottom:3}}>N2 · Drivers de Demanda × Precio</div>
+              <div style={{fontSize:13,color:T.inkMid}}>
+                Q×P = <b style={{color:T.ink}}>{fn(Q2)}</b> {proy.m}
+                <span style={{margin:"0 5px",color:T.inkXsoft}}>×</span>
+                <b style={{color:T.ink}}>{fu(P2)}/{proy.m}</b>
+                <span style={{margin:"0 5px",color:T.inkXsoft}}>=</span>
+                <b style={{color:cfg.c}}>{fu(Q2>0&&P2>0?Q2*P2:proy.P_base)}</b>
               </div>
             </div>
           </div>
@@ -1201,19 +1184,13 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
         {/* ══ N3 + N4: SUB-PROYECTOS y COMPONENTES ══ */}
         {baseTree ? (<>
           {/* Cabecera N3 */}
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
-            <div style={{width:28,height:28,borderRadius:8,background:LVL[3].c,
-              display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}>
-              📂
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",
+            gap:8,marginBottom:8,paddingTop:4}}>
+            <div style={{fontSize:11,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
+              letterSpacing:".1em"}}>
+              N3 · Componentes — {baseTree.componentes.length} sub-proyectos
             </div>
-            <div style={{flex:1}}>
-              <div style={{fontSize:11,fontWeight:700,color:LVL[3].c,textTransform:"uppercase",
-                letterSpacing:".1em"}}>N3 · Sub-Proyectos — Drivers de Volumen físico</div>
-              <div style={{fontSize:12,color:T.inkSoft}}>
-                {baseTree.componentes.length} sub-proyectos · Total árbol:
-                <b style={{color:T.red,marginLeft:4}}>{fu(treeTotal)}</b>
-              </div>
-            </div>
+            <b style={{fontSize:13,color:cfg.c}}>{fu(treeTotal)}</b>
           </div>
 
           {/* Barra composición */}
@@ -1257,49 +1234,33 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
 
                     {/* Cabecera N3 */}
                     <div onClick={()=>{setOpenN3(isOpenN?null:sp.id); setOpenN4(null);}}
-                      style={{display:"flex",alignItems:"center",gap:7,padding:"8px 10px",
-                        borderRadius:11,cursor:"pointer",
-                        background:isOpenN?`${sp.color}10`:T.card,
-                        border:`1.5px solid ${isOpenN?sp.color:T.borderSm}`,
-                        boxShadow:isOpenN?`0 2px 12px ${sp.color}18`:"0 1px 3px rgba(0,0,0,0.04)",
+                      style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",
+                        borderRadius:10,cursor:"pointer",background:"#fff",
+                        border:`1px solid ${isOpenN?sp.color:T.borderSm}`,
+                        boxShadow:isOpenN?`0 2px 10px ${sp.color}15`:"none",
                         transition:"all .18s"}}>
-                      <div style={{width:30,height:30,borderRadius:8,flexShrink:0,
-                        background:isOpenN?sp.color:`${sp.color}15`,fontSize:15,
-                        display:"flex",alignItems:"center",justifyContent:"center",
-                        transition:"background .18s"}}>{sp.icon}</div>
+                      <span style={{fontSize:18,flexShrink:0,opacity:isOpenN?1:0.7}}>{sp.icon}</span>
                       <div style={{flex:1,minWidth:0}}>
-                        <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:2}}>
-                          <span style={{fontSize:14,fontWeight:700,
-                            color:isOpenN?sp.color:T.ink,transition:"color .15s",
-                            overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
-                            {sp.label}
-                          </span>
-                          <LvlBadge n={3}/>
+                        <div style={{fontSize:13,fontWeight:700,
+                          color:isOpenN?sp.color:T.ink,marginBottom:2,
+                          overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                          {sp.label}
                         </div>
-                        <div style={{fontSize:11.5,color:T.inkSoft,display:"flex",gap:5}}>
-                          <span style={{color:spDT?.color,fontWeight:600}}>
-                            {spDT?.icon} Q:{fn(spQ)} {sp.Q_unit}
-                          </span>
-                          <span style={{color:T.inkXsoft}}>·</span>
-                          <span style={{color:spDF?.color||T.blue,fontWeight:600}}>
-                            💰 P:{fu(spv.pb??sp.P)}
-                          </span>
+                        <div style={{fontSize:11,color:T.inkSoft}}>
+                          Q:{fn(spQ)} {sp.Q_unit}
+                          <span style={{margin:"0 5px",color:T.borderSm}}>·</span>
+                          P:{fu(spv.pb??sp.P)}
                         </div>
                       </div>
                       <div style={{textAlign:"right",flexShrink:0}}>
-                        <div style={{fontSize:14,fontWeight:900,color:sp.color}}>{fu(spTotal)}</div>
+                        <div style={{fontSize:15,fontWeight:800,color:isOpenN?sp.color:T.ink}}>{fu(spTotal)}</div>
                         <div style={{fontSize:11,color:T.inkSoft}}>
                           {treeTotal>0?(spTotal/treeTotal*100).toFixed(0):0}%
                         </div>
                       </div>
-                      <div style={{width:18,height:18,borderRadius:"50%",flexShrink:0,
-                        background:isOpenN?`${sp.color}20`:T.borderSm,
-                        display:"flex",alignItems:"center",justifyContent:"center",
-                        transition:"all .18s"}}>
-                        <span style={{fontSize:13,color:isOpenN?sp.color:T.inkSoft,fontWeight:700,
-                          transform:isOpenN?"rotate(90deg)":"none",
-                          display:"block",transition:"transform .2s",lineHeight:1}}>›</span>
-                      </div>
+                      <span style={{fontSize:13,color:isOpenN?sp.color:T.inkSoft,fontWeight:700,
+                        transform:isOpenN?"rotate(90deg)":"none",
+                        display:"block",transition:"transform .2s",lineHeight:1,flexShrink:0}}>›</span>
                     </div>
 
                     {/* N3 EXPANDIDO */}
@@ -1483,19 +1444,13 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
                         </div>
 
                         {/* Total N3 */}
-                        <div style={{marginTop:7,background:`${sp.color}10`,borderRadius:10,
-                          padding:"8px 12px",border:`1.5px solid ${sp.color}22`,
+                        <div style={{marginTop:8,padding:"8px 12px",borderRadius:8,
+                          background:T.surface,
                           display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                          <div>
-                            <div style={{fontSize:10,fontWeight:700,color:sp.color,
-                              textTransform:"uppercase",letterSpacing:".1em"}}>
-                              Total N3 · {sp.label}
-                            </div>
-                            <div style={{fontSize:11.5,color:T.inkMid,marginTop:1}}>
-                              {(sp.sub||[]).length} componentes (N4)
-                            </div>
-                          </div>
-                          <div style={{fontSize:16,fontWeight:900,color:sp.color}}>{fu(spTotal)}</div>
+                          <span style={{fontSize:11,color:T.inkSoft}}>
+                            Total · {(sp.sub||[]).length} componentes
+                          </span>
+                          <span style={{fontSize:14,fontWeight:800,color:sp.color}}>{fu(spTotal)}</span>
                         </div>
                       </div>
                     )}
@@ -1506,27 +1461,29 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
           </div>
 
           {/* ── TOTAL ÁRBOL ── */}
-          <div style={{marginTop:10,marginLeft:36,background:T.redXsoft,borderRadius:13,
-            border:`1.5px solid ${T.redSoft}`,padding:"11px 15px",
+          <div style={{marginTop:12,padding:"12px 16px",borderRadius:12,
+            background:T.surface,border:`1px solid ${T.borderSm}`,
             display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <div>
-              <div style={{fontSize:11,fontWeight:700,color:T.inkSoft,textTransform:"uppercase",
-                letterSpacing:".12em",marginBottom:3}}>CAPEX DVB = Σ N4 (Q×P)</div>
-              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+              <div style={{fontSize:10,color:T.inkSoft,textTransform:"uppercase",
+                letterSpacing:".12em",marginBottom:4}}>CAPEX DVB = Σ Q×P</div>
+              <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
                 {baseTree.componentes.map(sp=>(
-                  <span key={sp.id} style={{fontSize:11,color:sp.color,fontWeight:700}}>
-                    {sp.label.split(" ")[0]}: {fu(n3Total(sp))}
+                  <span key={sp.id} style={{fontSize:11,color:T.inkMid}}>
+                    <span style={{display:"inline-block",width:6,height:6,borderRadius:"50%",
+                      background:sp.color,marginRight:3,verticalAlign:"middle"}}/>
+                    {fu(n3Total(sp))}
                   </span>
                 ))}
               </div>
             </div>
-            <div style={{textAlign:"right",flexShrink:0,marginLeft:10}}>
-              <div style={{fontSize:22,fontWeight:900,color:T.red,letterSpacing:"-.025em"}}>
+            <div style={{textAlign:"right",flexShrink:0,marginLeft:16}}>
+              <div style={{fontSize:24,fontWeight:900,color:cfg.c,letterSpacing:"-.025em"}}>
                 {fu(treeTotal)}
               </div>
-              <div style={{fontSize:12,fontWeight:700,color:cc(dProy),marginTop:2}}>
-                {sg(dProy)}{dProy.toFixed(1)}% vs base {fu(proy.P_base)}
-              </div>
+              {Math.abs(dProy)>.1&&<div style={{fontSize:12,fontWeight:700,color:cc(dProy),marginTop:2}}>
+                {sg(dProy)}{dProy.toFixed(1)}% vs base
+              </div>}
             </div>
           </div>
         </>):(
