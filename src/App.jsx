@@ -88,618 +88,313 @@ const CATEGORIA_CFG = TIPO_CFG;
    Cada nivel tiene Q_driver + P_driver propios
 ══════════════════════════════════════════════════════════════════════════ */
 const PXQ_TREE = {
-  "143.01":{componentes:[
-    {id:"hw",   label:"Hardware Radio",       icon:"📡",pct:.42,color:T.blue,    q_driver:"obsolescencia",      p_driver:"benchmark_amx",Q:189,Q_unit:"sitios",P:14280,
-     sub:[{label:"Antenas MIMO 4×4",q:189,p:5800,qd:"EoL >3 años",pd:"AMX benchmark"},{label:"Radio Units (RU)",q:189,p:4200,qd:"Congestión PRB",pd:"Cotización directa"},{label:"BBU / DU remoto",q:54,p:4280,qd:"Swap cluster",pd:"Histórico contrato"}]},
-    {id:"civil",label:"Obras Civiles",        icon:"🏗️",pct:.26,color:"#D97706", q_driver:"obsolescencia",      p_driver:"historico",     Q:189,Q_unit:"sitios",P:8600,
-     sub:[{label:"Torre / mástil nuevo",q:42,p:4800,qd:"Torre nueva",pd:"Contrato Ingram"},{label:"Adecuación shelter",q:147,p:2200,qd:"Remodelación",pd:"Histórico"},{label:"Energía rectificador",q:189,p:1600,qd:"Actualización",pd:"IPC+ILA"}]},
-    {id:"mo",   label:"Mano de Obra",         icon:"👷",pct:.18,color:T.green,   q_driver:"activaciones",       p_driver:"cotizacion",    Q:189,Q_unit:"sitios",P:5940,
-     sub:[{label:"Instalación RF",q:189,p:2800,qd:"Todos sitios",pd:"Marco Ericsson"},{label:"Integración y pruebas",q:189,p:2200,qd:"Todos sitios",pd:"Marco Ericsson"},{label:"Project Management",q:189,p:940,qd:"Todos sitios",pd:"% sobre contrato"}]},
-    {id:"om",   label:"O&M Año 1",            icon:"🔧",pct:.14,color:T.violet, q_driver:"mantenimiento",      p_driver:"historico",     Q:189,Q_unit:"sitios",P:4480,
-     sub:[{label:"Mantenimiento preventivo",q:189,p:2800,qd:"Contrato preventivo",pd:"Histórico"},{label:"Spare parts pool",q:189,p:1680,qd:"% de activos",pd:"Benchmark AMX"}]},
-  ]},
-  "143.02":{componentes:[
-    {id:"hw",   label:"Hardware 5G NR",       icon:"📡",pct:.48,color:T.blue,    q_driver:"congestion",         p_driver:"benchmark_amx",Q:42,Q_unit:"sitios",P:78400,
-     sub:[{label:"AAU Massive MIMO",q:42,p:38000,qd:"Congestión >7%",pd:"AMX benchmark"},{label:"gNB (DU+CU)",q:42,p:28000,qd:"Congestión >7%",pd:"Cotización Nokia"},{label:"Fronthaul eCPRI",q:42,p:12400,qd:"Sitios activos",pd:"Histórico"}]},
-    {id:"civil",label:"Obras e Integración",  icon:"🏗️",pct:.28,color:"#D97706", q_driver:"congestion",         p_driver:"cotizacion",    Q:42,Q_unit:"sitios",P:46000,
-     sub:[{label:"Refuerzo estructura",q:28,p:18000,qd:"Torre < cap.",pd:"Cotización civil"},{label:"Adecuación eléctrica",q:42,p:14000,qd:"Todos sitios",pd:"Contrato eléctrico"},{label:"Transporte backhaul",q:42,p:14000,qd:"Todos sitios",pd:"Cotización fibra"}]},
-    {id:"sw",   label:"Licencias Software",   icon:"💾",pct:.14,color:T.violet, q_driver:"migraciones",        p_driver:"benchmark_amx",Q:42,Q_unit:"sitios",P:22800,
-     sub:[{label:"Licencia NR básica",q:42,p:12000,qd:"Por sitio",pd:"AMX benchmark"},{label:"Features avanzados",q:42,p:10800,qd:"Por sitio",pd:"Negociación"}]},
-    {id:"om",   label:"O&M Año 1",            icon:"🔧",pct:.10,color:T.green,  q_driver:"mantenimiento",      p_driver:"historico",     Q:42,Q_unit:"sitios",P:16200,
-     sub:[{label:"Soporte NOC 24×7",q:42,p:9800,qd:"Por sitio",pd:"Marco Nokia"},{label:"Piezas y repuestos",q:42,p:6400,qd:"% activos",pd:"Histórico"}]},
-  ]},
-  "134.01":{componentes:[
-    {id:"inf",  label:"Infraestructura Pasiva",icon:"🗼",pct:.38,color:"#D97706",q_driver:"cobertura_crc",     p_driver:"benchmark_crc", Q:475,Q_unit:"sitios",P:38000,
-     sub:[{label:"Torre / mástil",q:142,p:65000,qd:"Sitio nuevo CRC",pd:"CRC resolución"},{label:"Shelter y plataforma",q:333,p:22000,qd:"Coubicación",pd:"Benchmark AMX"},{label:"Energía solar off-grid",q:95,p:28000,qd:"Sin eléctrico",pd:"Cotización"}]},
-    {id:"rad",  label:"Equipos Radio LTE",     icon:"📡",pct:.44,color:T.blue,   q_driver:"cobertura_crc",     p_driver:"cotizacion",    Q:475,Q_unit:"sitios",P:52400,
-     sub:[{label:"eNodeB 700/850 MHz",q:475,p:32000,qd:"Cobertura rural",pd:"Cotización Huawei"},{label:"Antenas directivas",q:475,p:12400,qd:"Por sitio",pd:"Histórico"},{label:"Backhaul MW/fibra",q:475,p:8000,qd:"Por sitio",pd:"Cotización"}]},
-    {id:"lic",  label:"Trámites y Licencias",  icon:"⚖️",pct:.18,color:T.red,   q_driver:"cobertura_crc",     p_driver:"benchmark_crc", Q:475,Q_unit:"sitios",P:21400,
-     sub:[{label:"Licencia ANLA",q:200,p:8000,qd:"Zona especial",pd:"Arancel fijo"},{label:"Permiso municipal",q:475,p:3200,qd:"Por sitio",pd:"Arancel promedio"},{label:"Interventoría CRC",q:475,p:10200,qd:"Obligatorio",pd:"% sobre obra"}]},
-  ]},
-  "111.04":{componentes:[
-    {id:"post", label:"Activaciones Postpago", icon:"📱",pct:.55,color:T.green,  q_driver:"activaciones",      p_driver:"historico",     Q:338600,Q_unit:"activaciones",P:136,
-     sub:[{label:"Subsidio equipo",q:338600,p:72,qd:"Net adds plan",pd:"Precio equipo"},{label:"Comisión canal",q:338600,p:38,qd:"Net adds",pd:"Tabla comisiones"},{label:"SIM + kit bienvenida",q:338600,p:26,qd:"Net adds",pd:"Costo logístico"}]},
-    {id:"pre",  label:"Activaciones Prepago",  icon:"📲",pct:.30,color:T.blue,   q_driver:"activaciones",      p_driver:"mercado",       Q:185400,Q_unit:"activaciones",P:74,
-     sub:[{label:"SIM prepago",q:185400,p:28,qd:"Target prepago",pd:"Costo logístico"},{label:"Comisión punto venta",q:185400,p:32,qd:"Target prepago",pd:"Tabla comisiones"},{label:"Carga inicial saldo",q:185400,p:14,qd:"Target prepago",pd:"Política comercial"}]},
-    {id:"ret",  label:"Retención Anti-churn",  icon:"🔄",pct:.15,color:"#D97706",q_driver:"migraciones",       p_driver:"historico",     Q:156000,Q_unit:"clientes",P:80,
-     sub:[{label:"Upgrade equipo",q:78000,p:120,qd:"Churn risk model",pd:"Subsidio aprobado"},{label:"Descuento plan",q:156000,p:40,qd:"Churn risk model",pd:"Política retención"}]},
-  ]},
-  "131.01":{componentes:[
-    {id:"f1f2", label:"Red Feeder F1→F2",      icon:"🌐",pct:.35,color:T.blue,   q_driver:"expansion_geo",     p_driver:"benchmark_amx", Q:120000,Q_unit:"homepass",P:42,
-     sub:[{label:"Cable fibra F1 troncal",q:120000,p:18,qd:"Trazado backbone",pd:"Precio/metro"},{label:"Nodo óptico OLT",q:480,p:6200,qd:"1 nodo/250 HP",pd:"AMX benchmark"},{label:"Zanjas y ductos",q:120000,p:8,qd:"Metros lineales",pd:"Contrato obra"}]},
-    {id:"f2f3", label:"Red Distribución F2→F3",icon:"🔌",pct:.30,color:T.green,  q_driver:"expansion_geo",     p_driver:"cotizacion",    Q:120000,Q_unit:"homepass",P:36,
-     sub:[{label:"Splitter 1:8 / 1:16",q:9600,p:380,qd:"1/12.5 HP",pd:"Cotización"},{label:"Cable fibra F2→F3",q:120000,p:12,qd:"Metros red dis.",pd:"Precio/metro"},{label:"Postes y herrajes",q:120000,p:10,qd:"Aéreo/subterráneo",pd:"Contrato civil"}]},
-    {id:"aco",  label:"Acometida Residencial",  icon:"🏠",pct:.22,color:"#D97706",q_driver:"activaciones",      p_driver:"historico",     Q:54000,Q_unit:"clientes",P:130,
-     sub:[{label:"Drop cable F3→ONT",q:54000,p:65,qd:"Take rate 45%",pd:"Contrato instalación"},{label:"ONT equipo cliente",q:54000,p:45,qd:"Take rate 45%",pd:"AMX benchmark"},{label:"Instalación técnica",q:54000,p:20,qd:"Take rate 45%",pd:"Tabla tarifaria"}]},
-    {id:"om",   label:"O&M Año 1",              icon:"🔧",pct:.13,color:T.violet,q_driver:"mantenimiento",      p_driver:"historico",     Q:120000,Q_unit:"homepass",P:16,
-     sub:[{label:"NOC y monitoreo",q:120000,p:8,qd:"Por homepass",pd:"Histórico"},{label:"Mant. correctivo",q:120000,p:5,qd:"% indisponibilidad",pd:"SLA contrato"},{label:"Inventario repuestos",q:120000,p:3,qd:"% activos",pd:"Política"}]},
-  ]},
-  "132.01":{componentes:[
-    {id:"trx",  label:"Capacidad Transporte",   icon:"🌐",pct:.45,color:T.blue,   q_driver:"crecimiento_trafico",p_driver:"cotizacion",   Q:315,Q_unit:"Gbps",P:21000,
-     sub:[{label:"Upgrades MW backhaul",q:180,p:18000,qd:"35% crec. tráfico",pd:"Cotización Ericsson"},{label:"Fibra metro (DCI)",q:135,p:24000,qd:"Rutas saturadas",pd:"IRU fibra"}]},
-    {id:"core", label:"Core IP/MPLS",           icon:"⚙️",pct:.35,color:T.violet,q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:315,Q_unit:"Gbps",P:16200,
-     sub:[{label:"Routers de borde",q:8,p:380000,qd:"Capacidad agotada",pd:"AMX benchmark"},{label:"Upgrades DWDM",q:6,p:280000,qd:"Troncales saturadas",pd:"Cotización"},{label:"Licencias software",q:315,p:1800,qd:"Por Gbps",pd:"Benchmark"}]},
-    {id:"ran",  label:"RAN Capacity carriers",  icon:"📶",pct:.20,color:T.green,  q_driver:"crecimiento_trafico",p_driver:"historico",    Q:420,Q_unit:"carriers",P:8600,
-     sub:[{label:"Carrier adicional 4G",q:280,p:6800,qd:"PRB utilización",pd:"Histórico"},{label:"Layer adicional 5G",q:140,p:12200,qd:"Densificación",pd:"Cotización Nokia"}]},
-  ]},
-  "103.01":{componentes:[
-    {id:"lic",  label:"Licencias SaaS",          icon:"💾",pct:.52,color:T.violet,q_driver:"migraciones",       p_driver:"cotizacion",    Q:2100000,Q_unit:"suscriptores",P:2.18,
-     sub:[{label:"CRM core (Salesforce)",q:2100000,p:1.20,qd:"Base convergente",pd:"Cotización SF"},{label:"Marketing Cloud",q:2100000,p:0.58,qd:"Base activa",pd:"Cotización SF"},{label:"Analytics add-on",q:2100000,p:0.40,qd:"Usuarios activos",pd:"Negociación"}]},
-    {id:"int",  label:"Integración & APIs",      icon:"🔗",pct:.28,color:T.blue,  q_driver:"migraciones",       p_driver:"cotizacion",    Q:48,Q_unit:"integraciones",P:62000,
-     sub:[{label:"Conectores BSS/OSS",q:28,p:75000,qd:"Sistemas legacy",pd:"Cotización"},{label:"API gateway",q:20,p:44000,qd:"Canales digitales",pd:"Cotización"}]},
-    {id:"impl", label:"Implementación",          icon:"🛠️",pct:.20,color:T.green, q_driver:"migraciones",       p_driver:"historico",     Q:36,Q_unit:"sprints",P:45000,
-     sub:[{label:"Fábrica de software",q:24,p:52000,qd:"Módulos config.",pd:"Rate card"},{label:"UAT y capacitación",q:12,p:28000,qd:"Usuarios finales",pd:"Tarifa diaria"}]},
-  ]},
-  "135.01":{componentes:[
-    {id:"prev", label:"Mantenimiento Preventivo",icon:"🔧",pct:.55,color:T.green, q_driver:"mantenimiento",     p_driver:"historico",     Q:7200,Q_unit:"sitios",P:1610,
-     sub:[{label:"Visita técnica anual",q:7200,p:680,qd:"Plan preventivo",pd:"Tarifa brigada"},{label:"Limpieza y ajuste",q:7200,p:420,qd:"Plan preventivo",pd:"Tarifa brigada"},{label:"Actualización SW",q:7200,p:510,qd:"Release schedule",pd:"Ericsson SLA"}]},
-    {id:"corr", label:"Mantenimiento Correctivo",icon:"🚨",pct:.30,color:T.red,   q_driver:"mantenimiento",     p_driver:"historico",     Q:7200,Q_unit:"sitios",P:880,
-     sub:[{label:"Guardia NOC 24×7",q:7200,p:480,qd:"Todo el parque",pd:"SLA NOC"},{label:"Despacho de brigada",q:1440,p:800,qd:"MTTR <4h",pd:"Tarifa urgente"},{label:"Piezas de repuesto",q:7200,p:400,qd:"% MTTF histórico",pd:"Precio proveedor"}]},
-    {id:"ene",  label:"Energía (subsidio)",      icon:"⚡",pct:.15,color:"#D97706",q_driver:"mantenimiento",     p_driver:"ila",           Q:7200,Q_unit:"sitios",P:410,
-     sub:[{label:"Consumo eléctrico",q:7200,p:280,qd:"kWh × tarifa",pd:"Tarifa EPM/ETB"},{label:"Combustible generador",q:2160,p:480,qd:"Sitios sin eléctrico",pd:"Precio ACPM"}]},
-  ]},
-  "111.05":{componentes:[
-    {id:"cpe",label:"CPE Residencial",icon:"📦",pct:0.62,color:T.blue,q_driver:"migraciones",p_driver:"benchmark_amx",Q:119000,Q_unit:"equipos",P:90,
-     sub:[{label:"Router HGU GPON",q:119000,p:52,qd:"Migración plan",pd:"AMX benchmark"},{label:"STB TV (si aplica)",q:47600,p:68,qd:"Incluye TV",pd:"AMX benchmark"},{label:"Flete y logística",q:119000,p:9,qd:"Por equipo",pd:"Tarifa operador"}]},
-    {id:"inst",label:"Instalación Técnica",icon:"🔧",pct:0.25,color:T.green,q_driver:"migraciones",p_driver:"historico",Q:119000,Q_unit:"visitas",P:36,
-     sub:[{label:"Técnico instalación",q:119000,p:28,qd:"Por visita",pd:"Tarifa brigada"},{label:"Materiales acometida",q:119000,p:8,qd:"Por visita",pd:"Histórico"}]},
-    {id:"log",label:"Retiro equipo viejo",icon:"♻️",pct:0.13,color:"#D97706",q_driver:"migraciones",p_driver:"historico",Q:119000,Q_unit:"equipos",P:19,
-     sub:[{label:"Recogida y transporte",q:119000,p:12,qd:"Por equipo",pd:"Tarifa logística"},{label:"Disposición final",q:119000,p:7,qd:"Por equipo",pd:"Convenio ambiental"}]},
-  ]},
-  "111.07":{componentes:[
-    {id:"sub",label:"Subsidio Migración",icon:"💳",pct:0.58,color:T.green,q_driver:"migraciones",p_driver:"benchmark_amx",Q:214500,Q_unit:"clientes",P:98,
-     sub:[{label:"Descuento plan 3 meses",q:214500,p:62,qd:"Oferta migración",pd:"Política comercial"},{label:"Bono datos extra",q:214500,p:36,qd:"Incentivo cliente",pd:"AMX benchmark"}]},
-    {id:"cpe",label:"Equipos en Migración",icon:"📦",pct:0.28,color:T.blue,q_driver:"migraciones",p_driver:"benchmark_amx",Q:85800,Q_unit:"equipos",P:70,
-     sub:[{label:"CPE upgrade tecnología",q:85800,p:48,qd:"40% requieren equipo",pd:"AMX benchmark"},{label:"Instalación técnica",q:85800,p:22,qd:"Cambio tecnología",pd:"Tarifa brigada"}]},
-    {id:"com",label:"Comisión Canal",icon:"🤝",pct:0.14,color:"#D97706",q_driver:"migraciones",p_driver:"historico",Q:214500,Q_unit:"clientes",P:24,
-     sub:[{label:"Comisión migración",q:214500,p:16,qd:"Por cliente migrado",pd:"Tabla comisiones"},{label:"Bono cumplimiento",q:214500,p:8,qd:"Meta mensual",pd:"Política canal"}]},
-  ]},
-  "143.05":{componentes:[
-    {id:"sw",label:"Licencias Cloud",icon:"☁️",pct:0.55,color:T.violet,q_driver:"obsolescencia",p_driver:"cotizacion",Q:80,Q_unit:"instancias",P:10120,
-     sub:[{label:"Plataforma VNF/CNF",q:80,p:7200,qd:"EoL HW físico",pd:"Cotización vendor"},{label:"Orquestador MANO",q:80,p:2920,qd:"Por instancia",pd:"Cotización vendor"}]},
-    {id:"hw",label:"Hardware x86",icon:"🖥️",pct:0.3,color:T.blue,q_driver:"obsolescencia",p_driver:"cotizacion",Q:80,Q_unit:"servidores",P:5520,
-     sub:[{label:"Servidores COTS",q:64,p:6800,qd:"Reemplazo HW",pd:"Cotización DELL"},{label:"Switches top-of-rack",q:16,p:4200,qd:"Por rack",pd:"Cotización Cisco"}]},
-    {id:"mig",label:"Migración y Pruebas",icon:"🔄",pct:0.15,color:T.green,q_driver:"obsolescencia",p_driver:"historico",Q:80,Q_unit:"VNFs",P:2760,
-     sub:[{label:"Fábrica migración",q:80,p:1800,qd:"Por VNF",pd:"Rate card TI"},{label:"Pruebas integración",q:80,p:960,qd:"Por VNF",pd:"Tarifa consultor"}]},
-  ]},
-  "134.02":{componentes:[
-    {id:"esp",label:"Pago Espectro 5G",icon:"📶",pct:0.72,color:T.red,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:1051,Q_unit:"km",P:9945,
-     sub:[{label:"Canon espectro ANE",q:1051,p:7800,qd:"Obligación regulatoria",pd:"Resolución CRC"},{label:"Tasas y contraprestaciones",q:1051,p:2145,qd:"Por km cubierto",pd:"CRC vigente"}]},
-    {id:"ver",label:"Verificación y Reporte",icon:"📋",pct:0.18,color:T.blue,q_driver:"cobertura_crc",p_driver:"cotizacion",Q:1051,Q_unit:"km",P:2487,
-     sub:[{label:"Drive test verificación",q:1051,p:1600,qd:"Obligatorio CRC",pd:"Tarifa consultor"},{label:"Reporte SIG geográfico",q:1051,p:887,qd:"Por km",pd:"Cotización GIS"}]},
-    {id:"adm",label:"Gestión Administrativa",icon:"⚖️",pct:0.1,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:1051,Q_unit:"km",P:1382,
-     sub:[{label:"Gestoría regulatoria",q:1051,p:900,qd:"Trámites ANE",pd:"Tarifa abogado"},{label:"Archivo y evidencias",q:1051,p:482,qd:"Por km",pd:"Costo operativo"}]},
-  ]},
-  "134.03":{componentes:[
-    {id:"eq",label:"Equipos Medux",icon:"📡",pct:0.58,color:T.blue,q_driver:"cobertura_crc",p_driver:"cotizacion",Q:106,Q_unit:"nodos",P:50200,
-     sub:[{label:"Sensor medición RF",q:106,p:28000,qd:"Nodo nuevo Medux",pd:"Cotización proveedor"},{label:"Gateway IoT",q:106,p:14000,qd:"Por nodo",pd:"Cotización"},{label:"Instalación técnica",q:106,p:8200,qd:"Por nodo",pd:"Tarifa brigada"}]},
-    {id:"con",label:"Conectividad",icon:"🌐",pct:0.28,color:T.green,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:106,Q_unit:"nodos",P:24200,
-     sub:[{label:"SIM datos M2M",q:106,p:8400,qd:"Anual por nodo",pd:"Tarifa MVNO"},{label:"Backhaul dedicado",q:106,p:15800,qd:"Alta disponibilidad",pd:"Benchmark CRC"}]},
-    {id:"plat",label:"Plataforma SW",icon:"💾",pct:0.14,color:T.violet,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:1,Q_unit:"plataforma",P:1285000,
-     sub:[{label:"Licencia plataforma",q:1,p:860000,qd:"Plataforma central",pd:"Benchmark CRC"},{label:"Integración CRC",q:1,p:425000,qd:"API regulatorio",pd:"Cotización"}]},
-  ]},
-  "134.04":{componentes:[
-    {id:"inf",label:"Infraestructura Pasiva",icon:"🗼",pct:0.4,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:86,Q_unit:"sitios",P:35000,
-     sub:[{label:"Torre arriostrada",q:38,p:48000,qd:"Sitio nuevo",pd:"CRC resolución"},{label:"Aditamento en torre existente",q:48,p:24000,qd:"Coubicación",pd:"Benchmark AMX"},{label:"Energía solar",q:86,p:3400,qd:"Zona sin red",pd:"Cotización solar"}]},
-    {id:"rad",label:"Equipos Radio",icon:"📡",pct:0.45,color:T.blue,q_driver:"cobertura_crc",p_driver:"cotizacion",Q:86,Q_unit:"sitios",P:39375,
-     sub:[{label:"eNodeB 700 MHz",q:86,p:24000,qd:"Cobertura rural",pd:"Cotización Huawei"},{label:"Antenas direccionales",q:86,p:9000,qd:"Por sitio",pd:"Histórico"},{label:"Backhaul VSAT/MW",q:86,p:6375,qd:"Zona sin fibra",pd:"Cotización"}]},
-    {id:"lic",label:"Trámites ANE/Municipios",icon:"⚖️",pct:0.15,color:T.red,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:86,Q_unit:"sitios",P:13125,
-     sub:[{label:"Licencia ANE",q:86,p:6000,qd:"Obligatorio",pd:"Arancel ANE"},{label:"Permiso municipal",q:86,p:4000,qd:"Por municipio",pd:"Tarifa promedio"},{label:"Consulta previa",q:22,p:14000,qd:"Zona indígena",pd:"Costo proceso"}]},
-  ]},
-  "134.05":{componentes:[
-    {id:"rad",label:"Equipos Radio 4G",icon:"📡",pct:0.55,color:T.blue,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:60,Q_unit:"sitios",P:49500,
-     sub:[{label:"eNodeB upgrade",q:60,p:32000,qd:"Renovación espectro",pd:"Benchmark CRC"},{label:"Antenas nuevas",q:60,p:11000,qd:"Por sitio",pd:"Cotización"},{label:"Integración red",q:60,p:6500,qd:"Por sitio",pd:"Marco proveedor"}]},
-    {id:"civ",label:"Obras Civiles",icon:"🏗️",pct:0.28,color:"#D97706",q_driver:"cobertura_crc",p_driver:"historico",Q:60,Q_unit:"sitios",P:25200,
-     sub:[{label:"Adecuación shelter",q:60,p:14000,qd:"Renovación shelter",pd:"Histórico"},{label:"Sistema eléctrico",q:60,p:11200,qd:"Por sitio",pd:"Contrato electricista"}]},
-    {id:"adm",label:"Trámites y Gestión",icon:"⚖️",pct:0.17,color:T.red,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:60,Q_unit:"sitios",P:15300,
-     sub:[{label:"Renovación licencias",q:60,p:9500,qd:"CRC/ANE",pd:"Arancel vigente"},{label:"Interventoría",q:60,p:5800,qd:"Obligatorio",pd:"% sobre obra"}]},
-  ]},
-  "141.01":{componentes:[
-    {id:"lic",label:"Licencias Productividad",icon:"💾",pct:0.55,color:T.violet,q_driver:"mantenimiento",p_driver:"cotizacion",Q:6860480,Q_unit:"usuarios",P:0.73,
-     sub:[{label:"Microsoft 365 E3",q:4200000,p:0.85,qd:"Usuarios activos",pd:"EA Microsoft"},{label:"Adobe Creative Cloud",q:280000,p:1.4,qd:"Diseño/mktg",pd:"VLP Adobe"},{label:"Herramientas colaboración",q:2380480,p:0.55,qd:"Usuarios base",pd:"Cotización"}]},
-    {id:"sec",label:"Licencias Seguridad",icon:"🔐",pct:0.28,color:T.red,q_driver:"mantenimiento",p_driver:"cotizacion",Q:6860480,Q_unit:"endpoints",P:0.37,
-     sub:[{label:"Antivirus/EDR",q:6860480,p:0.24,qd:"Todos endpoints",pd:"Cotización CrowdStrike"},{label:"DLP & cifrado",q:2200000,p:0.48,qd:"Usuarios críticos",pd:"Cotización Symantec"}]},
-    {id:"ops",label:"Licencias Operacionales",icon:"⚙️",pct:0.17,color:T.blue,q_driver:"mantenimiento",p_driver:"historico",Q:6860480,Q_unit:"usuarios",P:0.22,
-     sub:[{label:"ITSM (ServiceNow)",q:6860480,p:0.14,qd:"Per user annual",pd:"Histórico contrato"},{label:"Monitoreo APM",q:6860480,p:0.08,qd:"Per user annual",pd:"Histórico"}]},
-  ]},
-  "141.02":{componentes:[
-    {id:"oss",label:"OSS — Red & Operaciones",icon:"🌐",pct:0.42,color:T.blue,q_driver:"mantenimiento",p_driver:"cotizacion",Q:18000000,Q_unit:"transacciones",P:0.33,
-     sub:[{label:"Licencia OSS Ericsson ENM",q:18000000,p:0.18,qd:"Por transacción",pd:"EA Ericsson"},{label:"Soporte OSS Nivel 3",q:18000000,p:0.15,qd:"SLA 24×7",pd:"Marco soporte"}]},
-    {id:"bss",label:"BSS — Facturación & CRM",icon:"💳",pct:0.38,color:T.green,q_driver:"mantenimiento",p_driver:"cotizacion",Q:18000000,Q_unit:"transacciones",P:0.3,
-     sub:[{label:"Licencia Amdocs billing",q:18000000,p:0.2,qd:"Por factura/tx",pd:"Contrato Amdocs"},{label:"Soporte BSS producción",q:18000000,p:0.1,qd:"SLA crítico",pd:"Marco soporte"}]},
-    {id:"mid",label:"Middleware e Integración",icon:"🔗",pct:0.2,color:T.violet,q_driver:"mantenimiento",p_driver:"historico",Q:18000000,Q_unit:"transacciones",P:0.16,
-     sub:[{label:"ESB / API Manager",q:18000000,p:0.1,qd:"Por transacción",pd:"Histórico IBM"},{label:"Batch processing",q:18000000,p:0.06,qd:"Jobs nocturnos",pd:"Histórico"}]},
-  ]},
-  "141.03":{componentes:[
-    {id:"end",label:"Seguridad Endpoints",icon:"🛡️",pct:0.45,color:T.red,q_driver:"mantenimiento",p_driver:"cotizacion",Q:42000,Q_unit:"endpoints",P:90,
-     sub:[{label:"EDR / XDR platform",q:42000,p:55,qd:"Todos endpoints",pd:"Cotización CrowdStrike"},{label:"Parcheo automático",q:42000,p:22,qd:"Por endpoint",pd:"Tarifa licencia"},{label:"Capacitación phishing",q:42000,p:13,qd:"Por usuario",pd:"Plataforma e-learning"}]},
-    {id:"red",label:"Seguridad de Red",icon:"🔥",pct:0.35,color:T.blue,q_driver:"mantenimiento",p_driver:"cotizacion",Q:42000,Q_unit:"endpoints",P:70,
-     sub:[{label:"NGFW / IPS licencia",q:42,p:42000,qd:"Nodos perimetrales",pd:"Cotización Fortinet"},{label:"SIEM & correlación",q:42000,p:28,qd:"Por endpoint",pd:"Cotización Splunk"}]},
-    {id:"soc",label:"SOC y Respuesta",icon:"🚨",pct:0.2,color:"#D97706",q_driver:"mantenimiento",p_driver:"historico",Q:42000,Q_unit:"endpoints",P:40,
-     sub:[{label:"Servicio SOC 24×7",q:42000,p:28,qd:"Monitored endpoints",pd:"Tarifa SOC"},{label:"Respuesta incidentes",q:42000,p:12,qd:"Reserva IR",pd:"Histórico"}]},
-  ]},
-  "141.04":{componentes:[
-    {id:"inf",label:"Infraestructura Data Lake",icon:"🗄️",pct:0.5,color:T.blue,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:134,Q_unit:"TB",P:48500,
-     sub:[{label:"Almacenamiento objeto S3",q:134,p:28000,qd:"Crecimiento 28%",pd:"Cotización AWS"},{label:"Compute clusters Spark",q:134,p:14000,qd:"Por TB procesado",pd:"Cotización cloud"},{label:"Redes y egress",q:134,p:6500,qd:"Transferencia datos",pd:"Tarifa cloud"}]},
-    {id:"plat",label:"Plataforma Analytics",icon:"📊",pct:0.32,color:T.violet,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:134,Q_unit:"TB",P:31000,
-     sub:[{label:"Licencia Databricks",q:134,p:18000,qd:"Por TB/mes",pd:"Cotización Databricks"},{label:"BI Tools (PowerBI)",q:134,p:8000,qd:"Por TB informe",pd:"EA Microsoft"},{label:"MLflow / MLOps",q:134,p:5000,qd:"Modelos activos",pd:"Cotización"}]},
-    {id:"ing",label:"Ingeniería de Datos",icon:"🔧",pct:0.18,color:T.green,q_driver:"crecimiento_trafico",p_driver:"historico",Q:134,Q_unit:"TB",P:17400,
-     sub:[{label:"Pipelines ETL/ELT",q:134,p:10000,qd:"Por TB integrado",pd:"Rate card fábrica"},{label:"Calidad y gobierno datos",q:134,p:7400,qd:"Por TB",pd:"Tarifa consultor"}]},
-  ]},
-  "132.02":{componentes:[
-    {id:"olt",label:"OLT y Equipos Acceso",icon:"🔌",pct:0.52,color:T.blue,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:45100,Q_unit:"puertos",P:151,
-     sub:[{label:"Tarjetas OLT GPON",q:45100,p:88,qd:"Puertos nuevos",pd:"Cotización Nokia"},{label:"Fibra distribución F2",q:45100,p:42,qd:"Por puerto",pd:"Precio/metro"},{label:"Splitters 1:32",q:1410,p:680,qd:"1 splitter/32 HP",pd:"Cotización"}]},
-    {id:"agg",label:"Agregación y Backhaul",icon:"🌐",pct:0.33,color:T.violet,q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:45100,Q_unit:"puertos",P:96,
-     sub:[{label:"Router agregación",q:22,p:180000,qd:"Nodo saturado",pd:"AMX benchmark"},{label:"Upgrade DWDM metro",q:45100,p:32,qd:"Por puerto",pd:"IRU fibra"},{label:"Licencias ancho de banda",q:45100,p:24,qd:"Por puerto",pd:"Tarifa SW"}]},
-    {id:"act",label:"Acometidas Nuevas",icon:"🏠",pct:0.15,color:T.green,q_driver:"activaciones",p_driver:"historico",Q:18040,Q_unit:"clientes",P:44,
-     sub:[{label:"Drop cable + ONT",q:18040,p:28,qd:"Nuevas conexiones",pd:"Histórico"},{label:"Instalación técnica",q:18040,p:16,qd:"Por visita",pd:"Tarifa brigada"}]},
-  ]},
-  "132.03":{componentes:[
-    {id:"rtr",label:"Routers Core",icon:"⚙️",pct:0.48,color:T.blue,q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:180,Q_unit:"Gbps",P:30720,
-     sub:[{label:"Linecards 100G/400G",q:180,p:18500,qd:"Capacidad agotada",pd:"AMX benchmark"},{label:"Chasis upgrade",q:4,p:420000,qd:"Fin capacidad",pd:"Cotización Juniper"},{label:"Transpondedores DWDM",q:180,p:5000,qd:"Por Gbps",pd:"Histórico"}]},
-    {id:"sw",label:"Licencias Software",icon:"💾",pct:0.28,color:T.violet,q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:180,Q_unit:"Gbps",P:17920,
-     sub:[{label:"IOS-XR / Junos avanzado",q:180,p:9500,qd:"Por Gbps",pd:"AMX benchmark"},{label:"SDN controller",q:180,p:5800,qd:"Por Gbps",pd:"Benchmark"},{label:"Analytics y telemetría",q:180,p:2620,qd:"Por Gbps",pd:"Cotización"}]},
-    {id:"int",label:"Integración y Pruebas",icon:"🔧",pct:0.24,color:T.green,q_driver:"crecimiento_trafico",p_driver:"historico",Q:180,Q_unit:"Gbps",P:15360,
-     sub:[{label:"Fábrica integración",q:180,p:9000,qd:"Por Gbps configurado",pd:"Rate card"},{label:"Pruebas rendimiento",q:180,p:6360,qd:"Por Gbps",pd:"Tarifa consultor"}]},
-  ]},
-  "135.02":{componentes:[
-    {id:"prev",label:"Mantenimiento Preventivo",icon:"🔧",pct:0.5,color:T.green,q_driver:"mantenimiento",p_driver:"historico",Q:3400,Q_unit:"nodos",P:2900,
-     sub:[{label:"Visita técnica semestral",q:3400,p:1200,qd:"Plan preventivo",pd:"Tarifa brigada"},{label:"Limpieza y ajuste fibra",q:3400,p:900,qd:"Plan preventivo",pd:"Tarifa brigada"},{label:"Actualización firmware",q:3400,p:800,qd:"Release schedule",pd:"Nokia SLA"}]},
-    {id:"corr",label:"Mantenimiento Correctivo",icon:"🚨",pct:0.32,color:T.red,q_driver:"mantenimiento",p_driver:"historico",Q:3400,Q_unit:"nodos",P:1856,
-     sub:[{label:"NOC monitoreo 24×7",q:3400,p:900,qd:"Todo el parque",pd:"SLA NOC"},{label:"Despacho brigada correctiva",q:680,p:3200,qd:"MTTR <6h, 20%",pd:"Tarifa urgente"},{label:"Repuestos y splicing",q:3400,p:400,qd:"% fallas/año",pd:"Histórico"}]},
-    {id:"sw",label:"Soporte SW/OSS",icon:"💾",pct:0.18,color:T.violet,q_driver:"mantenimiento",p_driver:"historico",Q:3400,Q_unit:"nodos",P:1044,
-     sub:[{label:"Licencia OSS red fija",q:3400,p:640,qd:"Por nodo",pd:"Histórico Nokia"},{label:"Actualizaciones SW",q:3400,p:404,qd:"Por nodo/año",pd:"Contrato soporte"}]},
-  ]},
-  "131.02":{componentes:[
-    {id:"aco",label:"Acometida Empresarial",icon:"🏢",pct:0.55,color:T.blue,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:8498,Q_unit:"enlaces",P:651,
-     sub:[{label:"Fibra dedicada 1Gbps",q:5774,p:820,qd:"Empresas top",pd:"Cotización directa"},{label:"Fibra compartida 100M",q:2724,p:380,qd:"PYMEs",pd:"Tarifa estándar"}]},
-    {id:"cpe",label:"CPE Empresarial",icon:"📦",pct:0.28,color:T.green,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:8498,Q_unit:"equipos",P:332,
-     sub:[{label:"Router SD-WAN managed",q:4249,p:480,qd:"Grandes cuentas",pd:"Cotización Cisco"},{label:"ONT empresarial",q:4249,p:180,qd:"Resto cartera",pd:"AMX benchmark"}]},
-    {id:"sla",label:"SLA & Gestión",icon:"📋",pct:0.17,color:"#D97706",q_driver:"pipeline_b2b",p_driver:"historico",Q:8498,Q_unit:"enlaces",P:202,
-     sub:[{label:"NOC empresarial dedicado",q:8498,p:130,qd:"SLA 99.9%",pd:"Tarifa servicio"},{label:"Gestor de cuenta",q:8498,p:72,qd:"Por enlace",pd:"Costo operativo"}]},
-  ]},
-  "103.02":{componentes:[
-    {id:"lic",label:"Licencias Billing",icon:"💾",pct:0.5,color:T.violet,q_driver:"migraciones",p_driver:"cotizacion",Q:1530000,Q_unit:"suscriptores",P:3.56,
-     sub:[{label:"Amdocs Billing Suite",q:1530000,p:2.2,qd:"Por suscriptor",pd:"Contrato Amdocs"},{label:"Rating engine",q:1530000,p:1.36,qd:"Por suscriptor",pd:"Cotización"}]},
-    {id:"int",label:"Integración BSS/OSS",icon:"🔗",pct:0.32,color:T.blue,q_driver:"migraciones",p_driver:"cotizacion",Q:1530000,Q_unit:"suscriptores",P:2.28,
-     sub:[{label:"Conectores legado",q:1530000,p:1.4,qd:"Sistemas a migrar",pd:"Rate card TI"},{label:"APIs convergencia",q:1530000,p:0.88,qd:"Por suscriptor",pd:"Cotización"}]},
-    {id:"mig",label:"Migración de Datos",icon:"🔄",pct:0.18,color:T.green,q_driver:"migraciones",p_driver:"historico",Q:1530000,Q_unit:"suscriptores",P:1.28,
-     sub:[{label:"ETL migración billing",q:1530000,p:0.8,qd:"Por registro",pd:"Rate card fábrica"},{label:"Validación y reconciliación",q:1530000,p:0.48,qd:"Por suscriptor",pd:"Tarifa QA"}]},
-  ]},
-  "102.01":{componentes:[
-    {id:"dev",label:"Desarrollo App",icon:"📱",pct:0.48,color:T.blue,q_driver:"activaciones",p_driver:"cotizacion",Q:2400000,Q_unit:"usuarios",P:1.96,
-     sub:[{label:"Features nuevos iOS/Android",q:2400000,p:1.2,qd:"Net users",pd:"Rate card fábrica"},{label:"UX/UI redesign",q:2400000,p:0.76,qd:"Por usuario",pd:"Cotización studio"}]},
-    {id:"inf",label:"Infraestructura Cloud",icon:"☁️",pct:0.32,color:T.violet,q_driver:"activaciones",p_driver:"cotizacion",Q:2400000,Q_unit:"usuarios",P:1.31,
-     sub:[{label:"Compute y auto-scaling",q:2400000,p:0.72,qd:"Por usuario activo",pd:"Cotización AWS"},{label:"CDN y caché",q:2400000,p:0.38,qd:"Por request",pd:"Tarifa CloudFront"},{label:"Base datos DynamoDB",q:2400000,p:0.21,qd:"Por usuario",pd:"Cotización AWS"}]},
-    {id:"mkt",label:"Marketing & Analytics",icon:"📊",pct:0.2,color:T.green,q_driver:"activaciones",p_driver:"cotizacion",Q:2400000,Q_unit:"usuarios",P:0.82,
-     sub:[{label:"Push notifications",q:2400000,p:0.32,qd:"Por usuario",pd:"Firebase pricing"},{label:"Analytics (Firebase/Amplitude)",q:2400000,p:0.5,qd:"Por usuario/mes",pd:"Cotización"}]},
-  ]},
-  "102.02":{componentes:[
-    {id:"web",label:"Desarrollo Web",icon:"💻",pct:0.5,color:T.blue,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:3000000,Q_unit:"sesiones",P:1.2,
-     sub:[{label:"Frontend React/Next.js",q:3000000,p:0.68,qd:"Sesiones nuevas",pd:"Rate card fábrica"},{label:"Backend APIs REST",q:3000000,p:0.52,qd:"Por sesión",pd:"Rate card fábrica"}]},
-    {id:"inf",label:"Infraestructura",icon:"☁️",pct:0.32,color:T.violet,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:3000000,Q_unit:"sesiones",P:0.77,
-     sub:[{label:"Compute cloud (ECS)",q:3000000,p:0.42,qd:"Por sesión",pd:"Cotización AWS"},{label:"Load balancer & WAF",q:3000000,p:0.22,qd:"Por sesión",pd:"Tarifa AWS"},{label:"Almacenamiento caché",q:3000000,p:0.13,qd:"Por sesión",pd:"ElastiCache pricing"}]},
-    {id:"sec",label:"Seguridad Web",icon:"🔐",pct:0.18,color:T.red,q_driver:"crecimiento_trafico",p_driver:"historico",Q:3000000,Q_unit:"sesiones",P:0.43,
-     sub:[{label:"Certificados SSL/TLS",q:3000000,p:0.18,qd:"Por sesión",pd:"Histórico"},{label:"Protección DDoS",q:3000000,p:0.25,qd:"Por sesión",pd:"Tarifa Cloudflare"}]},
-  ]},
-  "102.03":{componentes:[
-    {id:"mod",label:"Desarrollo Modelos IA",icon:"🤖",pct:0.52,color:T.violet,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:70,Q_unit:"modelos",P:50960,
-     sub:[{label:"Ciencia de datos (sprints)",q:70,p:28000,qd:"Por modelo",pd:"Rate card DS"},{label:"MLOps & despliegue",q:70,p:14000,qd:"Por modelo",pd:"Tarifa ingeniería"},{label:"Datos entrenamiento",q:70,p:8960,qd:"Por modelo",pd:"Cotización datos"}]},
-    {id:"inf",label:"Infraestructura ML",icon:"⚙️",pct:0.3,color:T.blue,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:70,Q_unit:"modelos",P:29400,
-     sub:[{label:"GPU compute (SageMaker)",q:70,p:18000,qd:"Entrenamiento",pd:"Cotización AWS"},{label:"Serving endpoints",q:70,p:11400,qd:"Por modelo en prod.",pd:"Cotización"}]},
-    {id:"dat",label:"Plataforma Datos",icon:"📊",pct:0.18,color:T.green,q_driver:"pipeline_b2b",p_driver:"historico",Q:70,Q_unit:"modelos",P:17640,
-     sub:[{label:"Feature store",q:70,p:10000,qd:"Por modelo",pd:"Tarifa Feast/cloud"},{label:"Pipelines datos",q:70,p:7640,qd:"Por modelo",pd:"Rate card fábrica"}]},
-  ]},
-  "131.03":{componentes:[
-    {id:"f1f2",label:"Red Backbone Ciudades T2",icon:"🌐",pct:0.38,color:T.blue,q_driver:"expansion_geo",p_driver:"cotizacion",Q:185000,Q_unit:"homepass",P:28,
-     sub:[{label:"Cable fibra F1 troncal",q:185000,p:14,qd:"Trazado ciudad",pd:"Precio/metro"},{label:"OLT nodos de agregación",q:740,p:5800,qd:"1 OLT/250HP",pd:"Cotización Nokia"},{label:"Zanjas y canalización",q:185000,p:6,qd:"Por homepass",pd:"Contrato obra civil"}]},
-    {id:"dis",label:"Red Distribución",icon:"🔌",pct:0.32,color:T.green,q_driver:"expansion_geo",p_driver:"cotizacion",Q:185000,Q_unit:"homepass",P:24,
-     sub:[{label:"Splitter 1:16 en nodo",q:11562,p:320,qd:"1/16 homepass",pd:"Cotización"},{label:"Cable F2→F3",q:185000,p:10,qd:"Metros distribución",pd:"Precio/metro"},{label:"Postes y herrajes",q:185000,p:7,qd:"Por homepass",pd:"Contrato civil"}]},
-    {id:"aco",label:"Acometidas y ONT",icon:"🏠",pct:0.22,color:"#D97706",q_driver:"activaciones",p_driver:"historico",Q:83250,Q_unit:"clientes",P:16,
-     sub:[{label:"Drop cable + ONT",q:83250,p:12,qd:"Take rate 45%",pd:"Cotización proveedor"},{label:"Instalación técnica",q:83250,p:4,qd:"Por visita",pd:"Tarifa brigada"}]},
-    {id:"om",label:"O&M Año 1",icon:"🔧",pct:0.08,color:T.violet,q_driver:"mantenimiento",p_driver:"historico",Q:185000,Q_unit:"homepass",P:6,
-     sub:[{label:"NOC y monitoreo",q:185000,p:4,qd:"Por homepass",pd:"Histórico"},{label:"Mant. correctivo",q:185000,p:2,qd:"% fallas",pd:"SLA"}]},
-  ]},
-  "131.04":{componentes:[
-    {id:"f1f2",label:"Red Troncal Rural",icon:"🌐",pct:0.4,color:T.blue,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:40000,Q_unit:"homepass",P:80,
-     sub:[{label:"Fibra aérea en postería",q:40000,p:52,qd:"Rural largo alcance",pd:"CRC benchmark"},{label:"Equipos OLT rural",q:160,p:7500,qd:"1 OLT/250HP",pd:"Cotización"}]},
-    {id:"dis",label:"Red Distribución Rural",icon:"🔌",pct:0.35,color:T.green,q_driver:"cobertura_crc",p_driver:"cotizacion",Q:40000,Q_unit:"homepass",P:70,
-     sub:[{label:"Splitter + caja NAP",q:2500,p:480,qd:"1/16 HP",pd:"Cotización"},{label:"Cable drop rural",q:40000,p:32,qd:"Por homepass",pd:"Precio/metro"},{label:"Poste nuevo rural",q:8000,p:95,qd:"Sin postería",pd:"Cotización madera/concreto"}]},
-    {id:"fon",label:"Fondos USO & Trámites",icon:"⚖️",pct:0.25,color:T.red,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:40000,Q_unit:"homepass",P:50,
-     sub:[{label:"Cofinanciación USO",q:40000,p:30,qd:"Aporte MINTIC",pd:"Resolución USO"},{label:"Trámites municipales",q:40000,p:12,qd:"Por municipio",pd:"Arancel promedio"},{label:"Consulta previa comunidades",q:40000,p:8,qd:"Zonas étnicas",pd:"Costo proceso"}]},
-  ]},
-  "144.01":{componentes:[
-    {id:"nf",label:"Network Functions 5GC",icon:"☁️",pct:0.58,color:T.violet,q_driver:"migraciones",p_driver:"cotizacion",Q:21,Q_unit:"NFs",P:313333,
-     sub:[{label:"AMF/SMF/UPF CNF",q:21,p:180000,qd:"SA core migration",pd:"Cotización Ericsson"},{label:"PCF/AUSF/UDM",q:21,p:90000,qd:"Policy & auth",pd:"Cotización Ericsson"},{label:"NEF & APIs exposición",q:21,p:43333,qd:"Por NF",pd:"Cotización"}]},
-    {id:"inf",label:"Infraestructura Cloud-Native",icon:"🖥️",pct:0.28,color:T.blue,q_driver:"migraciones",p_driver:"cotizacion",Q:21,Q_unit:"NFs",P:151429,
-     sub:[{label:"Kubernetes clusters",q:21,p:86000,qd:"Por NF",pd:"Cotización HPE"},{label:"Storage NVMe distribuido",q:21,p:42000,qd:"Por NF",pd:"Cotización"},{label:"Red de gestión",q:21,p:23429,qd:"Por NF",pd:"Cotización"}]},
-    {id:"int",label:"Integración y Pruebas",icon:"🔧",pct:0.14,color:T.green,q_driver:"migraciones",p_driver:"historico",Q:21,Q_unit:"NFs",P:75714,
-     sub:[{label:"Integración RAN-Core",q:21,p:42000,qd:"End-to-end 5G SA",pd:"Marco Ericsson"},{label:"Pruebas E2E y KPIs",q:21,p:33714,qd:"Validación 5G",pd:"Tarifa consultor"}]},
-  ]},
-  "144.02":{componentes:[
-    {id:"sl",label:"Provisión de Slices",icon:"🔀",pct:0.52,color:T.violet,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:24,Q_unit:"slices",P:134833,
-     sub:[{label:"Configuración slice 5G SA",q:24,p:80000,qd:"Por slice B2B",pd:"Cotización vendor"},{label:"QoS & SLA garantizado",q:24,p:35000,qd:"Por slice",pd:"Cotización"},{label:"Portal self-service",q:24,p:19833,qd:"Acceso cliente",pd:"Cotización UI"}]},
-    {id:"orch",label:"Orquestación NSO",icon:"⚙️",pct:0.3,color:T.blue,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:24,Q_unit:"slices",P:77833,
-     sub:[{label:"NSO (Cisco / Ericsson)",q:24,p:50000,qd:"Licencia por slice",pd:"Cotización"},{label:"MANO integración OSS",q:24,p:27833,qd:"Por slice",pd:"Rate card integración"}]},
-    {id:"int",label:"Integración Cliente",icon:"🔗",pct:0.18,color:T.green,q_driver:"pipeline_b2b",p_driver:"historico",Q:24,Q_unit:"slices",P:46750,
-     sub:[{label:"API cliente y testing",q:24,p:28000,qd:"Por slice",pd:"Rate card B2B"},{label:"Soporte gestión post-venta",q:24,p:18750,qd:"Por slice/año",pd:"Tarifa servicio"}]},
-  ]},
-  "133.01":{componentes:[
-    {id:"ret",label:"Retiro Físico Cobre",icon:"♻️",pct:0.45,color:"#D97706",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:152000,Q_unit:"puertos",P:22.7,
-     sub:[{label:"Desmontaje DSLAM",q:1900,p:1200,qd:"Equipos EoL",pd:"AMX benchmark"},{label:"Retiro cable cobre",q:152000,p:8,qd:"Metros recuperados",pd:"Contrato obra"},{label:"Disposición residuos",q:152000,p:1.7,qd:"Normativa ambiental",pd:"Tarifa gestor"}]},
-    {id:"mig",label:"Migración Clientes ADSL→FTTX",icon:"🔄",pct:0.38,color:T.blue,q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:152000,Q_unit:"puertos",P:19.2,
-     sub:[{label:"Campaña migración masiva",q:152000,p:8,qd:"Por cliente",pd:"Costo campaña"},{label:"Instalación ONT FTTX",q:91200,p:22,qd:"60% migra a fibra",pd:"Contrato instalación"}]},
-    {id:"adm",label:"Gestión y Baja Lógica",icon:"📋",pct:0.17,color:T.violet,q_driver:"obsolescencia",p_driver:"historico",Q:152000,Q_unit:"puertos",P:8.6,
-     sub:[{label:"Baja sistema OSS/BSS",q:152000,p:4.5,qd:"Por puerto",pd:"Costo operativo"},{label:"Auditoría inventario",q:152000,p:4.1,qd:"Por puerto",pd:"Tarifa auditor"}]},
-  ]},
-  "133.02":{componentes:[
-    {id:"fttx",label:"Conversión HFC→FTTX",icon:"🔌",pct:0.55,color:T.blue,q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:336,Q_unit:"nodos",P:15278,
-     sub:[{label:"OLT de reemplazo",q:84,p:28000,qd:"1 OLT / 4 nodos HFC",pd:"AMX benchmark"},{label:"Fibra distribución nueva",q:336,p:6800,qd:"Tendido por nodo",pd:"Precio/metro"},{label:"Splitters y cajas NAP",q:336,p:2800,qd:"Por nodo",pd:"Cotización"}]},
-    {id:"ret",label:"Retiro Planta HFC",icon:"♻️",pct:0.28,color:"#D97706",q_driver:"obsolescencia",p_driver:"historico",Q:336,Q_unit:"nodos",P:7778,
-     sub:[{label:"Desmontaje amplificadores",q:336,p:4500,qd:"Nodos retirados",pd:"Contrato desmontaje"},{label:"Retiro cable coaxial",q:336,p:2200,qd:"Por nodo",pd:"Tarifa brigada"},{label:"Disposición equipos",q:336,p:1078,qd:"Norma ambiental",pd:"Gestor certificado"}]},
-    {id:"mig",label:"Migración Clientes HFC",icon:"🔄",pct:0.17,color:T.green,q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:336,Q_unit:"nodos",P:4722,
-     sub:[{label:"Campaña migración",q:336,p:2200,qd:"Por nodo (~120 clientes)",pd:"Costo campaña"},{label:"Instalación ONT clientes",q:336,p:2522,qd:"Clientes migrados",pd:"Contrato instalación"}]},
-  ]},
-  "105.01":{componentes:[
-    {id:"pow",label:"Infraestructura Eléctrica",icon:"⚡",pct:0.4,color:"#D97706",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:160,Q_unit:"kW",P:22400,
-     sub:[{label:"UPS modular nueva",q:160,p:10000,qd:"Por kW IT",pd:"Cotización Vertiv"},{label:"PDU e instalación",q:160,p:7000,qd:"Por kW",pd:"Cotización eléctrico"},{label:"Transformadores",q:160,p:5400,qd:"Por kW",pd:"Cotización ISA"}]},
-    {id:"cool",label:"Sistema Enfriamiento",icon:"❄️",pct:0.3,color:T.blue,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:160,Q_unit:"kW",P:16800,
-     sub:[{label:"CRAC / in-row cooling",q:160,p:10500,qd:"Por kW IT",pd:"Cotización Stulz"},{label:"Free-cooling econom.",q:160,p:6300,qd:"PUE < 1.4",pd:"Cotización"}]},
-    {id:"it",label:"Infraestructura IT",icon:"🖥️",pct:0.3,color:T.violet,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:160,Q_unit:"kW",P:16800,
-     sub:[{label:"Racks y cableado",q:160,p:8000,qd:"Por kW",pd:"Cotización Panduit"},{label:"Red out-of-band",q:160,p:5200,qd:"Por kW",pd:"Cotización"},{label:"Monitoreo DCIM",q:160,p:3600,qd:"Por kW",pd:"Licencia DCIM"}]},
-  ]},
-  "105.02":{componentes:[
-    {id:"pow",label:"Infraestructura Eléctrica",icon:"⚡",pct:0.4,color:"#D97706",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:101,Q_unit:"kW",P:27600,
-     sub:[{label:"UPS modular",q:101,p:12000,qd:"Por kW IT",pd:"Cotización Vertiv"},{label:"PDU y distribución",q:101,p:9600,qd:"Por kW",pd:"Cotización eléctrico"},{label:"Acometida eléctrica",q:101,p:6000,qd:"Ampliación",pd:"Cotización EPM/EMCALI"}]},
-    {id:"cool",label:"Sistema Enfriamiento",icon:"❄️",pct:0.35,color:T.blue,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:101,Q_unit:"kW",P:24150,
-     sub:[{label:"CRAC unidades",q:101,p:14000,qd:"Por kW",pd:"Cotización Stulz"},{label:"Circuito agua helada",q:101,p:10150,qd:"Por kW",pd:"Cotización"}]},
-    {id:"it",label:"IT & Obras Civiles",icon:"🏗️",pct:0.25,color:T.violet,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:101,Q_unit:"kW",P:17250,
-     sub:[{label:"Racks, cableado, patch",q:101,p:8000,qd:"Por kW",pd:"Cotización Panduit"},{label:"Obras sala técnica",q:101,p:9250,qd:"Remodelación",pd:"Cotización constructora"}]},
-  ]},
-  "112.01":{componentes:[
-    {id:"lic",label:"Licencias Cloud",icon:"☁️",pct:0.52,color:T.violet,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:918,Q_unit:"clientes",P:4251,
-     sub:[{label:"IaaS (compute+storage)",q:918,p:2400,qd:"Win pipeline",pd:"Cotización cliente"},{label:"SaaS paquetes",q:918,p:1100,qd:"Por cliente",pd:"Catálogo cloud"},{label:"Seguridad cloud",q:918,p:751,qd:"Por cliente",pd:"Bundle security"}]},
-    {id:"int",label:"Integración & Onboarding",icon:"🔗",pct:0.3,color:T.blue,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:918,Q_unit:"clientes",P:2453,
-     sub:[{label:"Professional services",q:918,p:1600,qd:"Por cliente",pd:"Rate card PS"},{label:"Conectividad SD-WAN",q:918,p:853,qd:"Por cliente",pd:"Cotización"}]},
-    {id:"sop",label:"Soporte & Gestión",icon:"📋",pct:0.18,color:T.green,q_driver:"pipeline_b2b",p_driver:"historico",Q:918,Q_unit:"clientes",P:1471,
-     sub:[{label:"Gestor cuenta B2B",q:918,p:800,qd:"Por cliente",pd:"Costo operativo"},{label:"NOC cloud dedicado",q:918,p:671,qd:"SLA 99.9%",pd:"Tarifa NOC"}]},
-  ]},
-  "112.02":{componentes:[
-    {id:"con",label:"Conectividad IoT",icon:"📡",pct:0.45,color:T.blue,q_driver:"pipeline_b2b",p_driver:"benchmark_amx",Q:23040,Q_unit:"dispositivos",P:135,
-     sub:[{label:"SIM IoT LPWAN/LTE-M",q:23040,p:48,qd:"Por dispositivo",pd:"Tarifa MVNO"},{label:"Gateway IoT industrial",q:2304,p:620,qd:"1 GW/10 dispos.",pd:"AMX benchmark"},{label:"Plan datos M2M",q:23040,p:40,qd:"Anual",pd:"Tarifa IoT"}]},
-    {id:"plat",label:"Plataforma IoT",icon:"☁️",pct:0.35,color:T.violet,q_driver:"pipeline_b2b",p_driver:"benchmark_amx",Q:23040,Q_unit:"dispositivos",P:105,
-     sub:[{label:"Licencia plataforma AWS IoT",q:23040,p:62,qd:"Por dispositivo",pd:"AMX benchmark"},{label:"Analytics tiempo real",q:23040,p:28,qd:"Por dispositivo",pd:"Cotización"},{label:"Dashboard cliente",q:23040,p:15,qd:"Por dispositivo",pd:"Tarifa UI"}]},
-    {id:"int",label:"Integración & Activación",icon:"🔧",pct:0.2,color:T.green,q_driver:"pipeline_b2b",p_driver:"historico",Q:23040,Q_unit:"dispositivos",P:60,
-     sub:[{label:"Provisión y activación",q:23040,p:35,qd:"Por dispositivo",pd:"Costo operativo"},{label:"Integración sistemas cliente",q:23040,p:25,qd:"Por dispositivo",pd:"Rate card TI"}]},
-  ]},
-  "136.01":{componentes:[
-    {id:"iru",label:"IRU Fibra Oscura",icon:"🌐",pct:0.6,color:T.blue,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:1344,Q_unit:"km",P:3513,
-     sub:[{label:"Derecho de uso fibra (20 años)",q:1344,p:2400,qd:"Nuevas rutas",pd:"Cotización ETB/IFX"},{label:"Mantenimiento IRU anual",q:1344,p:1113,qd:"Por km/año",pd:"Contrato IRU"}]},
-    {id:"amp",label:"Amplificación DWDM",icon:"📡",pct:0.28,color:T.violet,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:1344,Q_unit:"km",P:1639,
-     sub:[{label:"Transponders 100G/400G",q:1344,p:980,qd:"Por km de ruta",pd:"Cotización Ciena"},{label:"Amplificadores EDFA",q:1344,p:659,qd:"Cada 80 km",pd:"Cotización"}]},
-    {id:"ops",label:"Operación y Monitoreo",icon:"🔧",pct:0.12,color:T.green,q_driver:"mantenimiento",p_driver:"historico",Q:1344,Q_unit:"km",P:703,
-     sub:[{label:"OTDR y pruebas",q:1344,p:380,qd:"Certificación por km",pd:"Tarifa técnico"},{label:"Gestión NMS",q:1344,p:323,qd:"Por km gestionado",pd:"Licencia NMS"}]},
-  ]},
-  "136.02":{componentes:[
-    {id:"hw",label:"Hardware Regeneradores",icon:"📡",pct:0.55,color:T.blue,q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:48,Q_unit:"nodos",P:58667,
-     sub:[{label:"Transponders coherentes",q:48,p:38000,qd:"EoL >5 años",pd:"AMX benchmark"},{label:"Chasis y tarjetas línea",q:48,p:20667,qd:"Por nodo",pd:"Cotización Ciena"}]},
-    {id:"amp",label:"Amplificadores EDFA",icon:"🔌",pct:0.3,color:T.violet,q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:48,Q_unit:"nodos",P:32000,
-     sub:[{label:"EDFA Raman upgrade",q:48,p:22000,qd:"Nodo EoL",pd:"AMX benchmark"},{label:"OXC y patch panel óptico",q:48,p:10000,qd:"Por nodo",pd:"Cotización"}]},
-    {id:"com",label:"Comisionamiento",icon:"🔧",pct:0.15,color:T.green,q_driver:"obsolescencia",p_driver:"historico",Q:48,Q_unit:"nodos",P:16000,
-     sub:[{label:"Ingeniería on-site",q:48,p:9500,qd:"Por nodo",pd:"Rate card Ciena"},{label:"Pruebas OSNR/BER",q:48,p:6500,qd:"Por nodo",pd:"Tarifa técnico"}]},
-  ]},
-  "106.01":{componentes:[
-    {id:"lic",label:"Licencias SAP S/4HANA",icon:"💾",pct:0.45,color:T.violet,q_driver:"migraciones",p_driver:"cotizacion",Q:40,Q_unit:"módulos",P:96750,
-     sub:[{label:"SAP S/4HANA Enterprise",q:40,p:68000,qd:"Por módulo",pd:"Contrato SAP"},{label:"SAP BTP licencias",q:40,p:28750,qd:"Integración cloud",pd:"Cotización SAP"}]},
-    {id:"imp",label:"Implementación",icon:"🛠️",pct:0.38,color:T.blue,q_driver:"migraciones",p_driver:"cotizacion",Q:40,Q_unit:"módulos",P:81700,
-     sub:[{label:"Consultoría SAP (días)",q:40,p:52000,qd:"Por módulo",pd:"Rate card Deloitte"},{label:"Fábrica ABAP/Fiori",q:40,p:22000,qd:"Por módulo",pd:"Rate card fábrica"},{label:"Data migration",q:40,p:7700,qd:"Por módulo",pd:"Tarifa ETL"}]},
-    {id:"hyp",label:"Infraestructura HANA",icon:"🖥️",pct:0.17,color:T.green,q_driver:"migraciones",p_driver:"historico",Q:40,Q_unit:"módulos",P:36550,
-     sub:[{label:"Servidores HANA certificados",q:40,p:24000,qd:"Por módulo",pd:"Cotización HPE"},{label:"Storage NVMe",q:40,p:12550,qd:"Por módulo",pd:"Cotización"}]},
-  ]},
-  "106.02":{componentes:[
-    {id:"lic",label:"Licencias RPA",icon:"🤖",pct:0.5,color:T.violet,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:53,Q_unit:"bots",P:31900,
-     sub:[{label:"UiPath orchestrator",q:53,p:18000,qd:"Por bot prod.",pd:"Cotización UiPath"},{label:"UiPath Studio licencias",q:53,p:13900,qd:"Por desarrollador",pd:"Cotización UiPath"}]},
-    {id:"dev",label:"Desarrollo Bots",icon:"⚙️",pct:0.35,color:T.blue,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:53,Q_unit:"bots",P:22330,
-     sub:[{label:"Fábrica RPA (sprints)",q:53,p:14000,qd:"Por bot",pd:"Rate card fábrica"},{label:"Pruebas UAT",q:53,p:8330,qd:"Por bot",pd:"Tarifa QA"}]},
-    {id:"ops",label:"Operación & Soporte",icon:"🔧",pct:0.15,color:T.green,q_driver:"pipeline_b2b",p_driver:"historico",Q:53,Q_unit:"bots",P:9570,
-     sub:[{label:"Soporte nivel 2 bots",q:53,p:5500,qd:"Por bot/año",pd:"Tarifa soporte"},{label:"Monitoreo y alertas",q:53,p:4070,qd:"Por bot",pd:"Histórico"}]},
-  ]},
-  "137.01":{componentes:[
-    {id:"dt",label:"Drive Test & Mediciones",icon:"📊",pct:0.5,color:T.blue,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:2400,Q_unit:"sitios",P:1297,
-     sub:[{label:"Drive test vehicular",q:2400,p:680,qd:"Pendiente CRC",pd:"Tarifa brigada"},{label:"Walk test indoor",q:600,p:1800,qd:"25% indoor",pd:"Tarifa especial"},{label:"Equipo medición (alquiler)",q:2400,p:250,qd:"Por sitio",pd:"Tarifa alquiler"}]},
-    {id:"son",label:"SON & Optimización",icon:"⚙️",pct:0.32,color:T.violet,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:2400,Q_unit:"sitios",P:830,
-     sub:[{label:"Licencia SON automático",q:2400,p:480,qd:"Por sitio",pd:"Benchmark CRC"},{label:"Ajuste parámetros",q:2400,p:350,qd:"Post drive-test",pd:"Tarifa ingeniero"}]},
-    {id:"rep",label:"Reporte CRC",icon:"📋",pct:0.18,color:T.red,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:2400,Q_unit:"sitios",P:467,
-     sub:[{label:"Informe técnico SIG",q:2400,p:280,qd:"Por sitio",pd:"Tarifa geógrafo"},{label:"Radicación CRC online",q:2400,p:187,qd:"Por sitio",pd:"Costo operativo"}]},
-  ]},
-  "137.02":{componentes:[
-    {id:"ant",label:"Antenas MIMO 8T8R",icon:"📡",pct:0.58,color:T.blue,q_driver:"congestion",p_driver:"benchmark_amx",Q:304,Q_unit:"sitios",P:9769,
-     sub:[{label:"Antena MIMO 8T8R 4G",q:304,p:5800,qd:"PRB >80%",pd:"AMX benchmark"},{label:"Cables y conectores RF",q:304,p:1800,qd:"Por sitio",pd:"Cotización"},{label:"Instalación y ajuste",q:304,p:2169,qd:"Por sitio",pd:"Tarifa brigada"}]},
-    {id:"sw",label:"Licencias Features",icon:"💾",pct:0.28,color:T.violet,q_driver:"congestion",p_driver:"benchmark_amx",Q:304,Q_unit:"sitios",P:4716,
-     sub:[{label:"Feature MIMO avanzado",q:304,p:2800,qd:"Por sitio",pd:"AMX benchmark"},{label:"Beam Forming / 3D MIMO",q:304,p:1916,qd:"Por sitio",pd:"Cotización Nokia"}]},
-    {id:"opt",label:"Optimización Post-install",icon:"⚙️",pct:0.14,color:T.green,q_driver:"congestion",p_driver:"historico",Q:304,Q_unit:"sitios",P:2357,
-     sub:[{label:"Drive test post-upgrade",q:304,p:1200,qd:"Por sitio",pd:"Tarifa brigada"},{label:"Ajuste parámetros SON",q:304,p:1157,qd:"Por sitio",pd:"Tarifa ingeniero"}]},
-  ]},
-  "113.01":{componentes:[
-    {id:"plat",label:"Plataforma Omnichannel",icon:"🔗",pct:0.55,color:T.violet,q_driver:"migraciones",p_driver:"cotizacion",Q:22,Q_unit:"touchpoints",P:157727,
-     sub:[{label:"Licencia Salesforce Omni",q:22,p:95000,qd:"Por canal",pd:"Cotización SF"},{label:"Integración canales digitales",q:22,p:42000,qd:"Web/App/Chat",pd:"Rate card SI"},{label:"Conector CRM existente",q:22,p:20727,qd:"Por touchpoint",pd:"Cotización"}]},
-    {id:"impl",label:"Implementación",icon:"🛠️",pct:0.3,color:T.blue,q_driver:"migraciones",p_driver:"cotizacion",Q:22,Q_unit:"touchpoints",P:86045,
-     sub:[{label:"Sprints desarrollo",q:22,p:56000,qd:"Por canal",pd:"Rate card fábrica"},{label:"Testing y UAT",q:22,p:30045,qd:"Por touchpoint",pd:"Tarifa QA"}]},
-    {id:"cap",label:"Capacitación & Change Mgmt",icon:"📚",pct:0.15,color:T.green,q_driver:"migraciones",p_driver:"historico",Q:22,Q_unit:"touchpoints",P:43045,
-     sub:[{label:"Training agentes",q:22,p:25000,qd:"Por canal",pd:"Tarifa training"},{label:"Change management",q:22,p:18045,qd:"Por touchpoint",pd:"Tarifa consultor"}]},
-  ]},
-  "113.02":{componentes:[
-    {id:"lic",label:"Licencia VOC/NPS",icon:"📊",pct:0.52,color:T.violet,q_driver:"activaciones",p_driver:"mercado",Q:480000,Q_unit:"encuestas",P:5.09,
-     sub:[{label:"Medallia / Qualtrics SaaS",q:480000,p:3.2,qd:"Por encuesta",pd:"Precio mercado"},{label:"Módulo análisis sentimientos",q:480000,p:1.89,qd:"Por respuesta",pd:"Cotización NLP"}]},
-    {id:"int",label:"Integración CRM/BSS",icon:"🔗",pct:0.3,color:T.blue,q_driver:"activaciones",p_driver:"cotizacion",Q:480000,Q_unit:"encuestas",P:2.94,
-     sub:[{label:"Conector CRM Salesforce",q:480000,p:1.8,qd:"Por encuesta",pd:"Rate card SI"},{label:"ETL resultados a DW",q:480000,p:1.14,qd:"Por respuesta",pd:"Rate card datos"}]},
-    {id:"ops",label:"Operación Encuestas",icon:"📧",pct:0.18,color:T.green,q_driver:"activaciones",p_driver:"mercado",Q:480000,Q_unit:"encuestas",P:1.76,
-     sub:[{label:"Envío SMS/Email",q:480000,p:0.92,qd:"Por encuesta",pd:"Tarifa canal"},{label:"Análisis y reporte",q:480000,p:0.84,qd:"Por 1000 resp.",pd:"Tarifa analista"}]},
-  ]},
-  "108.01":{componentes:[
-    {id:"lic",label:"Licencia WMS",icon:"💾",pct:0.5,color:T.violet,q_driver:"mantenimiento",p_driver:"cotizacion",Q:48000,Q_unit:"referencias",P:64.6,
-     sub:[{label:"WMS SAP EWM",q:48000,p:42,qd:"Por referencia",pd:"Contrato SAP"},{label:"Módulo inventario RF",q:48000,p:22.6,qd:"Por referencia",pd:"Cotización"}]},
-    {id:"hw",label:"Hardware Almacén",icon:"📦",pct:0.3,color:T.blue,q_driver:"mantenimiento",p_driver:"historico",Q:48000,Q_unit:"referencias",P:38.75,
-     sub:[{label:"Terminales RF/Zebra",q:240,p:4800,qd:"1 terminal/200 ref",pd:"Cotización Zebra"},{label:"Impresoras etiquetas",q:96,p:3200,qd:"Por zona",pd:"Cotización Zebra"},{label:"Escáneres fijos",q:48,p:2400,qd:"Por dock",pd:"Cotización Honeywell"}]},
-    {id:"int",label:"Integración ERP",icon:"🔗",pct:0.2,color:T.green,q_driver:"mantenimiento",p_driver:"cotizacion",Q:48000,Q_unit:"referencias",P:25.83,
-     sub:[{label:"Integración SAP MM/SD",q:48000,p:16,qd:"Por referencia",pd:"Rate card SAP"},{label:"Soporte y mantenimiento",q:48000,p:9.83,qd:"Por referencia",pd:"Tarifa soporte"}]},
-  ]},
-  "108.02":{componentes:[
-    {id:"lic",label:"Licencia TMS",icon:"💾",pct:0.48,color:T.violet,q_driver:"mantenimiento",p_driver:"cotizacion",Q:1800,Q_unit:"rutas",P:1226,
-     sub:[{label:"TMS SAP TM / Oracle OTM",q:1800,p:800,qd:"Por ruta/día",pd:"Cotización SAP"},{label:"Módulo visibilidad GPS",q:1800,p:426,qd:"Por ruta",pd:"Cotización"}]},
-    {id:"hw",label:"Hardware Flota",icon:"🚚",pct:0.32,color:T.blue,q_driver:"mantenimiento",p_driver:"historico",Q:1800,Q_unit:"rutas",P:818,
-     sub:[{label:"GPS y telemetría vehículo",q:720,p:1200,qd:"Renovación 40%",pd:"Cotización Geotab"},{label:"Tabletas conductores",q:1800,p:320,qd:"Por ruta",pd:"Cotización Android"}]},
-    {id:"ops",label:"Operación TMS",icon:"⚙️",pct:0.2,color:T.green,q_driver:"mantenimiento",p_driver:"historico",Q:1800,Q_unit:"rutas",P:511,
-     sub:[{label:"Optimización rutas (IA)",q:1800,p:300,qd:"Por ruta",pd:"Tarifa plataforma"},{label:"Soporte helpdesk logístico",q:1800,p:211,qd:"Por ruta",pd:"Costo operativo"}]},
-  ]},
-  "107.01":{componentes:[
-    {id:"lic",label:"Licencia Workday HCM",icon:"💾",pct:0.55,color:T.violet,q_driver:"migraciones",p_driver:"cotizacion",Q:15040,Q_unit:"empleados",P:194,
-     sub:[{label:"Workday Core HR",q:15040,p:120,qd:"Por empleado",pd:"Contrato Workday"},{label:"Workday Payroll",q:15040,p:48,qd:"Por empleado",pd:"Cotización Workday"},{label:"Recruiting & Onboarding",q:15040,p:26,qd:"Por empleado",pd:"Módulo adicional"}]},
-    {id:"imp",label:"Implementación",icon:"🛠️",pct:0.3,color:T.blue,q_driver:"migraciones",p_driver:"cotizacion",Q:15040,Q_unit:"empleados",P:106,
-     sub:[{label:"Consultoría implementación",q:15040,p:68,qd:"Por empleado",pd:"Rate card Deloitte"},{label:"Integración nómina/ERP",q:15040,p:26,qd:"Por empleado",pd:"Rate card SI"},{label:"UAT y capacitación",q:15040,p:12,qd:"Por empleado",pd:"Tarifa training"}]},
-    {id:"mig",label:"Migración Datos RRHH",icon:"🔄",pct:0.15,color:T.green,q_driver:"migraciones",p_driver:"historico",Q:15040,Q_unit:"empleados",P:53,
-     sub:[{label:"ETL datos históricos",q:15040,p:32,qd:"Por empleado",pd:"Rate card datos"},{label:"Validación y limpieza",q:15040,p:21,qd:"Por empleado",pd:"Tarifa QA"}]},
-  ]},
-  "107.02":{componentes:[
-    {id:"obr",label:"Obras de Adecuación",icon:"🏗️",pct:0.55,color:"#D97706",q_driver:"mantenimiento",p_driver:"mercado",Q:42000,Q_unit:"m²",P:53.7,
-     sub:[{label:"Demolición y obra gris",q:42000,p:22,qd:"Por m²",pd:"Precio mercado"},{label:"Acabados y mobiliario",q:42000,p:24,qd:"Por m²",pd:"Cotización diseño"},{label:"Instalaciones eléctricas",q:42000,p:7.7,qd:"Por m²",pd:"Tarifa electricista"}]},
-    {id:"tec",label:"Infraestructura Tecnológica",icon:"💻",pct:0.3,color:T.blue,q_driver:"mantenimiento",p_driver:"mercado",Q:42000,Q_unit:"m²",P:29.3,
-     sub:[{label:"Red LAN/WiFi 6",q:42000,p:14,qd:"Por m²",pd:"Cotización Cisco"},{label:"AV y videoconferencia",q:42000,p:11,qd:"Por m²",pd:"Cotización AV"},{label:"Control acceso y CCTV",q:42000,p:4.3,qd:"Por m²",pd:"Cotización seguridad"}]},
-    {id:"ges",label:"Gestión de Proyecto",icon:"📋",pct:0.15,color:T.green,q_driver:"mantenimiento",p_driver:"historico",Q:42000,Q_unit:"m²",P:14.6,
-     sub:[{label:"Gerencia de proyecto",q:42000,p:8.5,qd:"Por m²",pd:"Tarifa gerencia"},{label:"Interventoría técnica",q:42000,p:6.1,qd:"Por m²",pd:"Tarifa interventor"}]},
-  ]},
-  "138.01":{componentes:[
-    {id:"hw",label:"Hardware Small Cell",icon:"📡",pct:0.55,color:T.blue,q_driver:"congestion",p_driver:"cotizacion",Q:680,Q_unit:"nodos",P:4730,
-     sub:[{label:"Small cell 5G (Samsung/Ericsson)",q:680,p:3200,qd:"Zona congestión",pd:"Cotización proveedor"},{label:"Soporte y sujeción urbana",q:680,p:980,qd:"Por nodo",pd:"Contrato civil"},{label:"Energía (tap eléctrico)",q:680,p:550,qd:"Por nodo",pd:"Cotización ENEL"}]},
-    {id:"con",label:"Conectividad Backhaul",icon:"🌐",pct:0.3,color:T.violet,q_driver:"congestion",p_driver:"cotizacion",Q:680,Q_unit:"nodos",P:2580,
-     sub:[{label:"Fibra oscura hasta nodo",q:680,p:1800,qd:"Por small cell",pd:"Cotización IRU"},{label:"Router CPE backhaul",q:680,p:780,qd:"Por nodo",pd:"Cotización"}]},
-    {id:"adm",label:"Permisos y Trámites",icon:"⚖️",pct:0.15,color:T.red,q_driver:"congestion",p_driver:"historico",Q:680,Q_unit:"nodos",P:1290,
-     sub:[{label:"Permiso municipio/alcaldía",q:680,p:800,qd:"Por small cell",pd:"Arancel municipal"},{label:"Acuerdo con propietario",q:680,p:490,qd:"Cuota mensual x 5 años",pd:"Tarifa mercado"}]},
-  ]},
-  "138.02":{componentes:[
-    {id:"hw",label:"Hardware DAS",icon:"📡",pct:0.58,color:T.blue,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:140,Q_unit:"edificios",P:12139,
-     sub:[{label:"Head-end y BDA",q:140,p:5800,qd:"Por edificio",pd:"Cotización CommScope"},{label:"Antenas de sector indoor",q:140,p:4200,qd:"Por edificio",pd:"Cotización"},{label:"Cableado coaxial/fibra",q:140,p:2139,qd:"Por edificio",pd:"Cotización civil"}]},
-    {id:"ins",label:"Instalación Civil",icon:"🏗️",pct:0.28,color:"#D97706",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:140,Q_unit:"edificios",P:5860,
-     sub:[{label:"Obra civil ductos",q:140,p:3600,qd:"Por edificio",pd:"Cotización constructora"},{label:"Instalación técnica",q:140,p:2260,qd:"Por edificio",pd:"Tarifa brigada"}]},
-    {id:"adm",label:"Permisos & Gestión",icon:"📋",pct:0.14,color:T.green,q_driver:"pipeline_b2b",p_driver:"historico",Q:140,Q_unit:"edificios",P:2929,
-     sub:[{label:"Permiso propiedad horizontal",q:140,p:1800,qd:"Por edificio",pd:"Tarifa gestor"},{label:"Comisionamiento y pruebas",q:140,p:1129,qd:"Por edificio",pd:"Tarifa técnico"}]},
-  ]},
-  "134.06":{componentes:[
-    {id:"esp",label:"Pago Canon Espectro",icon:"📶",pct:0.75,color:T.red,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:4,Q_unit:"bloques",P:1087500,
-     sub:[{label:"Canon anual 700 MHz",q:4,p:680000,qd:"Bloque 2×5 MHz",pd:"Resolución ANE"},{label:"Tasa renovación licencia",q:4,p:407500,qd:"Por bloque",pd:"CRC vigente"}]},
-    {id:"adm",label:"Gestión Regulatoria",icon:"⚖️",pct:0.25,color:T.violet,q_driver:"cobertura_crc",p_driver:"historico",Q:4,Q_unit:"bloques",P:362500,
-     sub:[{label:"Gestoría ANE/MinTIC",q:4,p:220000,qd:"Por bloque",pd:"Tarifa abogado"},{label:"Estudios y peritajes",q:4,p:142500,qd:"Por bloque",pd:"Tarifa consultor"}]},
-  ]},
-  "134.07":{componentes:[
-    {id:"mul",label:"Pago Multas CRC",icon:"⚖️",pct:0.65,color:T.red,q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:12,Q_unit:"eventos",P:167917,
-     sub:[{label:"Multa incumplimiento cobertura",q:8,p:185000,qd:"Resolución CRC",pd:"Tarifa CRC vigente"},{label:"Multa calidad de servicio",q:4,p:130000,qd:"KPI incumplido",pd:"Benchmark CRC"}]},
-    {id:"com",label:"Compensaciones Usuarios",icon:"💳",pct:0.35,color:T.violet,q_driver:"cobertura_crc",p_driver:"historico",Q:12,Q_unit:"eventos",P:90417,
-     sub:[{label:"Créditos a abonados",q:12,p:62000,qd:"Por evento CRC",pd:"Política regulatoria"},{label:"Gestoría y costos legales",q:12,p:28417,qd:"Por evento",pd:"Tarifa abogado"}]},
-  ]},
-  "139.01":{componentes:[
-    {id:"plat",label:"Plataforma Roaming",icon:"🌍",pct:0.52,color:T.blue,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:42,Q_unit:"acuerdos",P:54352,
-     sub:[{label:"Licencia plataforma IR.21",q:42,p:32000,qd:"Por acuerdo",pd:"Cotización vendor"},{label:"Integración HPMN/VPMN",q:42,p:22352,qd:"Por acuerdo",pd:"Rate card TI"}]},
-    {id:"int",label:"Integración & Testing",icon:"🔧",pct:0.3,color:T.violet,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:42,Q_unit:"acuerdos",P:31357,
-     sub:[{label:"Pruebas End-to-End roaming",q:42,p:18000,qd:"Por acuerdo",pd:"Tarifa consultor"},{label:"IOT (Inter-Op Test)",q:42,p:13357,qd:"Por acuerdo",pd:"Cotización laboratorio"}]},
-    {id:"ges",label:"Gestión Acuerdos",icon:"🤝",pct:0.18,color:T.green,q_driver:"pipeline_b2b",p_driver:"historico",Q:42,Q_unit:"acuerdos",P:18814,
-     sub:[{label:"Negociación y contratos",q:42,p:11000,qd:"Por acuerdo",pd:"Costo gestor"},{label:"Clearing y liquidación",q:42,p:7814,qd:"Por acuerdo/año",pd:"Tarifa DCH"}]},
-  ]},
-  "139.02":{componentes:[
-    {id:"cir",label:"Circuitos IP Transit",icon:"🌐",pct:0.55,color:T.blue,q_driver:"crecimiento_trafico",p_driver:"mercado",Q:40,Q_unit:"puertos Gbps",P:37675,
-     sub:[{label:"IP transit 100G NNI",q:40,p:22000,qd:"Por puerto Gbps",pd:"Precio mercado"},{label:"Peering privado IX",q:40,p:15675,qd:"Por puerto",pd:"Tarifa LACNIC"}]},
-    {id:"hw",label:"Hardware Interconexión",icon:"⚙️",pct:0.3,color:T.violet,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:40,Q_unit:"puertos Gbps",P:20550,
-     sub:[{label:"Linecards router borde",q:40,p:14000,qd:"Por puerto",pd:"Cotización Juniper"},{label:"Transpondedores ópticos",q:40,p:6550,qd:"Por puerto",pd:"Cotización"}]},
-    {id:"ops",label:"Operación Interconexión",icon:"🔧",pct:0.15,color:T.green,q_driver:"mantenimiento",p_driver:"historico",Q:40,Q_unit:"puertos Gbps",P:10275,
-     sub:[{label:"NOC y gestión NNIs",q:40,p:6000,qd:"Por puerto",pd:"Tarifa NOC"},{label:"Acuerdos SLA & MSA",q:40,p:4275,qd:"Por puerto",pd:"Costo legal"}]},
-  ]},
-  "114.01":{componentes:[
-    {id:"lic",label:"Licencias CCaaS",icon:"🎧",pct:0.55,color:T.violet,q_driver:"migraciones",p_driver:"cotizacion",Q:2496,Q_unit:"agentes",P:928,
-     sub:[{label:"Amazon Connect / Genesys Cloud",q:2496,p:580,qd:"Por agente/año",pd:"Cotización AWS"},{label:"WFM & calidad",q:2496,p:220,qd:"Por agente",pd:"Cotización Verint"},{label:"Grabación y analytics",q:2496,p:128,qd:"Por agente",pd:"Cotización"}]},
-    {id:"int",label:"Integración CRM/BSS",icon:"🔗",pct:0.3,color:T.blue,q_driver:"migraciones",p_driver:"cotizacion",Q:2496,Q_unit:"agentes",P:506,
-     sub:[{label:"CTI con CRM Salesforce",q:2496,p:300,qd:"Por agente",pd:"Rate card SI"},{label:"IVR inteligente",q:2496,p:206,qd:"Por agente",pd:"Cotización"}]},
-    {id:"mig",label:"Migración & Training",icon:"🔄",pct:0.15,color:T.green,q_driver:"migraciones",p_driver:"historico",Q:2496,Q_unit:"agentes",P:253,
-     sub:[{label:"Training agentes cloud",q:2496,p:160,qd:"Por agente",pd:"Tarifa e-learning"},{label:"Migración datos históricos",q:2496,p:93,qd:"Por agente",pd:"Rate card datos"}]},
-  ]},
-  "114.02":{componentes:[
-    {id:"lic",label:"Plataforma Conversacional",icon:"🤖",pct:0.5,color:T.violet,q_driver:"activaciones",p_driver:"cotizacion",Q:2400000,Q_unit:"interacciones",P:0.54,
-     sub:[{label:"Google CCAI / IBM Watson",q:2400000,p:0.32,qd:"Por interacción",pd:"Cotización Google"},{label:"NLU & intent training",q:2400000,p:0.22,qd:"Por interacción",pd:"Cotización"}]},
-    {id:"int",label:"Integración IVR/BSS",icon:"🔗",pct:0.32,color:T.blue,q_driver:"activaciones",p_driver:"cotizacion",Q:2400000,Q_unit:"interacciones",P:0.35,
-     sub:[{label:"Conector BSS/CRM",q:2400000,p:0.2,qd:"Por interacción",pd:"Rate card SI"},{label:"Orquestador de flujos",q:2400000,p:0.15,qd:"Por interacción",pd:"Cotización"}]},
-    {id:"ops",label:"Operación & Mejora Continua",icon:"📊",pct:0.18,color:T.green,q_driver:"activaciones",p_driver:"historico",Q:2400000,Q_unit:"interacciones",P:0.19,
-     sub:[{label:"Análisis de transcripts",q:2400000,p:0.11,qd:"Por interacción",pd:"Tarifa analista"},{label:"Reentrenamiento modelos",q:2400000,p:0.08,qd:"Por interacción",pd:"Rate card ML"}]},
-  ]},
-  "140.01":{componentes:[
-    {id:"plat",label:"Plataforma AIOps",icon:"🤖",pct:0.55,color:T.violet,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:36000,Q_unit:"alarmas/día",P:0.16,
-     sub:[{label:"Licencia IBM Watson AIOps",q:36000,p:0.1,qd:"Por alarma",pd:"Cotización IBM"},{label:"Correlación y supresión IA",q:36000,p:0.06,qd:"Por alarma",pd:"Cotización"}]},
-    {id:"int",label:"Integración NOC",icon:"🔗",pct:0.3,color:T.blue,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:36000,Q_unit:"alarmas/día",P:0.087,
-     sub:[{label:"Conectores NMS/EMS",q:36000,p:0.05,qd:"Por alarma",pd:"Rate card TI"},{label:"Dashboard tiempo real",q:36000,p:0.037,qd:"Por alarma",pd:"Cotización"}]},
-    {id:"ops",label:"Operación NOC",icon:"⚙️",pct:0.15,color:T.green,q_driver:"mantenimiento",p_driver:"historico",Q:36000,Q_unit:"alarmas/día",P:0.043,
-     sub:[{label:"Ingenieros NOC (turnos)",q:36000,p:0.026,qd:"Por alarma",pd:"Costo hora NOC"},{label:"Runbooks automatizados",q:36000,p:0.017,qd:"Por alarma",pd:"Rate card TI"}]},
-  ]},
-  "140.02":{componentes:[
-    {id:"siem",label:"SIEM & Analítica",icon:"🔍",pct:0.5,color:T.red,q_driver:"mantenimiento",p_driver:"mercado",Q:2200000,Q_unit:"eventos/día",P:0.59,
-     sub:[{label:"Splunk SIEM (licencia ingest)",q:2200000,p:0.38,qd:"Por evento",pd:"Precio mercado"},{label:"UEBA análisis comportamiento",q:2200000,p:0.21,qd:"Por evento",pd:"Cotización Exabeam"}]},
-    {id:"res",label:"Respuesta & Threat Intel",icon:"🚨",pct:0.32,color:"#D97706",q_driver:"mantenimiento",p_driver:"mercado",Q:2200000,Q_unit:"eventos/día",P:0.378,
-     sub:[{label:"SOAR (Palo Alto XSOAR)",q:2200000,p:0.22,qd:"Por evento",pd:"Cotización Palo Alto"},{label:"Threat intelligence feeds",q:2200000,p:0.158,qd:"Por evento",pd:"Tarifa CrowdStrike"}]},
-    {id:"ops",label:"Operación SOC 24×7",icon:"👁️",pct:0.18,color:T.violet,q_driver:"mantenimiento",p_driver:"historico",Q:2200000,Q_unit:"eventos/día",P:0.213,
-     sub:[{label:"Analistas SOC (3 turnos)",q:2200000,p:0.14,qd:"Por evento",pd:"Costo operativo"},{label:"Playbooks e investigación",q:2200000,p:0.073,qd:"Por evento",pd:"Tarifa consultor"}]},
-  ]},
-  "115.01":{componentes:[
-    {id:"plat",label:"Plataforma OTT",icon:"📺",pct:0.52,color:T.violet,q_driver:"activaciones",p_driver:"mercado",Q:240000,Q_unit:"suscriptores",P:8.13,
-     sub:[{label:"Licencia Brightcove / AWS Elemental",q:240000,p:5.2,qd:"Por suscriptor",pd:"Precio mercado"},{label:"CDN streaming",q:240000,p:1.8,qd:"Por suscriptor",pd:"Tarifa CloudFront"},{label:"DRM protección contenido",q:240000,p:1.13,qd:"Por suscriptor",pd:"Cotización Widevine"}]},
-    {id:"con",label:"Contenidos & Derechos",icon:"🎬",pct:0.33,color:T.blue,q_driver:"activaciones",p_driver:"mercado",Q:240000,Q_unit:"suscriptores",P:5.15,
-     sub:[{label:"Licencias contenido premium",q:240000,p:3.5,qd:"Por suscriptor",pd:"Negociación canal"},{label:"Producción original (piloto)",q:240000,p:1.65,qd:"Amortización",pd:"Presupuesto producción"}]},
-    {id:"ops",label:"Operación & Marketing",icon:"📣",pct:0.15,color:T.green,q_driver:"activaciones",p_driver:"mercado",Q:240000,Q_unit:"suscriptores",P:2.35,
-     sub:[{label:"Marketing adquisición",q:240000,p:1.4,qd:"CAC digital",pd:"Benchmark mercado"},{label:"Soporte técnico OTT",q:240000,p:0.95,qd:"Por suscriptor",pd:"Costo operativo"}]},
-  ]},
-  "115.02":{componentes:[
-    {id:"lic",label:"Licencias Contenido",icon:"🎬",pct:0.65,color:T.violet,q_driver:"pipeline_b2b",p_driver:"mercado",Q:220,Q_unit:"títulos",P:5672,
-     sub:[{label:"Derechos distribución Colombia",q:220,p:3800,qd:"Por título/año",pd:"Negociación distribuidor"},{label:"Doblaje y subtitulación",q:220,p:1872,qd:"Por título",pd:"Tarifa estudio"}]},
-    {id:"tec",label:"Ingesta y Publicación",icon:"⚙️",pct:0.22,color:T.blue,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:220,Q_unit:"títulos",P:1920,
-     sub:[{label:"Transcoding multi-bitrate",q:220,p:1100,qd:"Por título",pd:"Cotización Bitmovin"},{label:"Metadata & catalogación",q:220,p:820,qd:"Por título",pd:"Tarifa catalogador"}]},
-    {id:"mkt",label:"Promoción & Curación",icon:"📣",pct:0.13,color:T.green,q_driver:"pipeline_b2b",p_driver:"mercado",Q:220,Q_unit:"títulos",P:1135,
-     sub:[{label:"Banner y push campaigns",q:220,p:700,qd:"Por título",pd:"Costo campaña"},{label:"Curación editorial",q:220,p:435,qd:"Por título",pd:"Tarifa editor"}]},
-  ]},
-  "109.01":{componentes:[
-    {id:"ren",label:"Renovación Flota",icon:"🚗",pct:0.55,color:T.blue,q_driver:"mantenimiento",p_driver:"cotizacion",Q:640,Q_unit:"vehículos",P:2750,
-     sub:[{label:"Leasing vehículos nuevos",q:320,p:4200,qd:"50% renovación",pd:"Cotización Leasing"},{label:"Seguro todo riesgo",q:640,p:600,qd:"Por vehículo",pd:"Cotización seguro"}]},
-    {id:"man",label:"Mantenimiento Flota",icon:"🔧",pct:0.3,color:T.green,q_driver:"mantenimiento",p_driver:"historico",Q:640,Q_unit:"vehículos",P:1500,
-     sub:[{label:"Mantenimiento preventivo",q:640,p:900,qd:"Por vehículo/año",pd:"Histórico taller"},{label:"Reparaciones correctivas",q:640,p:600,qd:"% flota",pd:"Histórico"}]},
-    {id:"tel",label:"Telemetría y GPS",icon:"📍",pct:0.15,color:T.violet,q_driver:"mantenimiento",p_driver:"cotizacion",Q:640,Q_unit:"vehículos",P:750,
-     sub:[{label:"Dispositivo GPS",q:640,p:450,qd:"Por vehículo",pd:"Cotización Geotab"},{label:"Plataforma fleet mgmt",q:640,p:300,qd:"Por vehículo",pd:"SaaS tarifa"}]},
-  ]},
-  "109.02":{componentes:[
-    {id:"man",label:"Mantenimiento Locativos",icon:"🏢",pct:0.55,color:"#D97706",q_driver:"mantenimiento",p_driver:"mercado",Q:85000,Q_unit:"m²",P:17.47,
-     sub:[{label:"Mant. preventivo edificios",q:85000,p:9,qd:"Por m²",pd:"Precio mercado"},{label:"Reparaciones locativas",q:85000,p:5.47,qd:"% área",pd:"Histórico"},{label:"Pintura y acabados",q:85000,p:3,qd:"Ciclo 3 años",pd:"Cotización obra"}]},
-    {id:"ser",label:"Servicios Generales",icon:"⚙️",pct:0.3,color:T.blue,q_driver:"mantenimiento",p_driver:"mercado",Q:85000,Q_unit:"m²",P:9.53,
-     sub:[{label:"Aseo y jardinería",q:85000,p:5.5,qd:"Por m²",pd:"Tarifa empresa"},{label:"Vigilancia y recepción",q:85000,p:4.03,qd:"Por m²",pd:"Tarifa seguridad"}]},
-    {id:"inf",label:"Infraestructura Técnica",icon:"🔌",pct:0.15,color:T.green,q_driver:"mantenimiento",p_driver:"historico",Q:85000,Q_unit:"m²",P:4.76,
-     sub:[{label:"Red eléctrica y UPS",q:85000,p:2.8,qd:"Por m²",pd:"Histórico"},{label:"HVAC y climatización",q:85000,p:1.96,qd:"Por m²",pd:"Tarifa HVAC"}]},
-  ]},
-  "109.03":{componentes:[
-    {id:"cam",label:"Cámaras y Hardware",icon:"📷",pct:0.55,color:T.blue,q_driver:"obsolescencia",p_driver:"historico",Q:924,Q_unit:"cámaras",P:1690,
-     sub:[{label:"Cámara IP 4K exterior",q:924,p:1100,qd:"EoL >5 años",pd:"Cotización Hikvision"},{label:"NVR / almacenamiento",q:462,p:1160,qd:"1 NVR/2 cámaras",pd:"Histórico"},{label:"Cables y conectores",q:924,p:90,qd:"Por cámara",pd:"Histórico"}]},
-    {id:"ins",label:"Instalación y Obra",icon:"🏗️",pct:0.28,color:"#D97706",q_driver:"obsolescencia",p_driver:"historico",Q:924,Q_unit:"cámaras",P:860,
-     sub:[{label:"Montaje y cableado",q:924,p:580,qd:"Por cámara",pd:"Tarifa brigada"},{label:"Obra civil soporte",q:924,p:280,qd:"Por cámara",pd:"Cotización civil"}]},
-    {id:"plat",label:"Plataforma VMS",icon:"💾",pct:0.17,color:T.violet,q_driver:"obsolescencia",p_driver:"historico",Q:924,Q_unit:"cámaras",P:523,
-     sub:[{label:"Licencia VMS Milestone",q:924,p:320,qd:"Por cámara",pd:"Cotización Milestone"},{label:"Mantenimiento software",q:924,p:203,qd:"Por cámara",pd:"Histórico"}]},
-  ]},
-  "109.04":{componentes:[
-    {id:"hw",label:"Hardware Control Acceso",icon:"🔑",pct:0.55,color:T.blue,q_driver:"mantenimiento",p_driver:"historico",Q:1800,Q_unit:"puertas",P:611,
-     sub:[{label:"Controlador y lector biométrico",q:1800,p:380,qd:"Por puerta",pd:"Cotización HID"},{label:"Torniquete/puerta eléctrica",q:360,p:1200,qd:"20% renovación",pd:"Histórico"},{label:"Cables y conectores",q:1800,p:80,qd:"Por puerta",pd:"Histórico"}]},
-    {id:"sw",label:"Software PACS",icon:"💾",pct:0.28,color:T.violet,q_driver:"mantenimiento",p_driver:"historico",Q:1800,Q_unit:"puertas",P:311,
-     sub:[{label:"Licencia Lenel/Genetec",q:1800,p:200,qd:"Por punto acceso",pd:"Contrato licencia"},{label:"Mantenimiento anual SW",q:1800,p:111,qd:"Por puerta",pd:"Histórico"}]},
-    {id:"int",label:"Integración CCTV/HR",icon:"🔗",pct:0.17,color:T.green,q_driver:"mantenimiento",p_driver:"historico",Q:1800,Q_unit:"puertas",P:189,
-     sub:[{label:"Integración con VMS CCTV",q:1800,p:115,qd:"Por puerta",pd:"Rate card SI"},{label:"Integración Workday RRHH",q:1800,p:74,qd:"Por puerta",pd:"Tarifa integración"}]},
-  ]},
-  "116.01":{componentes:[
-    {id:"plat",label:"Plataforma IoT",icon:"☁️",pct:0.55,color:T.violet,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:100800,Q_unit:"dispositivos",P:14.47,
-     sub:[{label:"AWS IoT Core / Azure IoT Hub",q:100800,p:9.2,qd:"Por dispositivo",pd:"Cotización cloud"},{label:"Reglas y procesamiento streams",q:100800,p:3.6,qd:"Por dispositivo",pd:"Cotización"},{label:"Device management",q:100800,p:1.67,qd:"Por dispositivo",pd:"Tarifa licencia"}]},
-    {id:"con",label:"Conectividad IoT",icon:"📡",pct:0.3,color:T.blue,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:100800,Q_unit:"dispositivos",P:7.89,
-     sub:[{label:"SIM IoT NB-IoT/LTE-M",q:100800,p:4.8,qd:"Por dispositivo",pd:"Tarifa MVNO"},{label:"Gestión SIM (SM-DP)",q:100800,p:3.09,qd:"Por dispositivo",pd:"Tarifa plataforma"}]},
-    {id:"sec",label:"Seguridad IoT",icon:"🔐",pct:0.15,color:T.red,q_driver:"pipeline_b2b",p_driver:"historico",Q:100800,Q_unit:"dispositivos",P:3.95,
-     sub:[{label:"Certificados X.509 por device",q:100800,p:2.3,qd:"Por dispositivo",pd:"Tarifa PKI"},{label:"Anomaly detection IA",q:100800,p:1.65,qd:"Por dispositivo",pd:"Cotización"}]},
-  ]},
-  "116.02":{componentes:[
-    {id:"sen",label:"Sensores y Dispositivos",icon:"📡",pct:0.52,color:T.blue,q_driver:"pipeline_b2b",p_driver:"mercado",Q:5320,Q_unit:"sensores",P:170,
-     sub:[{label:"Sensor ambiental LoRa",q:5320,p:95,qd:"Por sensor",pd:"Precio mercado"},{label:"Sensor tráfico/aforo",q:5320,p:55,qd:"Por sensor",pd:"Cotización Libelium"},{label:"Instalación y montaje",q:5320,p:20,qd:"Por sensor",pd:"Tarifa brigada"}]},
-    {id:"plat",label:"Plataforma Smart City",icon:"🏙️",pct:0.33,color:T.violet,q_driver:"pipeline_b2b",p_driver:"mercado",Q:5320,Q_unit:"sensores",P:108,
-     sub:[{label:"Dashboard ciudad (GIS)",q:5320,p:65,qd:"Por sensor",pd:"Precio mercado"},{label:"Analytics tiempo real",q:5320,p:43,qd:"Por sensor",pd:"Cotización"}]},
-    {id:"int",label:"Integración Municipios",icon:"🏛️",pct:0.15,color:T.green,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:5320,Q_unit:"sensores",P:49,
-     sub:[{label:"API con sistemas alcaldía",q:5320,p:30,qd:"Por sensor",pd:"Rate card SI"},{label:"Capacitación funcionarios",q:5320,p:19,qd:"Por sensor",pd:"Tarifa training"}]},
-  ]},
-  "117.01":{componentes:[
-    {id:"red",label:"Capacidad Radio (MVNA)",icon:"📶",pct:0.55,color:T.blue,q_driver:"activaciones",p_driver:"cotizacion",Q:220000,Q_unit:"SIMs",P:5.94,
-     sub:[{label:"Wholesale voz (minutos)",q:220000,p:2.8,qd:"Por SIM activa",pd:"Cotización mayorista"},{label:"Wholesale datos (GB)",q:220000,p:2.4,qd:"Por SIM activa",pd:"Cotización mayorista"},{label:"SMS wholesale",q:220000,p:0.74,qd:"Por SIM",pd:"Tarifa SMS"}]},
-    {id:"plat",label:"Plataforma MVNO",icon:"☁️",pct:0.3,color:T.violet,q_driver:"activaciones",p_driver:"cotizacion",Q:220000,Q_unit:"SIMs",P:3.24,
-     sub:[{label:"BSS/OSS MVNO (SaaS)",q:220000,p:2.0,qd:"Por SIM",pd:"Cotización Comverse"},{label:"HLR/HSS virtual",q:220000,p:1.24,qd:"Por SIM",pd:"Cotización"}]},
-    {id:"sim",label:"SIM & Logística",icon:"💳",pct:0.15,color:T.green,q_driver:"activaciones",p_driver:"historico",Q:220000,Q_unit:"SIMs",P:1.62,
-     sub:[{label:"SIM física + envío",q:110000,p:1.8,qd:"50% físico",pd:"Costo logístico"},{label:"eSIM provisión",q:110000,p:1.44,qd:"50% eSIM",pd:"Tarifa SM-DP+"}]},
-  ]},
-  "117.02":{componentes:[
-    {id:"cap",label:"Capacidad Mayorista",icon:"🌐",pct:0.6,color:T.blue,q_driver:"crecimiento_trafico",p_driver:"mercado",Q:320,Q_unit:"Gbps",P:2737.5,
-     sub:[{label:"Capacidad IP transit venta",q:320,p:1600,qd:"Por Gbps vendido",pd:"Precio mayorista"},{label:"Capacidad MPLS L3VPN",q:320,p:1137.5,qd:"Por Gbps",pd:"Tarifa mercado"}]},
-    {id:"ope",label:"Operación Wholesale",icon:"⚙️",pct:0.25,color:T.violet,q_driver:"crecimiento_trafico",p_driver:"historico",Q:320,Q_unit:"Gbps",P:1140.6,
-     sub:[{label:"NOC wholesale dedicado",q:320,p:700,qd:"Por Gbps",pd:"Costo operativo"},{label:"Gestión acuerdos NNI",q:320,p:440.6,qd:"Por Gbps",pd:"Tarifa gestor"}]},
-    {id:"pla",label:"Plataforma Billing Mayorista",icon:"💾",pct:0.15,color:T.green,q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:320,Q_unit:"Gbps",P:684.4,
-     sub:[{label:"Medición y liquidación CDRs",q:320,p:440,qd:"Por Gbps",pd:"Cotización billing"},{label:"Portal self-service operadores",q:320,p:244.4,qd:"Por Gbps",pd:"Tarifa desarrollo"}]},
-  ]},
-  "145.01":{componentes:[
-    {id:"pan",label:"Paneles Solares",icon:"☀️",pct:0.55,color:"#D97706",q_driver:"mantenimiento",p_driver:"cotizacion",Q:480,Q_unit:"sitios",P:2750,
-     sub:[{label:"Panel fotovoltaico 400W",q:480,p:1500,qd:"4 paneles/sitio",pd:"Cotización Jinko"},{label:"Soporte y estructura",q:480,p:750,qd:"Por sitio",pd:"Cotización estructural"},{label:"Cableado DC y protecciones",q:480,p:500,qd:"Por sitio",pd:"Cotización eléctrico"}]},
-    {id:"bat",label:"Sistema Almacenamiento",icon:"🔋",pct:0.3,color:T.blue,q_driver:"mantenimiento",p_driver:"cotizacion",Q:480,Q_unit:"sitios",P:1500,
-     sub:[{label:"Baterías Li-Ion 5kWh",q:480,p:1100,qd:"Por sitio",pd:"Cotización Samsung SDI"},{label:"BMS e inversor",q:480,p:400,qd:"Por sitio",pd:"Cotización Victron"}]},
-    {id:"mon",label:"Monitoreo & O&M",icon:"📊",pct:0.15,color:T.green,q_driver:"mantenimiento",p_driver:"historico",Q:480,Q_unit:"sitios",P:750,
-     sub:[{label:"Sensor IoT monitoreo solar",q:480,p:450,qd:"Por sitio",pd:"Cotización"},{label:"Mantenimiento preventivo",q:480,p:300,qd:"Por sitio/año",pd:"Tarifa técnico"}]},
-  ]},
-  "145.02":{componentes:[
-    {id:"bat",label:"Baterías Li-Ion",icon:"🔋",pct:0.65,color:T.blue,q_driver:"obsolescencia",p_driver:"cotizacion",Q:96,Q_unit:"sitios",P:9276,
-     sub:[{label:"Pack Li-Ion 48V/200Ah",q:96,p:6500,qd:"Reemplazo EoL",pd:"Cotización CATL"},{label:"BMS sistema gestión",q:96,p:2776,qd:"Por sitio",pd:"Cotización"}]},
-    {id:"ret",label:"Retiro Baterías Plomo",icon:"♻️",pct:0.22,color:"#D97706",q_driver:"obsolescencia",p_driver:"historico",Q:96,Q_unit:"sitios",P:3140,
-     sub:[{label:"Desmontaje y transporte",q:96,p:1800,qd:"Por sitio",pd:"Tarifa brigada"},{label:"Reciclaje certificado",q:96,p:1340,qd:"Norma ambiental",pd:"Gestor certificado"}]},
-    {id:"ins",label:"Instalación y Puesta en Marcha",icon:"🔧",pct:0.13,color:T.green,q_driver:"obsolescencia",p_driver:"historico",Q:96,Q_unit:"sitios",P:1855,
-     sub:[{label:"Instalación técnica",q:96,p:1200,qd:"Por sitio",pd:"Tarifa electricista"},{label:"Pruebas y calibración",q:96,p:655,qd:"Por sitio",pd:"Tarifa técnico"}]},
-  ]},
-  "118.01":{componentes:[
-    {id:"hw",label:"Hardware Laboratorio",icon:"🔬",pct:0.55,color:T.blue,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:10,Q_unit:"prototipos",P:90750,
-     sub:[{label:"Equipos 5G NR standalone",q:10,p:52000,qd:"Por prototipo",pd:"Cotización Keysight"},{label:"Servidores MEC edge",q:10,p:28000,qd:"Por prototipo",pd:"Cotización HPE"},{label:"Instrumentos RF testing",q:10,p:10750,qd:"Por prototipo",pd:"Cotización Anritsu"}]},
-    {id:"sw",label:"Software & Licencias I+D",icon:"💾",pct:0.3,color:T.violet,q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:10,Q_unit:"prototipos",P:49500,
-     sub:[{label:"Simulador de red 5G SA",q:10,p:28000,qd:"Por prototipo",pd:"Cotización Spirent"},{label:"Licencias SDK 5G APIs",q:10,p:21500,qd:"Por prototipo",pd:"Cotización 3GPP vendor"}]},
-    {id:"rec",label:"Recursos Investigación",icon:"🧑‍🔬",pct:0.15,color:T.green,q_driver:"pipeline_b2b",p_driver:"historico",Q:10,Q_unit:"prototipos",P:24750,
-     sub:[{label:"Ingenieros investigación (meses)",q:10,p:15000,qd:"Por prototipo",pd:"Costo FTE"},{label:"Publicaciones y patentes",q:10,p:9750,qd:"Por prototipo",pd:"Tarifa jurídico"}]},
-  ]},
-  "118.02":{componentes:[
-    {id:"inf",label:"Infraestructura Sandbox",icon:"☁️",pct:0.55,color:T.blue,q_driver:"mantenimiento",p_driver:"cotizacion",Q:40,Q_unit:"entornos",P:13750,
-     sub:[{label:"Kubernetes namespaces",q:40,p:6000,qd:"Por entorno",pd:"Cotización cloud"},{label:"Almacenamiento y red",q:40,p:4500,qd:"Por entorno",pd:"Tarifa cloud"},{label:"Licencias herramientas CI/CD",q:40,p:3250,qd:"Por entorno",pd:"Cotización GitLab"}]},
-    {id:"plat",label:"Plataforma DevOps",icon:"⚙️",pct:0.3,color:T.violet,q_driver:"mantenimiento",p_driver:"cotizacion",Q:40,Q_unit:"entornos",P:7500,
-     sub:[{label:"Jenkins / ArgoCD",q:40,p:4000,qd:"Por entorno",pd:"Cotización"},{label:"Monitoring (Grafana/Prom)",q:40,p:3500,qd:"Por entorno",pd:"Cotización"}]},
-    {id:"ops",label:"Soporte DevOps",icon:"🔧",pct:0.15,color:T.green,q_driver:"mantenimiento",p_driver:"historico",Q:40,Q_unit:"entornos",P:3750,
-     sub:[{label:"Site reliability engineering",q:40,p:2200,qd:"Por entorno",pd:"Costo FTE parcial"},{label:"Documentación y runbooks",q:40,p:1550,qd:"Por entorno",pd:"Rate card TI"}]},
-  ]},
-  "119.01":{componentes:[
-    {id:"lic",label:"Licencia CPQ",icon:"💾",pct:0.52,color:T.violet,q_driver:"migraciones",p_driver:"cotizacion",Q:2184,Q_unit:"usuarios",P:305,
-     sub:[{label:"Salesforce CPQ licencia",q:2184,p:200,qd:"Por usuario",pd:"Contrato SF"},{label:"Módulo configurador catálogo",q:2184,p:105,qd:"Por usuario",pd:"Cotización"}]},
-    {id:"imp",label:"Implementación",icon:"🛠️",pct:0.33,color:T.blue,q_driver:"migraciones",p_driver:"cotizacion",Q:2184,Q_unit:"usuarios",P:193,
-     sub:[{label:"Configuración reglas precio",q:2184,p:120,qd:"Por usuario",pd:"Rate card SF SI"},{label:"Integración ERP/billing",q:2184,p:73,qd:"Por usuario",pd:"Rate card integración"}]},
-    {id:"cap",label:"Capacitación & Soporte",icon:"📚",pct:0.15,color:T.green,q_driver:"migraciones",p_driver:"historico",Q:2184,Q_unit:"usuarios",P:88,
-     sub:[{label:"Training usuarios CPQ",q:2184,p:55,qd:"Por usuario",pd:"Tarifa e-learning"},{label:"Soporte año 1",q:2184,p:33,qd:"Por usuario",pd:"Tarifa soporte"}]},
-  ]},
-  "119.02":{componentes:[
-    {id:"lic",label:"Plataforma Marketing",icon:"📣",pct:0.55,color:T.violet,q_driver:"activaciones",p_driver:"mercado",Q:840,Q_unit:"campañas",P:654,
-     sub:[{label:"Marketo / HubSpot Enterprise",q:840,p:420,qd:"Por campaña",pd:"Precio mercado"},{label:"Email + SMS automation",q:840,p:234,qd:"Por campaña",pd:"Tarifa plataforma"}]},
-    {id:"dat",label:"Datos y Segmentación",icon:"📊",pct:0.28,color:T.blue,q_driver:"activaciones",p_driver:"mercado",Q:840,Q_unit:"campañas",P:333,
-     sub:[{label:"Datos terceros (audiencias)",q:840,p:200,qd:"Por campaña",pd:"Tarifa data broker"},{label:"Limpieza y enriquecimiento",q:840,p:133,qd:"Por campaña",pd:"Cotización MDM"}]},
-    {id:"ops",label:"Operación Campañas",icon:"⚙️",pct:0.17,color:T.green,q_driver:"activaciones",p_driver:"historico",Q:840,Q_unit:"campañas",P:203,
-     sub:[{label:"Diseño y contenido",q:840,p:130,qd:"Por campaña",pd:"Tarifa agencia"},{label:"Reporte y optimización",q:840,p:73,qd:"Por campaña",pd:"Tarifa analista"}]},
-  ]},
-  "999.01":{componentes:[
-    {id:"ti",label:"TI Menor & Licencias",icon:"💻",pct:0.35,color:T.violet,q_driver:"mantenimiento",p_driver:"historico",Q:100,Q_unit:"proyectos",P:16649,
-     sub:[{label:"HW end-of-life TI",q:100,p:9800,qd:"Proyectos <$1M TI",pd:"Histórico promedio"},{label:"Licencias SW menores",q:100,p:6849,qd:"Por proyecto",pd:"Histórico"}]},
-    {id:"red",label:"Red & Infraestructura Menor",icon:"🔌",pct:0.35,color:T.blue,q_driver:"mantenimiento",p_driver:"historico",Q:100,Q_unit:"proyectos",P:16649,
-     sub:[{label:"Obras civiles menores",q:100,p:9500,qd:"Proyectos <$1M RED",pd:"Histórico"},{label:"Equipos red menores",q:100,p:7149,qd:"Por proyecto",pd:"Histórico promedio"}]},
-    {id:"adm",label:"Administrativos Varios",icon:"🏢",pct:0.3,color:"#D97706",q_driver:"mantenimiento",p_driver:"historico",Q:100,Q_unit:"proyectos",P:14270,
-     sub:[{label:"Mobiliario y equipamiento",q:100,p:8500,qd:"Por proyecto",pd:"Histórico"},{label:"Imprevistos y contingencias",q:100,p:5770,qd:"5% presupuesto",pd:"Reserva estándar"}]},
-  ]}
+  "101.01":{
+    componentes:[
+    {id:"fiber",label:"Red troncal F1",icon:"🔌",pct:0.3,color:"#0891B2",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:48000,Q_unit:"km",P:453,sub:[{label:"Fibra F1 troncal",q:48000,p:149,qd:"Por unidad",pd:"benchmark_amx"},{label:"Ductos y zanjas",q:48000,p:149,qd:"Por unidad",pd:"benchmark_amx"},{label:"Empalmes OTDR",q:48000,p:149,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"hw",label:"Equipos OLT/agregación",icon:"📡",pct:0.25,color:"#2563EB",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:480,Q_unit:"nodos",P:23500,sub:[{label:"OLT XGS-PON",q:480,p:7755,qd:"Por unidad",pd:"benchmark_amx"},{label:"Módulos GPON",q:480,p:7755,qd:"Por unidad",pd:"benchmark_amx"},{label:"Switches agregación",q:480,p:7755,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"civil",label:"Planta externa",icon:"🏗️",pct:0.25,color:"#D97706",q_driver:"expansion_geo",p_driver:"cotizacion",Q:80000,Q_unit:"homepass",P:71,sub:[{label:"Postes y herrajes",q:80000,p:23,qd:"Por unidad",pd:"cotizacion"},{label:"Cajas empalme",q:80000,p:23,qd:"Por unidad",pd:"cotizacion"},{label:"Tendido aéreo",q:80000,p:23,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"mo",label:"Instalación planta interna",icon:"👷",pct:0.2,color:"#059669",q_driver:"activaciones",p_driver:"cotizacion",Q:36000,Q_unit:"hogares",P:111,sub:[{label:"Drop cable F3→ONT",q:36000,p:37,qd:"Por unidad",pd:"cotizacion"},{label:"ONT/CPE",q:36000,p:37,qd:"Por unidad",pd:"cotizacion"},{label:"Instalación técnica",q:36000,p:37,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "101.02":{
+    componentes:[
+    {id:"civil",label:"Obra civil expansión",icon:"🏗️",pct:0.5,color:"#D97706",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:80000,Q_unit:"homepass",P:86,sub:[{label:"Zanjeo y ductos",q:80000,p:28,qd:"Por unidad",pd:"benchmark_amx"},{label:"Cámaras y registros",q:80000,p:28,qd:"Por unidad",pd:"benchmark_amx"},{label:"Tendido fibra",q:80000,p:28,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"hw",label:"Planta activa",icon:"📡",pct:0.3,color:"#2563EB",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:13806,Q_unit:"puertos",P:300,sub:[{label:"Splitters 1:32",q:13806,p:99,qd:"Por unidad",pd:"benchmark_amx"},{label:"Conectores SC/APC",q:13806,p:99,qd:"Por unidad",pd:"benchmark_amx"},{label:"Patchcords",q:13806,p:99,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Activación masiva",icon:"👷",pct:0.2,color:"#059669",q_driver:"activaciones",p_driver:"cotizacion",Q:55000,Q_unit:"hogares",P:50,sub:[{label:"ONT masivo",q:55000,p:16,qd:"Por unidad",pd:"cotizacion"},{label:"Drop wire",q:55000,p:16,qd:"Por unidad",pd:"cotizacion"},{label:"Alta servicio",q:55000,p:16,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "101.03":{
+    componentes:[
+    {id:"iru",label:"IRU fibra neutra",icon:"📋",pct:0.6,color:"#B45309",q_driver:"expansion_geo",p_driver:"mercado",Q:6327,Q_unit:"unidad",P:3786,sub:[{label:"Acuerdo IRU operador neutro",q:6327,p:1249,qd:"Por unidad",pd:"mercado"},{label:"Derechos de paso",q:6327,p:1249,qd:"Por unidad",pd:"mercado"},{label:"Gestión",q:6327,p:1249,qd:"Por unidad",pd:"mercado"}]},
+    {id:"hw",label:"Integración activa",icon:"📡",pct:0.4,color:"#2563EB",q_driver:"expansion_geo",p_driver:"cotizacion",Q:6327,Q_unit:"puertos",P:2000,sub:[{label:"Equipos interconexión",q:6327,p:660,qd:"Por unidad",pd:"cotizacion"},{label:"Integración OLT",q:6327,p:660,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas",q:6327,p:660,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "102.01":{
+    componentes:[
+    {id:"civil",label:"Infraestructura pasiva",icon:"🏗️",pct:0.4,color:"#D97706",q_driver:"expansion_geo",p_driver:"cotizacion",Q:200,Q_unit:"sitios",P:20900,sub:[{label:"Torre/mástil nuevo",q:200,p:6897,qd:"Por unidad",pd:"cotizacion"},{label:"Shelter y plataforma",q:200,p:6897,qd:"Por unidad",pd:"cotizacion"},{label:"Energía y baterías",q:200,p:6897,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"hw",label:"Equipos radio LTE/NR",icon:"📡",pct:0.35,color:"#2563EB",q_driver:"expansion_geo",p_driver:"benchmark_amx",Q:200,Q_unit:"sitios",P:18291,sub:[{label:"eNodeB 4G 700MHz",q:200,p:6036,qd:"Por unidad",pd:"benchmark_amx"},{label:"Antenas MIMO",q:200,p:6036,qd:"Por unidad",pd:"benchmark_amx"},{label:"Backhaul MW",q:200,p:6036,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Instalación y comisionado",icon:"👷",pct:0.15,color:"#059669",q_driver:"expansion_geo",p_driver:"cotizacion",Q:200,Q_unit:"sitios",P:7843,sub:[{label:"Montaje RF",q:200,p:2588,qd:"Por unidad",pd:"cotizacion"},{label:"Integración core",q:200,p:2588,qd:"Por unidad",pd:"cotizacion"},{label:"Drive test",q:200,p:2588,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"om",label:"O&M Año 1",icon:"🔧",pct:0.1,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:200,Q_unit:"sitios",P:5221,sub:[{label:"Mant. preventivo",q:200,p:1723,qd:"Por unidad",pd:"historico"},{label:"Guardia NOC",q:200,p:1723,qd:"Por unidad",pd:"historico"},{label:"Repuestos críticos",q:200,p:1723,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "102.02":{
+    componentes:[
+    {id:"hw",label:"DAS/Small cell indoor",icon:"📡",pct:0.55,color:"#2563EB",q_driver:"expansion_geo",p_driver:"cotizacion",Q:80,Q_unit:"edificios",P:6626,sub:[{label:"Unidades remotas RU",q:80,p:2187,qd:"Por unidad",pd:"cotizacion"},{label:"Head-end",q:80,p:2187,qd:"Por unidad",pd:"cotizacion"},{label:"Cableado coaxial",q:80,p:2187,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"civil",label:"Adecuación civil",icon:"🏗️",pct:0.3,color:"#D97706",q_driver:"expansion_geo",p_driver:"cotizacion",Q:80,Q_unit:"edificios",P:3615,sub:[{label:"Obra civil interna",q:80,p:1193,qd:"Por unidad",pd:"cotizacion"},{label:"Ductos y bandejas",q:80,p:1193,qd:"Por unidad",pd:"cotizacion"},{label:"Permisología",q:80,p:1193,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"mo",label:"Instalación",icon:"👷",pct:0.15,color:"#059669",q_driver:"expansion_geo",p_driver:"cotizacion",Q:80,Q_unit:"edificios",P:1808,sub:[{label:"Montaje y cableado",q:80,p:597,qd:"Por unidad",pd:"cotizacion"},{label:"Integración",q:80,p:597,qd:"Por unidad",pd:"cotizacion"},{label:"Documentación",q:80,p:597,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "103.01":{
+    componentes:[
+    {id:"lic",label:"Capacidad cable submarino",icon:"🔑",pct:0.65,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"mercado",Q:250,Q_unit:"Gbps",P:22874,sub:[{label:"Wavelength adicional",q:250,p:7548,qd:"Por unidad",pd:"mercado"},{label:"Mantenimiento cable",q:250,p:7548,qd:"Por unidad",pd:"mercado"},{label:"Gestión consorcio",q:250,p:7548,qd:"Por unidad",pd:"mercado"}]},
+    {id:"hw",label:"Equipos terminación",icon:"📡",pct:0.35,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"Gbps",P:12317,sub:[{label:"Transpondedores coherentes",q:250,p:4065,qd:"Por unidad",pd:"benchmark_amx"},{label:"Amplificadores EDFA",q:250,p:4065,qd:"Por unidad",pd:"benchmark_amx"},{label:"Gestión red",q:250,p:4065,qd:"Por unidad",pd:"benchmark_amx"}]}
+  ]},
+  "103.02":{
+    componentes:[
+    {id:"iru",label:"Derecho uso cable",icon:"📋",pct:1.0,color:"#B45309",q_driver:"crecimiento_trafico",p_driver:"mercado",Q:1,Q_unit:"unidad",P:5591250,sub:[{label:"Aporte al consorcio",q:1,p:1845112,qd:"Por unidad",pd:"mercado"},{label:"Derechos IRU",q:1,p:1845112,qd:"Por unidad",pd:"mercado"},{label:"O&M",q:1,p:1845112,qd:"Por unidad",pd:"mercado"}]}
+  ]},
+  "201.01":{
+    componentes:[
+    {id:"hw",label:"Hardware Radio 4G",icon:"📡",pct:0.45,color:"#2563EB",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:2000,Q_unit:"sitios",P:16010,sub:[{label:"Antenas MIMO 4T4R",q:2000,p:5283,qd:"Por unidad",pd:"benchmark_amx"},{label:"Radio Units RRU",q:2000,p:5283,qd:"Por unidad",pd:"benchmark_amx"},{label:"BBU reemplazo",q:2000,p:5283,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"sw",label:"Software y licencias",icon:"💾",pct:0.2,color:"#7C3AED",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:2000,Q_unit:"sitios",P:7114,sub:[{label:"Licencia LTE",q:2000,p:2348,qd:"Por unidad",pd:"benchmark_amx"},{label:"Features avanzados",q:2000,p:2348,qd:"Por unidad",pd:"benchmark_amx"},{label:"Soporte año 1",q:2000,p:2348,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"civil",label:"Obras civiles",icon:"🏗️",pct:0.2,color:"#D97706",q_driver:"obsolescencia",p_driver:"historico",Q:2000,Q_unit:"sitios",P:7114,sub:[{label:"Adecuación shelter",q:2000,p:2348,qd:"Por unidad",pd:"historico"},{label:"Energía rectificador",q:2000,p:2348,qd:"Por unidad",pd:"historico"},{label:"Torre",q:2000,p:2348,qd:"Por unidad",pd:"historico"}]},
+    {id:"mo",label:"Instalación y comisionado",icon:"👷",pct:0.15,color:"#059669",q_driver:"obsolescencia",p_driver:"cotizacion",Q:2000,Q_unit:"sitios",P:5336,sub:[{label:"Desmonte viejo",q:2000,p:1761,qd:"Por unidad",pd:"cotizacion"},{label:"Montaje nuevo",q:2000,p:1761,qd:"Por unidad",pd:"cotizacion"},{label:"Drive test",q:2000,p:1761,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "201.02":{
+    componentes:[
+    {id:"hw",label:"Hardware 5G NR",icon:"📡",pct:0.48,color:"#2563EB",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:300,Q_unit:"sitios",P:47666,sub:[{label:"AAU Massive MIMO",q:300,p:15730,qd:"Por unidad",pd:"benchmark_amx"},{label:"gNB DU+CU",q:300,p:15730,qd:"Por unidad",pd:"benchmark_amx"},{label:"Fronthaul eCPRI",q:300,p:15730,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"sw",label:"Licencias NR",icon:"💾",pct:0.18,color:"#7C3AED",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:300,Q_unit:"sitios",P:17875,sub:[{label:"Licencia NR",q:300,p:5899,qd:"Por unidad",pd:"benchmark_amx"},{label:"Features NSA/SA",q:300,p:5899,qd:"Por unidad",pd:"benchmark_amx"},{label:"Network slicing",q:300,p:5899,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"civil",label:"Integración y obras",icon:"🏗️",pct:0.22,color:"#D97706",q_driver:"obsolescencia",p_driver:"cotizacion",Q:300,Q_unit:"sitios",P:21858,sub:[{label:"Refuerzo estructura",q:300,p:7213,qd:"Por unidad",pd:"cotizacion"},{label:"Adecuación eléctrica",q:300,p:7213,qd:"Por unidad",pd:"cotizacion"},{label:"Backhaul fibra",q:300,p:7213,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"om",label:"Soporte y O&M",icon:"🔧",pct:0.12,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:300,Q_unit:"sitios",P:11925,sub:[{label:"NOC 24x7",q:300,p:3935,qd:"Por unidad",pd:"historico"},{label:"Field maintenance",q:300,p:3935,qd:"Por unidad",pd:"historico"},{label:"Spare parts pool",q:300,p:3935,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "201.03":{
+    componentes:[
+    {id:"hw",label:"Infraestructura compute",icon:"🖥️",pct:0.5,color:"#2563EB",q_driver:"obsolescencia",p_driver:"cotizacion",Q:100,Q_unit:"nodos",P:42961,sub:[{label:"Servidores COTS",q:100,p:14177,qd:"Por unidad",pd:"cotizacion"},{label:"Storage NVMe",q:100,p:14177,qd:"Por unidad",pd:"cotizacion"},{label:"Networking DC 100G",q:100,p:14177,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"sw",label:"Plataforma cloud",icon:"💾",pct:0.35,color:"#7C3AED",q_driver:"obsolescencia",p_driver:"benchmark_amx",Q:100,Q_unit:"nodos",P:30073,sub:[{label:"OpenStack/VMware",q:100,p:9924,qd:"Por unidad",pd:"benchmark_amx"},{label:"VNF licencias",q:100,p:9924,qd:"Por unidad",pd:"benchmark_amx"},{label:"Orquestación",q:100,p:9924,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Integración y migración",icon:"👷",pct:0.15,color:"#059669",q_driver:"migraciones",p_driver:"cotizacion",Q:100,Q_unit:"nodos",P:12888,sub:[{label:"Migración VNFs",q:100,p:4253,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas aceptación",q:100,p:4253,qd:"Por unidad",pd:"cotizacion"},{label:"Capacitación",q:100,p:4253,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "202.01":{
+    componentes:[
+    {id:"hw",label:"Equipos reemplazo",icon:"📡",pct:0.45,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"nodos",P:9677,sub:[{label:"Nodos IP nueva gen",q:250,p:3193,qd:"Por unidad",pd:"cotizacion"},{label:"Tarjetas línea",q:250,p:3193,qd:"Por unidad",pd:"cotizacion"},{label:"Transceptores",q:250,p:3193,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"mo",label:"Desmonte y migración",icon:"👷",pct:0.35,color:"#059669",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"nodos",P:7527,sub:[{label:"Desmonte equipo viejo",q:250,p:2484,qd:"Por unidad",pd:"cotizacion"},{label:"Migración tráfico",q:250,p:2484,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas",q:250,p:2484,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Servicios profesionales",icon:"🛠️",pct:0.2,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"nodos",P:4301,sub:[{label:"Diseño red",q:250,p:1419,qd:"Por unidad",pd:"cotizacion"},{label:"PM",q:250,p:1419,qd:"Por unidad",pd:"cotizacion"},{label:"Documentación",q:250,p:1419,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "202.02":{
+    componentes:[
+    {id:"sw",label:"Licencias OSS/BSS",icon:"💾",pct:0.6,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:10,Q_unit:"sistemas",P:243388,sub:[{label:"AMDOCS actualización",q:10,p:80318,qd:"Por unidad",pd:"cotizacion"},{label:"Nokia NSP",q:10,p:80318,qd:"Por unidad",pd:"cotizacion"},{label:"Integraciones API",q:10,p:80318,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Implementación",icon:"🛠️",pct:0.4,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:10,Q_unit:"sistemas",P:162259,sub:[{label:"Consultoría técnica",q:10,p:53545,qd:"Por unidad",pd:"cotizacion"},{label:"Testing",q:10,p:53545,qd:"Por unidad",pd:"cotizacion"},{label:"Gestión del cambio",q:10,p:53545,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "202.03":{
+    componentes:[
+    {id:"mo",label:"Apagado red 3G",icon:"👷",pct:0.5,color:"#059669",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:500,Q_unit:"sitios",P:3110,sub:[{label:"Desmonte RNC/NodeB",q:500,p:1026,qd:"Por unidad",pd:"cotizacion"},{label:"Migración abonados",q:500,p:1026,qd:"Por unidad",pd:"cotizacion"},{label:"Disposición",q:500,p:1026,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Plan de migración",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:500,Q_unit:"sitios",P:1866,sub:[{label:"Comunicación clientes",q:500,p:616,qd:"Por unidad",pd:"cotizacion"},{label:"Soporte",q:500,p:616,qd:"Por unidad",pd:"cotizacion"},{label:"Monitoreo",q:500,p:616,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"hw",label:"Herramientas técnicas",icon:"📡",pct:0.2,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:500,Q_unit:"sitios",P:1244,sub:[{label:"Equipos campo",q:500,p:411,qd:"Por unidad",pd:"cotizacion"},{label:"Analizadores",q:500,p:411,qd:"Por unidad",pd:"cotizacion"},{label:"Kits diagnóstico",q:500,p:411,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "203.01":{
+    componentes:[
+    {id:"mo",label:"Trabajos desmonte",icon:"👷",pct:0.7,color:"#059669",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:51,sub:[{label:"Desmonte físico",q:1000,p:17,qd:"Por unidad",pd:"cotizacion"},{label:"Transporte",q:1000,p:17,qd:"Por unidad",pd:"cotizacion"},{label:"Bodegaje",q:1000,p:17,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Gestión y disposición",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:22,sub:[{label:"Inventario activos",q:1000,p:7,qd:"Por unidad",pd:"cotizacion"},{label:"Disposición RAEE",q:1000,p:7,qd:"Por unidad",pd:"cotizacion"},{label:"Documentación",q:1000,p:7,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "301.01":{
+    componentes:[
+    {id:"hw",label:"Upgrades MW backhaul",icon:"📡",pct:0.4,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:35824,sub:[{label:"Radios MW alta cap",q:250,p:11822,qd:"Por unidad",pd:"cotizacion"},{label:"Antenas parabólicas",q:250,p:11822,qd:"Por unidad",pd:"cotizacion"},{label:"Instalación",q:250,p:11822,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"hw",label:"Core IP expansión",icon:"🌐",pct:0.35,color:"#0891B2",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"Gbps",P:31347,sub:[{label:"Routers borde",q:250,p:10345,qd:"Por unidad",pd:"benchmark_amx"},{label:"Upgrades DWDM",q:250,p:10345,qd:"Por unidad",pd:"benchmark_amx"},{label:"Licencias Gbps",q:250,p:10345,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"sw",label:"Carriers adicionales",icon:"💾",pct:0.25,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"historico",Q:250,Q_unit:"Gbps",P:22374,sub:[{label:"Carrier 4G adicional",q:250,p:7383,qd:"Por unidad",pd:"historico"},{label:"Layer 5G",q:250,p:7383,qd:"Por unidad",pd:"historico"},{label:"Lic. capacidad",q:250,p:7383,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "301.02":{
+    componentes:[
+    {id:"hw",label:"Fibra intermunicipal",icon:"🔌",pct:0.4,color:"#0891B2",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"Gbps",P:33480,sub:[{label:"Fibra metro DCI",q:250,p:11048,qd:"Por unidad",pd:"benchmark_amx"},{label:"Amplificadores EDFA",q:250,p:11048,qd:"Por unidad",pd:"benchmark_amx"},{label:"OXC",q:250,p:11048,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"hw",label:"Core IP/MPLS expansión",icon:"🌐",pct:0.35,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"Gbps",P:29310,sub:[{label:"Router core nueva gen",q:250,p:9672,qd:"Por unidad",pd:"benchmark_amx"},{label:"Licencias MPLS",q:250,p:9672,qd:"Por unidad",pd:"benchmark_amx"},{label:"Tarjetas",q:250,p:9672,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"hw",label:"Nodos OLT capacidad",icon:"📡",pct:0.25,color:"#D97706",q_driver:"crecimiento_trafico",p_driver:"historico",Q:250,Q_unit:"Gbps",P:20925,sub:[{label:"OLT expansión",q:250,p:6905,qd:"Por unidad",pd:"historico"},{label:"Splits HFC",q:250,p:6905,qd:"Por unidad",pd:"historico"},{label:"Módulos GPON",q:250,p:6905,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "301.03":{
+    componentes:[
+    {id:"mo",label:"Trabajos campo",icon:"👷",pct:0.5,color:"#059669",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"sitios",P:4029,sub:[{label:"Desmonte y reubicación",q:250,p:1330,qd:"Por unidad",pd:"cotizacion"},{label:"Montaje",q:250,p:1330,qd:"Por unidad",pd:"cotizacion"},{label:"Drive test",q:250,p:1330,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"hw",label:"Materiales",icon:"📡",pct:0.3,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"sitios",P:2417,sub:[{label:"Herrajes",q:250,p:798,qd:"Por unidad",pd:"cotizacion"},{label:"Cables RF",q:250,p:798,qd:"Por unidad",pd:"cotizacion"},{label:"Conectores",q:250,p:798,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"civil",label:"Obra menor",icon:"🏗️",pct:0.2,color:"#D97706",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"sitios",P:1611,sub:[{label:"Permisología",q:250,p:532,qd:"Por unidad",pd:"cotizacion"},{label:"Adecuación civil",q:250,p:532,qd:"Por unidad",pd:"cotizacion"},{label:"Documentación",q:250,p:532,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "301.04":{
+    componentes:[
+    {id:"hw",label:"Módulos GPON",icon:"📡",pct:0.7,color:"#2563EB",q_driver:"crecimiento_trafico",p_driver:"benchmark_amx",Q:250,Q_unit:"puertos",P:861,sub:[{label:"Módulos XGS-PON",q:250,p:284,qd:"Por unidad",pd:"benchmark_amx"},{label:"Tarjetas OLT",q:250,p:284,qd:"Por unidad",pd:"benchmark_amx"},{label:"Transceptores",q:250,p:284,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Instalación",icon:"👷",pct:0.3,color:"#059669",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"puertos",P:369,sub:[{label:"Configuración",q:250,p:122,qd:"Por unidad",pd:"cotizacion"},{label:"Integración NMS",q:250,p:122,qd:"Por unidad",pd:"cotizacion"},{label:"Documentación",q:250,p:122,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "302.01":{
+    componentes:[
+    {id:"svc",label:"MVNO y alianzas",icon:"💼",pct:0.6,color:"#7C3AED",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:12805,sub:[{label:"Plataforma MVNO",q:300,p:4226,qd:"Por unidad",pd:"cotizacion"},{label:"Integración",q:300,p:4226,qd:"Por unidad",pd:"cotizacion"},{label:"Soporte",q:300,p:4226,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Proyectos innovación",icon:"🛠️",pct:0.4,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:8561,sub:[{label:"Estudios y piloto",q:300,p:2825,qd:"Por unidad",pd:"cotizacion"},{label:"Implementación",q:300,p:2825,qd:"Por unidad",pd:"cotizacion"},{label:"PMO",q:300,p:2825,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "401.01":{
+    componentes:[
+    {id:"hw",label:"Equipo masivo fibra",icon:"📡",pct:0.55,color:"#2563EB",q_driver:"activaciones",p_driver:"benchmark_amx",Q:400000,Q_unit:"clientes",P:115,sub:[{label:"ONT/CPE fibra",q:400000,p:38,qd:"Por unidad",pd:"benchmark_amx"},{label:"Drop cable",q:400000,p:38,qd:"Por unidad",pd:"benchmark_amx"},{label:"SIM/kit bienvenida",q:400000,p:38,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Instalación técnica",icon:"👷",pct:0.3,color:"#059669",q_driver:"activaciones",p_driver:"cotizacion",Q:400000,Q_unit:"clientes",P:63,sub:[{label:"Visita técnica",q:400000,p:21,qd:"Por unidad",pd:"cotizacion"},{label:"Alta servicio",q:400000,p:21,qd:"Por unidad",pd:"cotizacion"},{label:"Configuración CPE",q:400000,p:21,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Comisión canal",icon:"🛠️",pct:0.15,color:"#6B7280",q_driver:"activaciones",p_driver:"historico",Q:400000,Q_unit:"clientes",P:31,sub:[{label:"Comisión distribuidor",q:400000,p:10,qd:"Por unidad",pd:"historico"},{label:"Bono meta",q:400000,p:10,qd:"Por unidad",pd:"historico"},{label:"Soporte postventa",q:400000,p:10,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "402.01":{
+    componentes:[
+    {id:"hw",label:"CPE fibra reemplazo",icon:"📡",pct:0.5,color:"#2563EB",q_driver:"migraciones",p_driver:"benchmark_amx",Q:150000,Q_unit:"clientes",P:132,sub:[{label:"ONT GPON",q:150000,p:44,qd:"Por unidad",pd:"benchmark_amx"},{label:"Router WiFi 6",q:150000,p:44,qd:"Por unidad",pd:"benchmark_amx"},{label:"Kit instalación",q:150000,p:44,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Migración técnica",icon:"👷",pct:0.35,color:"#059669",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:93,sub:[{label:"Desmonte cable/HFC",q:150000,p:31,qd:"Por unidad",pd:"cotizacion"},{label:"Instalación fibra",q:150000,p:31,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas QoS",q:150000,p:31,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Gestión migración",icon:"🛠️",pct:0.15,color:"#6B7280",q_driver:"migraciones",p_driver:"historico",Q:150000,Q_unit:"clientes",P:40,sub:[{label:"Comunicación cliente",q:150000,p:13,qd:"Por unidad",pd:"historico"},{label:"Soporte",q:150000,p:13,qd:"Por unidad",pd:"historico"},{label:"Gestión incidencias",q:150000,p:13,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "402.02":{
+    componentes:[
+    {id:"hw",label:"CPE cable/satélite",icon:"📡",pct:0.6,color:"#2563EB",q_driver:"migraciones",p_driver:"benchmark_amx",Q:150000,Q_unit:"clientes",P:99,sub:[{label:"Módem DOCSIS 3.1",q:150000,p:33,qd:"Por unidad",pd:"benchmark_amx"},{label:"Terminal VSAT",q:150000,p:33,qd:"Por unidad",pd:"benchmark_amx"},{label:"Kit",q:150000,p:33,qd:"Por unidad",pd:"benchmark_amx"}]},
+    {id:"mo",label:"Instalación y swap",icon:"👷",pct:0.4,color:"#059669",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:66,sub:[{label:"Swap en sitio",q:150000,p:22,qd:"Por unidad",pd:"cotizacion"},{label:"Configuración",q:150000,p:22,qd:"Por unidad",pd:"cotizacion"},{label:"Alta NMS",q:150000,p:22,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "403.01":{
+    componentes:[
+    {id:"mo",label:"Logística traslados",icon:"👷",pct:1.0,color:"#059669",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:706,sub:[{label:"Logística mudanza",q:1000,p:233,qd:"Por unidad",pd:"cotizacion"},{label:"Personal",q:1000,p:233,qd:"Por unidad",pd:"cotizacion"},{label:"Transporte",q:1000,p:233,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "403.02":{
+    componentes:[
+    {id:"svc",label:"Soporte técnico",icon:"🛠️",pct:0.6,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:5290,sub:[{label:"Call center técnico",q:1000,p:1746,qd:"Por unidad",pd:"historico"},{label:"Despacho brigada",q:1000,p:1746,qd:"Por unidad",pd:"historico"},{label:"Resolución NOC",q:1000,p:1746,qd:"Por unidad",pd:"historico"}]},
+    {id:"hw",label:"Materiales correctivos",icon:"📡",pct:0.4,color:"#2563EB",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:3527,sub:[{label:"Repuestos CPE",q:1000,p:1164,qd:"Por unidad",pd:"historico"},{label:"Cables drop",q:1000,p:1164,qd:"Por unidad",pd:"historico"},{label:"ONT reemplazo",q:1000,p:1164,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "501.01":{
+    componentes:[
+    {id:"hw",label:"CPE y equipos cliente",icon:"📡",pct:0.4,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:46930,sub:[{label:"Router CPE empresarial",q:300,p:15487,qd:"Por unidad",pd:"cotizacion"},{label:"Firewall Fortinet",q:300,p:15487,qd:"Por unidad",pd:"cotizacion"},{label:"Switch L2/L3",q:300,p:15487,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Conectividad dedicada",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:41064,sub:[{label:"Enlace dedicado",q:300,p:13551,qd:"Por unidad",pd:"cotizacion"},{label:"Redundancia",q:300,p:13551,qd:"Por unidad",pd:"cotizacion"},{label:"SLA garantizado",q:300,p:13551,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"mo",label:"Implementación",icon:"👷",pct:0.25,color:"#059669",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:29325,sub:[{label:"Instalación técnica",q:300,p:9677,qd:"Por unidad",pd:"cotizacion"},{label:"Integración",q:300,p:9677,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas aceptación",q:300,p:9677,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "501.02":{
+    componentes:[
+    {id:"hw",label:"Infraestructura nodos IP",icon:"📡",pct:0.5,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:13909,sub:[{label:"Nodos IP",q:300,p:4590,qd:"Por unidad",pd:"cotizacion"},{label:"Equipos activos",q:300,p:4590,qd:"Por unidad",pd:"cotizacion"},{label:"Infraestructura pasiva",q:300,p:4590,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"O&M contrato",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"historico",Q:300,Q_unit:"contratos",P:8345,sub:[{label:"Mantenimiento 24x7",q:300,p:2754,qd:"Por unidad",pd:"historico"},{label:"Gestión incidencias",q:300,p:2754,qd:"Por unidad",pd:"historico"},{label:"Reportes SLA",q:300,p:2754,qd:"Por unidad",pd:"historico"}]},
+    {id:"mo",label:"Despliegue",icon:"👷",pct:0.2,color:"#059669",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:5563,sub:[{label:"Instalación campo",q:300,p:1836,qd:"Por unidad",pd:"cotizacion"},{label:"Integración",q:300,p:1836,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas",q:300,p:1836,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "501.03":{
+    componentes:[
+    {id:"hw",label:"Equipos dedicados",icon:"📡",pct:0.6,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:1071,sub:[{label:"CPE industrial",q:300,p:353,qd:"Por unidad",pd:"cotizacion"},{label:"Redundancia",q:300,p:353,qd:"Por unidad",pd:"cotizacion"},{label:"Seguridad física",q:300,p:353,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Servicios gestionados",icon:"🛠️",pct:0.4,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:715,sub:[{label:"SLA 99.99%",q:300,p:236,qd:"Por unidad",pd:"cotizacion"},{label:"Soporte 24x7",q:300,p:236,qd:"Por unidad",pd:"cotizacion"},{label:"Reportería",q:300,p:236,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "501.04":{
+    componentes:[
+    {id:"lic",label:"Licencias nube",icon:"🔑",pct:0.7,color:"#7C3AED",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:2238,sub:[{label:"Compute OCI",q:300,p:739,qd:"Por unidad",pd:"cotizacion"},{label:"Storage",q:300,p:739,qd:"Por unidad",pd:"cotizacion"},{label:"Networking cloud",q:300,p:739,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Integración",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:960,sub:[{label:"Migración workloads",q:300,p:317,qd:"Por unidad",pd:"cotizacion"},{label:"Conectividad directa",q:300,p:317,qd:"Por unidad",pd:"cotizacion"},{label:"Soporte",q:300,p:317,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "502.01":{
+    componentes:[
+    {id:"hw",label:"Equipos TI datacenter",icon:"🖥️",pct:0.55,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:28798,sub:[{label:"Servidores cliente",q:300,p:9503,qd:"Por unidad",pd:"cotizacion"},{label:"Storage",q:300,p:9503,qd:"Por unidad",pd:"cotizacion"},{label:"Networking 100G",q:300,p:9503,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"civil",label:"Infraestructura DC",icon:"🏗️",pct:0.3,color:"#D97706",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:15709,sub:[{label:"Ampliación sala",q:300,p:5184,qd:"Por unidad",pd:"cotizacion"},{label:"Energía eléctrica",q:300,p:5184,qd:"Por unidad",pd:"cotizacion"},{label:"Cooling",q:300,p:5184,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"mo",label:"Implementación",icon:"👷",pct:0.15,color:"#059669",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:7842,sub:[{label:"Instalación racks",q:300,p:2588,qd:"Por unidad",pd:"cotizacion"},{label:"Cableado estructurado",q:300,p:2588,qd:"Por unidad",pd:"cotizacion"},{label:"Pruebas",q:300,p:2588,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "502.02":{
+    componentes:[
+    {id:"hw",label:"Servidores y storage",icon:"🖥️",pct:0.65,color:"#2563EB",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:14793,sub:[{label:"Servidores COTS",q:300,p:4882,qd:"Por unidad",pd:"cotizacion"},{label:"Storage SAN/NAS",q:300,p:4882,qd:"Por unidad",pd:"cotizacion"},{label:"Virtualización",q:300,p:4882,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Servicios profesionales",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"pipeline_b2b",p_driver:"cotizacion",Q:300,Q_unit:"contratos",P:7965,sub:[{label:"Diseño",q:300,p:2628,qd:"Por unidad",pd:"cotizacion"},{label:"Implementación",q:300,p:2628,qd:"Por unidad",pd:"cotizacion"},{label:"Testing",q:300,p:2628,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "601.01":{
+    componentes:[
+    {id:"civil",label:"Infraestructura pasiva",icon:"🏗️",pct:0.38,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:175612,sub:[{label:"Torre/mástil",q:90,p:57952,qd:"Por unidad",pd:"benchmark_crc"},{label:"Shelter",q:90,p:57952,qd:"Por unidad",pd:"benchmark_crc"},{label:"Energía solar off-grid",q:90,p:57952,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"hw",label:"Equipos radio LTE",icon:"📡",pct:0.44,color:"#2563EB",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:203393,sub:[{label:"eNodeB 700/850MHz",q:90,p:67120,qd:"Por unidad",pd:"benchmark_crc"},{label:"Antenas directivas",q:90,p:67120,qd:"Por unidad",pd:"benchmark_crc"},{label:"Backhaul MW",q:90,p:67120,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"reg",label:"Permisos y regulatorio",icon:"⚖️",pct:0.18,color:"#E8182A",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:83191,sub:[{label:"Licencia ANLA",q:90,p:27453,qd:"Por unidad",pd:"benchmark_crc"},{label:"Permiso municipal",q:90,p:27453,qd:"Por unidad",pd:"benchmark_crc"},{label:"Interventoría CRC",q:90,p:27453,qd:"Por unidad",pd:"benchmark_crc"}]}
+  ]},
+  "601.02":{
+    componentes:[
+    {id:"civil",label:"Obra civil 5G",icon:"🏗️",pct:0.35,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:62976,sub:[{label:"Fibra ODH",q:90,p:20782,qd:"Por unidad",pd:"benchmark_crc"},{label:"Obra civil nueva",q:90,p:20782,qd:"Por unidad",pd:"benchmark_crc"},{label:"Energía",q:90,p:20782,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"hw",label:"Equipos gNB",icon:"📡",pct:0.45,color:"#2563EB",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:80934,sub:[{label:"gNB AAU 5G",q:90,p:26708,qd:"Por unidad",pd:"benchmark_crc"},{label:"Antenas massive MIMO",q:90,p:26708,qd:"Por unidad",pd:"benchmark_crc"},{label:"Integración",q:90,p:26708,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"reg",label:"Pago espectro",icon:"⚖️",pct:0.2,color:"#E8182A",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:35977,sub:[{label:"Cargo espectro CRC",q:90,p:11872,qd:"Por unidad",pd:"benchmark_crc"},{label:"Gestión regulatoria",q:90,p:11872,qd:"Por unidad",pd:"benchmark_crc"}]}
+  ]},
+  "601.03":{
+    componentes:[
+    {id:"hw",label:"Repetidores y MW",icon:"📡",pct:0.55,color:"#2563EB",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:60606,sub:[{label:"Repetidor activo",q:90,p:20000,qd:"Por unidad",pd:"benchmark_crc"},{label:"Radio MW",q:90,p:20000,qd:"Por unidad",pd:"benchmark_crc"},{label:"Antenas",q:90,p:20000,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"civil",label:"Infraestructura",icon:"🏗️",pct:0.3,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:33090,sub:[{label:"Torre menor",q:90,p:10920,qd:"Por unidad",pd:"benchmark_crc"},{label:"Energía",q:90,p:10920,qd:"Por unidad",pd:"benchmark_crc"},{label:"Instalación",q:90,p:10920,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"reg",label:"Implementación regulatoria",icon:"⚖️",pct:0.15,color:"#E8182A",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:16545,sub:[{label:"Gestión CRC",q:90,p:5460,qd:"Por unidad",pd:"benchmark_crc"},{label:"Reportes",q:90,p:5460,qd:"Por unidad",pd:"benchmark_crc"},{label:"Supervisión",q:90,p:5460,qd:"Por unidad",pd:"benchmark_crc"}]}
+  ]},
+  "601.04":{
+    componentes:[
+    {id:"hw",label:"Electrónica nueva banda",icon:"📡",pct:0.65,color:"#2563EB",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:39190,sub:[{label:"eNodeB nueva frecuencia",q:90,p:12933,qd:"Por unidad",pd:"benchmark_crc"},{label:"Antenas wide-band",q:90,p:12933,qd:"Por unidad",pd:"benchmark_crc"},{label:"RRU",q:90,p:12933,qd:"Por unidad",pd:"benchmark_crc"}]},
+    {id:"civil",label:"Energía y adecuación",icon:"🏗️",pct:0.35,color:"#D97706",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:21095,sub:[{label:"Baterías",q:90,p:6961,qd:"Por unidad",pd:"benchmark_crc"},{label:"Rectificadores",q:90,p:6961,qd:"Por unidad",pd:"benchmark_crc"},{label:"Obra civil menor",q:90,p:6961,qd:"Por unidad",pd:"benchmark_crc"}]}
+  ]},
+  "601.05":{
+    componentes:[
+    {id:"svc",label:"Servicios medición",icon:"🛠️",pct:1.0,color:"#6B7280",q_driver:"cobertura_crc",p_driver:"benchmark_crc",Q:90,Q_unit:"sitios",P:5185,sub:[{label:"Drive test CRC",q:90,p:1711,qd:"Por unidad",pd:"benchmark_crc"},{label:"Reportes calidad",q:90,p:1711,qd:"Por unidad",pd:"benchmark_crc"},{label:"Auditoría técnica",q:90,p:1711,qd:"Por unidad",pd:"benchmark_crc"}]}
+  ]},
+  "701.01":{
+    componentes:[
+    {id:"lic",label:"Licencias corporativas",icon:"🔑",pct:0.55,color:"#7C3AED",q_driver:"mantenimiento",p_driver:"ila",Q:1000,Q_unit:"activos",P:20027,sub:[{label:"Microsoft EA",q:1000,p:6609,qd:"Por unidad",pd:"ila"},{label:"Oracle",q:1000,p:6609,qd:"Por unidad",pd:"ila"},{label:"Red Hat enterprise",q:1000,p:6609,qd:"Por unidad",pd:"ila"}]},
+    {id:"lic",label:"Licencias OSS/BSS",icon:"💾",pct:0.45,color:"#0891B2",q_driver:"mantenimiento",p_driver:"ila",Q:1000,Q_unit:"activos",P:16386,sub:[{label:"AMDOCS",q:1000,p:5407,qd:"Por unidad",pd:"ila"},{label:"Nokia NSP",q:1000,p:5407,qd:"Por unidad",pd:"ila"},{label:"Ericsson OSS",q:1000,p:5407,qd:"Por unidad",pd:"ila"}]}
+  ]},
+  "701.02":{
+    componentes:[
+    {id:"sw",label:"Microsoft y productividad",icon:"💾",pct:0.55,color:"#7C3AED",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:4583,sub:[{label:"M365 upgrade",q:1000,p:1512,qd:"Por unidad",pd:"historico"},{label:"Teams",q:1000,p:1512,qd:"Por unidad",pd:"historico"},{label:"SharePoint",q:1000,p:1512,qd:"Por unidad",pd:"historico"}]},
+    {id:"svc",label:"Software y gestión",icon:"🛠️",pct:0.45,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:3750,sub:[{label:"OSS/BSS actualización",q:1000,p:1238,qd:"Por unidad",pd:"historico"},{label:"Consultoría",q:1000,p:1238,qd:"Por unidad",pd:"historico"},{label:"Soporte",q:1000,p:1238,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "701.03":{
+    componentes:[
+    {id:"hw",label:"Plataformas core",icon:"🖥️",pct:0.55,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:3354,sub:[{label:"Servidores",q:1000,p:1107,qd:"Por unidad",pd:"cotizacion"},{label:"Storage",q:1000,p:1107,qd:"Por unidad",pd:"cotizacion"},{label:"Virtualización",q:1000,p:1107,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"hw",label:"Cómputo y networking DC",icon:"🌐",pct:0.45,color:"#0891B2",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:2745,sub:[{label:"Servidores blade",q:1000,p:906,qd:"Por unidad",pd:"cotizacion"},{label:"Networking 25G",q:1000,p:906,qd:"Por unidad",pd:"cotizacion"},{label:"Racks",q:1000,p:906,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "701.04":{
+    componentes:[
+    {id:"svc",label:"Desarrollo a medida",icon:"💼",pct:0.65,color:"#7C3AED",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:3453,sub:[{label:"Sprints desarrollo",q:1000,p:1139,qd:"Por unidad",pd:"cotizacion"},{label:"QA",q:1000,p:1139,qd:"Por unidad",pd:"cotizacion"},{label:"DevOps pipeline",q:1000,p:1139,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Gestión y arquitectura",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:1859,sub:[{label:"Arquitectura",q:1000,p:613,qd:"Por unidad",pd:"cotizacion"},{label:"PM",q:1000,p:613,qd:"Por unidad",pd:"cotizacion"},{label:"Documentación",q:1000,p:613,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "701.05":{
+    componentes:[
+    {id:"svc",label:"Migración técnica",icon:"🛠️",pct:1.0,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:679,sub:[{label:"Planificación",q:1000,p:224,qd:"Por unidad",pd:"cotizacion"},{label:"Ejecución",q:1000,p:224,qd:"Por unidad",pd:"cotizacion"},{label:"Validación",q:1000,p:224,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "702.01":{
+    componentes:[
+    {id:"sw",label:"Plataforma CRM",icon:"💾",pct:0.45,color:"#7C3AED",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:86,sub:[{label:"Salesforce CRM",q:150000,p:28,qd:"Por unidad",pd:"cotizacion"},{label:"Marketing Cloud",q:150000,p:28,qd:"Por unidad",pd:"cotizacion"},{label:"Analytics",q:150000,p:28,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"sw",label:"Billing convergente",icon:"💾",pct:0.35,color:"#0891B2",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:67,sub:[{label:"Billing engine",q:150000,p:22,qd:"Por unidad",pd:"cotizacion"},{label:"Conectores BSS",q:150000,p:22,qd:"Por unidad",pd:"cotizacion"},{label:"API gateway",q:150000,p:22,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Implementación",icon:"🛠️",pct:0.2,color:"#6B7280",q_driver:"migraciones",p_driver:"cotizacion",Q:150000,Q_unit:"clientes",P:38,sub:[{label:"Configuración",q:150000,p:13,qd:"Por unidad",pd:"cotizacion"},{label:"UAT",q:150000,p:13,qd:"Por unidad",pd:"cotizacion"},{label:"Capacitación",q:150000,p:13,qd:"Por unidad",pd:"cotizacion"},{label:"Go-live",q:150000,p:13,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "703.01":{
+    componentes:[
+    {id:"sw",label:"Plataforma cloud",icon:"☁️",pct:0.5,color:"#0891B2",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:3648,sub:[{label:"Infraestructura cloud",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"},{label:"Virtualización",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"},{label:"Orquestación",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"sw",label:"Ciberseguridad",icon:"💾",pct:0.5,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:3648,sub:[{label:"SIEM",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"},{label:"EDR/XDR",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"},{label:"Firewall NGFW",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"},{label:"SOC herramientas",q:250,p:1204,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "704.01":{
+    componentes:[
+    {id:"sw",label:"Plataforma datos",icon:"📊",pct:0.6,color:"#0891B2",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:9662,sub:[{label:"Databricks/Spark",q:250,p:3188,qd:"Por unidad",pd:"cotizacion"},{label:"Data lake",q:250,p:3188,qd:"Por unidad",pd:"cotizacion"},{label:"BI tools PowerBI",q:250,p:3188,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Implementación analytics",icon:"🛠️",pct:0.4,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:6441,sub:[{label:"Ingeniería datos",q:250,p:2126,qd:"Por unidad",pd:"cotizacion"},{label:"ML models",q:250,p:2126,qd:"Por unidad",pd:"cotizacion"},{label:"Dashboards",q:250,p:2126,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "704.02":{
+    componentes:[
+    {id:"svc",label:"App y canales digitales",icon:"💼",pct:0.65,color:"#7C3AED",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:8216,sub:[{label:"App Mi Claro",q:250,p:2711,qd:"Por unidad",pd:"cotizacion"},{label:"Canal web",q:250,p:2711,qd:"Por unidad",pd:"cotizacion"},{label:"Autogestión",q:250,p:2711,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Integración digital",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"crecimiento_trafico",p_driver:"cotizacion",Q:250,Q_unit:"Gbps",P:4424,sub:[{label:"APIs",q:250,p:1460,qd:"Por unidad",pd:"cotizacion"},{label:"Middleware",q:250,p:1460,qd:"Por unidad",pd:"cotizacion"},{label:"Integración CRM",q:250,p:1460,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "705.01":{
+    componentes:[
+    {id:"hw",label:"Renovación IAAS",icon:"🖥️",pct:0.65,color:"#2563EB",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:8115,sub:[{label:"Servidores reposición",q:1000,p:2678,qd:"Por unidad",pd:"historico"},{label:"Storage",q:1000,p:2678,qd:"Por unidad",pd:"historico"},{label:"Networking DC",q:1000,p:2678,qd:"Por unidad",pd:"historico"}]},
+    {id:"svc",label:"Soporte y gestión",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:4370,sub:[{label:"Gestión plataforma",q:1000,p:1442,qd:"Por unidad",pd:"historico"},{label:"Soporte 24x7",q:1000,p:1442,qd:"Por unidad",pd:"historico"},{label:"Monitoreo",q:1000,p:1442,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "705.02":{
+    componentes:[
+    {id:"hw",label:"Equipos DC críticos",icon:"⚡",pct:0.55,color:"#F59E0B",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:2149,sub:[{label:"UPS",q:1000,p:709,qd:"Por unidad",pd:"historico"},{label:"Generadores",q:1000,p:709,qd:"Por unidad",pd:"historico"},{label:"CRAC cooling",q:1000,p:709,qd:"Por unidad",pd:"historico"}]},
+    {id:"svc",label:"Servicios facilities",icon:"🛠️",pct:0.45,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:1758,sub:[{label:"Mant. preventivo",q:1000,p:580,qd:"Por unidad",pd:"historico"},{label:"Gestión energía",q:1000,p:580,qd:"Por unidad",pd:"historico"},{label:"Seguridad física",q:1000,p:580,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "801.01":{
+    componentes:[
+    {id:"mo",label:"Field force preventivo",icon:"👷",pct:0.45,color:"#059669",q_driver:"mantenimiento",p_driver:"historico",Q:7200,Q_unit:"sitios",P:1366,sub:[{label:"Visita técnica anual",q:7200,p:451,qd:"Por unidad",pd:"historico"},{label:"Limpieza y ajuste",q:7200,p:451,qd:"Por unidad",pd:"historico"},{label:"Actualización SW",q:7200,p:451,qd:"Por unidad",pd:"historico"}]},
+    {id:"svc",label:"NOC y gestión",icon:"🛠️",pct:0.3,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:7200,Q_unit:"sitios",P:911,sub:[{label:"Guardia NOC 24x7",q:7200,p:301,qd:"Por unidad",pd:"historico"},{label:"Despacho brigada",q:7200,p:301,qd:"Por unidad",pd:"historico"},{label:"ITSM",q:7200,p:301,qd:"Por unidad",pd:"historico"}]},
+    {id:"hw",label:"Baterías y energía",icon:"⚡",pct:0.25,color:"#F59E0B",q_driver:"mantenimiento",p_driver:"historico",Q:7200,Q_unit:"sitios",P:759,sub:[{label:"Baterías Li-Ion",q:7200,p:250,qd:"Por unidad",pd:"historico"},{label:"Rectificadores",q:7200,p:250,qd:"Por unidad",pd:"historico"},{label:"Repuestos críticos",q:7200,p:250,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "801.02":{
+    componentes:[
+    {id:"mo",label:"Atención correctiva",icon:"👷",pct:0.5,color:"#059669",q_driver:"mantenimiento",p_driver:"historico",Q:3400,Q_unit:"nodos",P:2975,sub:[{label:"Despacho urgente",q:3400,p:982,qd:"Por unidad",pd:"historico"},{label:"Reparación HFC",q:3400,p:982,qd:"Por unidad",pd:"historico"},{label:"Reparación fibra",q:3400,p:982,qd:"Por unidad",pd:"historico"}]},
+    {id:"hw",label:"Repuestos y materiales",icon:"📡",pct:0.35,color:"#2563EB",q_driver:"mantenimiento",p_driver:"historico",Q:3400,Q_unit:"nodos",P:2082,sub:[{label:"Amplificadores",q:3400,p:687,qd:"Por unidad",pd:"historico"},{label:"Tap y splitter",q:3400,p:687,qd:"Por unidad",pd:"historico"},{label:"Fibra óptica",q:3400,p:687,qd:"Por unidad",pd:"historico"}]},
+    {id:"svc",label:"Servicios capitalizables",icon:"🛠️",pct:0.15,color:"#6B7280",q_driver:"mantenimiento",p_driver:"historico",Q:3400,Q_unit:"nodos",P:893,sub:[{label:"MO capitalizable",q:3400,p:295,qd:"Por unidad",pd:"historico"},{label:"Materiales",q:3400,p:295,qd:"Por unidad",pd:"historico"},{label:"Documentación",q:3400,p:295,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "802.01":{
+    componentes:[
+    {id:"iru",label:"Derecho uso fibra",icon:"📋",pct:1.0,color:"#B45309",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:7045,sub:[{label:"IRU fibra Internexa",q:1000,p:2325,qd:"Por unidad",pd:"historico"},{label:"Gestión contrato",q:1000,p:2325,qd:"Por unidad",pd:"historico"},{label:"Mantenimiento",q:1000,p:2325,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "802.02":{
+    componentes:[
+    {id:"iru",label:"IRU Andired",icon:"📋",pct:0.6,color:"#B45309",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:2786,sub:[{label:"Fibra Andired",q:1000,p:919,qd:"Por unidad",pd:"historico"},{label:"Derechos paso",q:1000,p:919,qd:"Por unidad",pd:"historico"},{label:"Gestión",q:1000,p:919,qd:"Por unidad",pd:"historico"}]},
+    {id:"iru",label:"IRUs otros operadores",icon:"📋",pct:0.4,color:"#D97706",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:1857,sub:[{label:"Azteca y otros",q:1000,p:613,qd:"Por unidad",pd:"historico"},{label:"Contratos marco",q:1000,p:613,qd:"Por unidad",pd:"historico"},{label:"Renovaciones",q:1000,p:613,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "802.03":{
+    componentes:[
+    {id:"lic",label:"Cloud rights",icon:"🔑",pct:1.0,color:"#7C3AED",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:391,sub:[{label:"Derechos uso nube pública",q:1000,p:129,qd:"Por unidad",pd:"historico"},{label:"Gestión contrato",q:1000,p:129,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "802.04":{
+    componentes:[
+    {id:"lic",label:"Alianzas estratégicas",icon:"📋",pct:1.0,color:"#B45309",q_driver:"mantenimiento",p_driver:"historico",Q:1000,Q_unit:"activos",P:97,sub:[{label:"Acuerdos alianza",q:1000,p:32,qd:"Por unidad",pd:"historico"},{label:"Derechos recíprocos",q:1000,p:32,qd:"Por unidad",pd:"historico"}]}
+  ]},
+  "803.01":{
+    componentes:[
+    {id:"civil",label:"Adecuaciones físicas",icon:"🏗️",pct:0.7,color:"#D97706",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:2587,sub:[{label:"Obra civil oficinas",q:1000,p:854,qd:"Por unidad",pd:"cotizacion"},{label:"Equipos y mobiliario",q:1000,p:854,qd:"Por unidad",pd:"cotizacion"},{label:"Instalaciones",q:1000,p:854,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"mo",label:"Mano de obra",icon:"👷",pct:0.3,color:"#059669",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:1109,sub:[{label:"Instalación",q:1000,p:366,qd:"Por unidad",pd:"cotizacion"},{label:"Montaje",q:1000,p:366,qd:"Por unidad",pd:"cotizacion"},{label:"Acabados",q:1000,p:366,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "803.02":{
+    componentes:[
+    {id:"hw",label:"Flota operativa",icon:"🚗",pct:0.85,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:675,sub:[{label:"Vehículos técnicos",q:1000,p:223,qd:"Por unidad",pd:"cotizacion"},{label:"GPS",q:1000,p:223,qd:"Por unidad",pd:"cotizacion"},{label:"Equipamiento",q:1000,p:223,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Gestión flota",icon:"🛠️",pct:0.15,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:119,sub:[{label:"Seguro",q:1000,p:39,qd:"Por unidad",pd:"cotizacion"},{label:"Mantenimiento",q:1000,p:39,qd:"Por unidad",pd:"cotizacion"},{label:"Gestión",q:1000,p:39,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "803.03":{
+    componentes:[
+    {id:"mo",label:"Logística traslados",icon:"👷",pct:1.0,color:"#059669",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:706,sub:[{label:"Logística mudanza",q:1000,p:233,qd:"Por unidad",pd:"cotizacion"},{label:"Personal",q:1000,p:233,qd:"Por unidad",pd:"cotizacion"},{label:"Transporte",q:1000,p:233,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "803.04":{
+    componentes:[
+    {id:"svc",label:"Mantenimiento preventivo",icon:"🛠️",pct:1.0,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:484,sub:[{label:"Mantenimiento edilicio",q:1000,p:160,qd:"Por unidad",pd:"cotizacion"},{label:"Sistemas eléctricos",q:1000,p:160,qd:"Por unidad",pd:"cotizacion"},{label:"HVAC",q:1000,p:160,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "803.05":{
+    componentes:[
+    {id:"hw",label:"Equipos seguridad",icon:"📡",pct:0.65,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:269,sub:[{label:"CCTV",q:1000,p:89,qd:"Por unidad",pd:"cotizacion"},{label:"Control acceso",q:1000,p:89,qd:"Por unidad",pd:"cotizacion"},{label:"Alarmas",q:1000,p:89,qd:"Por unidad",pd:"cotizacion"}]},
+    {id:"svc",label:"Servicios vigilancia",icon:"🛠️",pct:0.35,color:"#6B7280",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:145,sub:[{label:"Vigilancia",q:1000,p:48,qd:"Por unidad",pd:"cotizacion"},{label:"Monitoreo",q:1000,p:48,qd:"Por unidad",pd:"cotizacion"},{label:"Respuesta",q:1000,p:48,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
+  "803.06":{
+    componentes:[
+    {id:"hw",label:"Flota administrativa",icon:"🚗",pct:1.0,color:"#2563EB",q_driver:"mantenimiento",p_driver:"cotizacion",Q:1000,Q_unit:"activos",P:146,sub:[{label:"Vehículos admin",q:1000,p:48,qd:"Por unidad",pd:"cotizacion"},{label:"GPS",q:1000,p:48,qd:"Por unidad",pd:"cotizacion"},{label:"Equipamiento",q:1000,p:48,qd:"Por unidad",pd:"cotizacion"}]}
+  ]},
 };
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -1852,11 +1547,61 @@ function PxQPanel({proy, macroData, macroTipo, ov, onChange, onSave}){
 }
 
 function Drawer({proy,macroData,macroTipo,ov,onChange,onClose}){
+  const [width, setWidth] = useState(680);
+  const dragging = useRef(false);
+  const startX   = useRef(0);
+  const startW   = useRef(0);
+
+  const onMouseDown = (e) => {
+    dragging.current = true;
+    startX.current   = e.clientX;
+    startW.current   = width;
+    document.body.style.cursor = "ew-resize";
+    document.body.style.userSelect = "none";
+  };
+
+  useEffect(() => {
+    const onMove = (e) => {
+      if (!dragging.current) return;
+      const delta = startX.current - e.clientX;
+      const newW  = Math.min(Math.max(startW.current + delta, 420), window.innerWidth * 0.92);
+      setWidth(Math.round(newW));
+    };
+    const onUp = () => {
+      dragging.current = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, []);
+
   return(
     <div style={{position:"fixed",inset:0,zIndex:400,display:"flex"}}>
       <div style={{flex:1,background:"rgba(0,0,0,.44)",backdropFilter:"blur(5px)"}} onClick={onClose}/>
-      <div className="sr" style={{width:560,background:T.card,borderLeft:`1px solid ${T.borderSm}`,display:"flex",flexDirection:"column",overflow:"hidden",boxShadow:"-20px 0 60px rgba(0,0,0,0.12)"}}>
-        <div style={{flexShrink:0,display:"flex",justifyContent:"flex-end",padding:"10px 12px",background:T.surface,borderBottom:`1px solid ${T.borderSm}`}}>
+      <div className="sr" style={{width,minWidth:420,background:T.card,borderLeft:`1px solid ${T.borderSm}`,display:"flex",flexDirection:"column",overflow:"hidden",boxShadow:"-20px 0 60px rgba(0,0,0,0.12)",position:"relative"}}>
+        {/* Handle de resize — borde izquierdo arrastrable */}
+        <div
+          onMouseDown={onMouseDown}
+          style={{position:"absolute",left:0,top:0,bottom:0,width:6,cursor:"ew-resize",zIndex:10,
+            background:"transparent",transition:"background .15s"}}
+          onMouseEnter={e=>e.currentTarget.style.background="rgba(232,24,42,0.18)"}
+          onMouseLeave={e=>e.currentTarget.style.background="transparent"}
+        >
+          {/* Grip visual */}
+          <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",
+            display:"flex",flexDirection:"column",gap:3}}>
+            {[0,1,2].map(i=>(
+              <div key={i} style={{width:2,height:16,borderRadius:99,background:"rgba(156,154,149,0.5)"}}/>
+            ))}
+          </div>
+        </div>
+        <div style={{flexShrink:0,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",background:T.surface,borderBottom:`1px solid ${T.borderSm}`}}>
+          <span style={{fontSize:10,color:T.inkSoft,fontWeight:600}}>{width}px</span>
           <button onClick={onClose} style={{width:30,height:30,borderRadius:9,border:`1px solid ${T.borderSm}`,background:T.card,color:T.inkMid,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
         </div>
         <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column"}}>
@@ -2272,21 +2017,30 @@ function ViewTablero({overrides,setOverrides}){
 
       {/* ── MINI-KPIs POR TIPO ── */}
       <div className="fu1" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:22}}>
-        {porTipo.map(({tipo,cfg,base,dvb,d,count,pct})=>(
-          <div key={tipo} className="hover-lift" onClick={()=>setFTipo(fTipo===tipo?null:tipo)}
-            style={{background:T.card,borderRadius:18,padding:"18px 20px",border:`1.5px solid ${fTipo===tipo?cfg.c:T.borderSm}`,
-              boxShadow:fTipo===tipo?`0 8px 28px ${cfg.c}28`:"0 2px 8px rgba(0,0,0,0.04)",cursor:"pointer",position:"relative",overflow:"hidden",transition:"all .18s"}}>
-            <div style={{position:"absolute",top:-10,right:-10,width:56,height:56,borderRadius:"50%",background:`${cfg.c}10`,pointerEvents:"none"}}/>
+        {porTipo.map(({tipo,cfg,base,dvb,d,count,pct})=>{
+          const isActive = fTipo===tipo;
+          const isDimmed = fTipo && !isActive;
+          return(
+          <div key={tipo} onClick={()=>setFTipo(fTipo===tipo?null:tipo)}
+            style={{background:isDimmed?"#F5F5F4":T.card,borderRadius:18,padding:"18px 20px",
+              border:`1.5px solid ${isActive?cfg.c:isDimmed?"#E5E5E3":T.borderSm}`,
+              boxShadow:isActive?`0 8px 28px ${cfg.c}28`:"0 2px 8px rgba(0,0,0,0.04)",
+              cursor:"pointer",position:"relative",overflow:"hidden",
+              transition:"all .22s cubic-bezier(.22,1,.36,1)",
+              opacity:isDimmed?0.45:1,
+              transform:isActive?"translateY(-2px) scale(1.01)":"translateY(0) scale(1)"}}>
+            <div style={{position:"absolute",top:-10,right:-10,width:56,height:56,borderRadius:"50%",
+              background:isDimmed?"transparent":`${cfg.c}10`,pointerEvents:"none"}}/>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}}>
               <TipoBadge tipo={tipo}/>
-              {fTipo===tipo&&<div style={{width:8,height:8,borderRadius:"50%",background:cfg.c,marginTop:3}}/>}
+              {isActive&&<div style={{width:8,height:8,borderRadius:"50%",background:cfg.c,marginTop:3}}/>}
             </div>
-            <div style={{fontSize:24,fontWeight:900,color:T.ink,letterSpacing:"-.02em",marginBottom:4}}>{fu(dvb)}</div>
+            <div style={{fontSize:24,fontWeight:900,color:isDimmed?T.inkSoft:T.ink,letterSpacing:"-.02em",marginBottom:4}}>{fu(dvb)}</div>
             <div style={{fontSize:10,color:T.inkSoft,marginBottom:10}}>{fu(base)} base · {count} proy. · {(pct*100).toFixed(1)}%</div>
-            <PBar pct={pct*100*3.5} color={cfg.c} h={3}/>
-            <div style={{fontSize:10,fontWeight:700,color:cc(d),marginTop:6}}>{sg(d)}{d.toFixed(1)}% vs base</div>
+            <PBar pct={pct*100*3.5} color={isDimmed?"#D4D2CC":cfg.c} h={3}/>
+            <div style={{fontSize:10,fontWeight:700,color:isDimmed?T.inkSoft:cc(d),marginTop:6}}>{sg(d)}{d.toFixed(1)}% vs base</div>
           </div>
-        ))}
+        );})}
       </div>
 
       {/* ── TOOLBAR ── */}
