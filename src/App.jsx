@@ -2898,15 +2898,14 @@ function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, global
                 const when = new Date(a.created_at);
                 const diff = Math.round((Date.now()-when)/60000);
                 const t    = diff<1?"ahora":diff<60?`${diff}m`:diff<1440?`${Math.round(diff/60)}h`:when.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
-                const rawVal = a.value_after?.v;
-                const val  = rawVal!=null
-                  ? typeof rawVal==="number"
-                    ? rawVal>9999?`$${(rawVal/1e3).toFixed(0)}K`:`${rawVal}`
-                    : String(rawVal)
+                const val  = a.value_after?.v!=null
+                  ? typeof a.value_after.v==="number"
+                    ? a.value_after.v>9999?`$${(a.value_after.v/1e3).toFixed(0)}K`:`${a.value_after.v}`
+                    : String(a.value_after.v)
                   : "—";
                 const isMe = a.user_email===userEmail;
                 return(
-                  <div key={a.id||i} style={{display:"grid",
+                  <div key={a.id} style={{display:"grid",
                     gridTemplateColumns:"110px 1fr 130px 90px 120px",
                     padding:"8px 18px",minWidth:600,
                     background:i%2===0?T.card:"#FAFAF9",
@@ -3588,49 +3587,29 @@ export default function App(){
 
   const handleChangeWithLog = (id, patch, proy, macro, categoria) => {
     handleChange(id, patch);
-    
-    // Determinar campo y valor
-    let field = 'ajuste';
-    let value = null;
-    
-    if (patch._capex !== undefined) {
-      field = 'CAPEX DVB';
-      value = { v: patch._capex };
-    } else if (patch.pf?.pb !== undefined) {
-      field = 'P unitario';
-      value = { v: patch.pf.pb };
-    } else if (patch.pf?.pa !== undefined) {
-      field = 'P actual';
-      value = { v: patch.pf.pa };
-    } else if (patch.pt) {
-      field = 'Parámetros Q';
-      const keys = Object.keys(patch.pt);
-      if (keys.length > 0) {
-        value = { v: patch.pt[keys[0]], k: keys[0] };
-      }
-    } else if (patch.dt) {
-      field = 'Driver Q';
-      value = { v: patch.dt };
-    } else if (patch.df) {
-      field = 'Driver P';
-      value = { v: patch.df };
-    } else if (patch._tree) {
-      field = 'Árbol PxQ';
-      value = { v: 'modificado' };
-    }
-    
+    const field = patch._capex!==undefined?'CAPEX DVB':
+                  patch.pf?.pb!==undefined?'P unitario':
+                  patch.pf?.pa!==undefined?'P actual':
+                  patch.pt?'Parámetros Q':
+                  patch.dt?'Driver Q':
+                  patch.df?'Driver P':
+                  patch._tree?'Árbol PxQ':'ajuste';
+    const value = patch._capex!=null?{v:patch._capex}:
+                  patch.pf?.pb!=null?{v:patch.pf.pb}:
+                  patch.pf?.pa!=null?{v:patch.pf.pa}:
+                  patch.pt?{v:Object.values(patch.pt)[0]}:
+                  patch.dt?{v:patch.dt}:
+                  patch.df?{v:patch.df}:
+                  patch._tree?{v:'modificado'}:null;
     pushLog({
-      user_id: session.user.id,
-      user_email: session.user.email,
-      user_name: profile?.full_name || session.user.email.split('@')[0],
-      project_id: id,
-      project_name: proy?.n || id,
-      macro_name: macro?.macro || '',
-      categoria: categoria || '',
-      field,
-      value_before: null,
-      value_after: value,
-    }).then(() => fetchLog(session.user.id).then(({ data }) => setAuditLog(data || [])));
+      user_id:session.user.id,
+      user_email:session.user.email,
+      user_name:profile?.full_name||session.user.email.split('@')[0],
+      project_id:id, project_name:proy?.n||id,
+      macro_name:macro?.macro||'', categoria:categoria||'', field,
+      value_before:null,
+      value_after:value,
+    }).then(()=>fetchLog(session.user.id).then(({data})=>setAuditLog(data||[])));
   };
 
   const saveScenToDB = async (scen, totalCapex, deltaPct) => {
