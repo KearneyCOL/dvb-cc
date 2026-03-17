@@ -3526,32 +3526,7 @@ export default function App(){
     return()=>s.remove();
   },[]);
 
-  // Auth listener
-  useEffect(()=>{
-    supabase.auth.getSession().then(({data:{session:s}})=>{
-      setSession(s);
-      if(s) initUser(s);
-      setAuthReady(true);
-    });
-    const {data:{subscription}} = supabase.auth.onAuthStateChange((_,s)=>{
-      setSession(s);
-      if(s) initUser(s);
-      else { setProfile(null); setAuditLog([]); setEscenarios([]); }
-    });
-    return ()=>subscription.unsubscribe();
-  },[]);
-
-  // ══ GUARDS — después de todos los hooks ════════════════════════
-  if(!authReady) return(
-    <div style={{minHeight:"100vh",background:"#F7F6F3",display:"flex",
-      alignItems:"center",justifyContent:"center",
-      fontFamily:"'Outfit',system-ui,sans-serif"}}>
-      <div style={{fontSize:13,color:"#9CA3AF"}}>Cargando...</div>
-    </div>
-  );
-  if(!session) return <AuthLogin onAuth={(s)=>{ setSession(s); initUser(s); }}/>;
-
-  // ══ FUNCIONES — no son hooks, van después de los guards ════════
+  // ══ FUNCIONES — definidas antes de usarlas ════════════════════════
 
   const initUser = async (s) => {
     touchLastSeen(s.user.id);
@@ -3620,6 +3595,31 @@ export default function App(){
   const deleteScenFromDB = async (scen) => {
     if(scen.dbId) await removeScenario(session.user.id, scen.dbId);
   };
+
+  // Auth listener
+  useEffect(()=>{
+    supabase.auth.getSession().then(({data:{session:s}})=>{
+      setSession(s);
+      if(s) initUser(s);
+      setAuthReady(true);
+    });
+    const {data:{subscription}} = supabase.auth.onAuthStateChange((_,s)=>{
+      setSession(s);
+      if(s) initUser(s);
+      else { setProfile(null); setAuditLog([]); setEscenarios([]); }
+    });
+    return ()=>subscription.unsubscribe();
+  },[]);
+
+  // ══ GUARDS — después de todos los hooks ════════════════════════
+  if(!authReady) return(
+    <div style={{minHeight:"100vh",background:"#F7F6F3",display:"flex",
+      alignItems:"center",justifyContent:"center",
+      fontFamily:"'Outfit',system-ui,sans-serif"}}>
+      <div style={{fontSize:13,color:"#9CA3AF"}}>Cargando...</div>
+    </div>
+  );
+  if(!session) return <AuthLogin onAuth={(s)=>{ setSession(s); initUser(s); }}/>;
 
   const tBase=DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+p.P_base,0),0);
   const tDVB=DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+calcCap(p,overrides[p.id]),0),0);
