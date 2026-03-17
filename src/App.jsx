@@ -2131,26 +2131,9 @@ function ViewTablero({overrides,setOverrides,onChangeLog}){
 
       {drawer&&<Drawer proy={drawer.proy} macroData={drawer.macroData} macroTipo={drawer.macroTipo} ov={overrides[drawer.proy.id]}
         onChange={patch=>(onChangeLog||handleChange)(drawer.proy.id,patch,drawer.proy,drawer.macroData,drawer.macroTipo)} onClose={()=>setDrawer(null)}/>}
-      {resetModal&&<ResetModal overrides={overrides} onApply={ids=>{
-        // Registrar cada reset en el log
-        ids.forEach(id=>{
-          const proy = DATA.flatMap(m=>m.proyectos).find(p=>p.id===id);
-          const macro = DATA.find(m=>m.proyectos.some(p=>p.id===id));
-          if(onChangeLog && proy) onChangeLog(id, {_reset:true}, proy, macro, macro?.tipo);
-        });
-        setOverrides(p=>{const n={...p};ids.forEach(id=>delete n[id]);return n;});
-        setResetModal(false);
-      }} onClose={()=>setResetModal(false)}/>}
+      {resetModal&&<ResetModal overrides={overrides} onApply={ids=>{setOverrides(p=>{const n={...p};ids.forEach(id=>delete n[id]);return n;});setResetModal(false);}} onClose={()=>setResetModal(false)}/>}
       {inverso&&<InverseModal overrides={overrides}
-        onApply={upd=>{
-          // Registrar cada ajuste inverso en el log
-          Object.entries(upd).forEach(([id,ov])=>{
-            const proy = DATA.flatMap(m=>m.proyectos).find(p=>p.id===id);
-            const macro = DATA.find(m=>m.proyectos.some(p=>p.id===id));
-            if(onChangeLog && proy) onChangeLog(id, {...ov, _inverse:true}, proy, macro, macro?.tipo);
-          });
-          setOverrides(p=>({...p,...Object.fromEntries(Object.entries(upd).map(([id,ov])=>[id,{...p[id],...ov}]))}));
-        }}
+        onApply={upd=>setOverrides(p=>({...p,...Object.fromEntries(Object.entries(upd).map(([id,ov])=>[id,{...p[id],...ov}]))}))}
         onClose={()=>setInverso(false)}/>}
     </div>
   );
@@ -2915,29 +2898,12 @@ function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, global
                 const when = new Date(a.created_at);
                 const diff = Math.round((Date.now()-when)/60000);
                 const t    = diff<1?"ahora":diff<60?`${diff}m`:diff<1440?`${Math.round(diff/60)}h`:when.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
-                
-                // Formatear valor según tipo
-                let val = "—";
-                let valColor = T.green;
-                if (a.value_after?.v != null) {
-                  const v = a.value_after.v;
-                  if (typeof v === "number") {
-                    val = v > 9999 ? `$${(v/1e3).toFixed(0)}K` : v > 999 ? `$${(v/1e3).toFixed(1)}K` : `${v.toLocaleString('es-CO')}`;
-                  } else if (v === 'restaurado') {
-                    val = "↩ Base";
-                    valColor = T.blue;
-                  } else if (v === 'aplicado' || v === 'modificado') {
-                    val = "✓ Aplicado";
-                    valColor = T.violet;
-                  } else {
-                    val = String(v);
-                  }
-                }
-                // Mostrar key del parámetro si existe
-                if (a.value_after?.k) {
-                  val = `${a.value_after.k}: ${val}`;
-                }
-                
+                const rawVal = a.value_after?.v;
+                const val  = rawVal!=null
+                  ? typeof rawVal==="number"
+                    ? rawVal>9999?`$${(rawVal/1e3).toFixed(0)}K`:`${rawVal}`
+                    : String(rawVal)
+                  : "—";
                 const isMe = a.user_email===userEmail;
                 return(
                   <div key={a.id||i} style={{display:"grid",
@@ -2955,7 +2921,7 @@ function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, global
                       <div style={{fontSize:9,color:T.inkSoft}}>{a.macro_name||""}</div>
                     </div>
                     <span style={{fontSize:10,color:T.inkMid}}>{a.field}</span>
-                    <span style={{fontSize:11,fontWeight:800,color:valColor}}>{val}</span>
+                    <span style={{fontSize:11,fontWeight:800,color:T.green}}>{val}</span>
                     <div style={{display:"flex",alignItems:"center",gap:5}}>
                       <div style={{width:20,height:20,borderRadius:"50%",flexShrink:0,
                         background:isMe?T.red:"#E5E7EB",
@@ -3621,22 +3587,13 @@ export default function App(){
   };
 
   const handleChangeWithLog = (id, patch, proy, macro, categoria) => {
-    // No aplicar handleChange si es un reset (ya se maneja en el modal)
-    if (!patch._reset && !patch._inverse) {
-      handleChange(id, patch);
-    }
+    handleChange(id, patch);
     
-    // Determinar el campo y valor según el tipo de cambio
+    // Determinar campo y valor
     let field = 'ajuste';
     let value = null;
     
-    if (patch._reset) {
-      field = 'Reset a base';
-      value = { v: 'restaurado' };
-    } else if (patch._inverse) {
-      field = 'Ajuste inverso';
-      value = { v: patch.pf?.pb || 'aplicado' };
-    } else if (patch._capex !== undefined) {
+    if (patch._capex !== undefined) {
       field = 'CAPEX DVB';
       value = { v: patch._capex };
     } else if (patch.pf?.pb !== undefined) {
@@ -3647,7 +3604,6 @@ export default function App(){
       value = { v: patch.pf.pa };
     } else if (patch.pt) {
       field = 'Parámetros Q';
-      // Capturar el primer valor cambiado en pt
       const keys = Object.keys(patch.pt);
       if (keys.length > 0) {
         value = { v: patch.pt[keys[0]], k: keys[0] };
