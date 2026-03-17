@@ -3307,6 +3307,25 @@ export default function App(){
   const [loadedFile,   setLoadedFile]   = useState(null);
   const [globalParams, setGlobalParams] = useState({ipc:5.2,ila:3.8,trm:4180,delta_amx:0,contingencia:3.0});
 
+  // ══ initUser como useCallback — DEBE estar antes de los useEffect que lo usan ══
+  const initUser = useCallback(async (s) => {
+    touchLastSeen(s.user.id);
+    const {data:p}    = await getProfile(s.user.id);
+    setProfile(p);
+    const {data:log}  = await fetchLog(s.user.id);
+    setAuditLog(log||[]);
+    const {data:scens}= await fetchScenarios(s.user.id);
+    if(scens?.length){
+      setEscenarios(scens.map((sc,i)=>({
+        id:'db_'+sc.id, dbId:sc.id,
+        name:sc.name, description:sc.description||'',
+        overrides:sc.overrides||{},
+        createdAt:new Date(sc.created_at).toLocaleString('es-CO'),
+        color:['#E8182A','#2563EB','#059669','#7C3AED','#D97706'][i%5]
+      })));
+    }
+  }, []);
+
   // Estilos globales
   useEffect(()=>{
     const s=document.createElement("style");s.textContent=GS;document.head.appendChild(s);
@@ -3326,7 +3345,7 @@ export default function App(){
       else { setProfile(null); setAuditLog([]); setEscenarios([]); }
     });
     return ()=>subscription.unsubscribe();
-  },[]);
+  },[initUser]);
 
   // ══ GUARDS — después de todos los hooks ════════════════════════
   if(!authReady) return(
@@ -3339,24 +3358,6 @@ export default function App(){
   if(!session) return <AuthLogin onAuth={(s)=>{ setSession(s); initUser(s); }}/>;
 
   // ══ FUNCIONES — no son hooks, van después de los guards ════════
-
-  const initUser = async (s) => {
-    touchLastSeen(s.user.id);
-    const {data:p}    = await getProfile(s.user.id);
-    setProfile(p);
-    const {data:log}  = await fetchLog(s.user.id);
-    setAuditLog(log||[]);
-    const {data:scens}= await fetchScenarios(s.user.id);
-    if(scens?.length){
-      setEscenarios(scens.map((sc,i)=>({
-        id:'db_'+sc.id, dbId:sc.id,
-        name:sc.name, description:sc.description||'',
-        overrides:sc.overrides||{},
-        createdAt:new Date(sc.created_at).toLocaleString('es-CO'),
-        color:['#E8182A','#2563EB','#059669','#7C3AED','#D97706'][i%5]
-      })));
-    }
-  };
 
   const handleSignOut = async ()=>{
     await authSignOut();
