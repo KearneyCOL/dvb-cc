@@ -2131,9 +2131,26 @@ function ViewTablero({overrides,setOverrides,onChangeLog}){
 
       {drawer&&<Drawer proy={drawer.proy} macroData={drawer.macroData} macroTipo={drawer.macroTipo} ov={overrides[drawer.proy.id]}
         onChange={patch=>(onChangeLog||handleChange)(drawer.proy.id,patch,drawer.proy,drawer.macroData,drawer.macroTipo)} onClose={()=>setDrawer(null)}/>}
-      {resetModal&&<ResetModal overrides={overrides} onApply={ids=>{setOverrides(p=>{const n={...p};ids.forEach(id=>delete n[id]);return n;});setResetModal(false);}} onClose={()=>setResetModal(false)}/>}
+      {resetModal&&<ResetModal overrides={overrides} onApply={ids=>{
+        // Registrar cada reset en el log
+        ids.forEach(id=>{
+          const proy = DATA.flatMap(m=>m.proyectos).find(p=>p.id===id);
+          const macro = DATA.find(m=>m.proyectos.some(p=>p.id===id));
+          if(onChangeLog && proy) onChangeLog(id, {_reset:true}, proy, macro, macro?.tipo);
+        });
+        setOverrides(p=>{const n={...p};ids.forEach(id=>delete n[id]);return n;});
+        setResetModal(false);
+      }} onClose={()=>setResetModal(false)}/>}
       {inverso&&<InverseModal overrides={overrides}
-        onApply={upd=>setOverrides(p=>({...p,...Object.fromEntries(Object.entries(upd).map(([id,ov])=>[id,{...p[id],...ov}]))}))}
+        onApply={upd=>{
+          // Registrar cada ajuste inverso en el log
+          Object.entries(upd).forEach(([id,ov])=>{
+            const proy = DATA.flatMap(m=>m.proyectos).find(p=>p.id===id);
+            const macro = DATA.find(m=>m.proyectos.some(p=>p.id===id));
+            if(onChangeLog && proy) onChangeLog(id, {...ov, _inverse:true}, proy, macro, macro?.tipo);
+          });
+          setOverrides(p=>({...p,...Object.fromEntries(Object.entries(upd).map(([id,ov])=>[id,{...p[id],...ov}]))}));
+        }}
         onClose={()=>setInverso(false)}/>}
     </div>
   );
@@ -2898,14 +2915,32 @@ function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, global
                 const when = new Date(a.created_at);
                 const diff = Math.round((Date.now()-when)/60000);
                 const t    = diff<1?"ahora":diff<60?`${diff}m`:diff<1440?`${Math.round(diff/60)}h`:when.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
-                const val  = a.value_after?.v!=null
-                  ? typeof a.value_after.v==="number"
-                    ? a.value_after.v>9999?`$${(a.value_after.v/1e3).toFixed(0)}K`:`${a.value_after.v}`
-                    : String(a.value_after.v)
-                  : "—";
+                
+                // Formatear valor según tipo
+                let val = "—";
+                let valColor = T.green;
+                if (a.value_after?.v != null) {
+                  const v = a.value_after.v;
+                  if (typeof v === "number") {
+                    val = v > 9999 ? `$${(v/1e3).toFixed(0)}K` : v > 999 ? `$${(v/1e3).toFixed(1)}K` : `${v.toLocaleString('es-CO')}`;
+                  } else if (v === 'restaurado') {
+                    val = "↩ Base";
+                    valColor = T.blue;
+                  } else if (v === 'aplicado' || v === 'modificado') {
+                    val = "✓ Aplicado";
+                    valColor = T.violet;
+                  } else {
+                    val = String(v);
+                  }
+                }
+                // Mostrar key del parámetro si existe
+                if (a.value_after?.k) {
+                  val = `${a.value_after.k}: ${val}`;
+                }
+                
                 const isMe = a.user_email===userEmail;
                 return(
-                  <div key={a.id} style={{display:"grid",
+                  <div key={a.id||i} style={{display:"grid",
                     gridTemplateColumns:"110px 1fr 130px 90px 120px",
                     padding:"8px 18px",minWidth:600,
                     background:i%2===0?T.card:"#FAFAF9",
@@ -2920,7 +2955,7 @@ function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, global
                       <div style={{fontSize:9,color:T.inkSoft}}>{a.macro_name||""}</div>
                     </div>
                     <span style={{fontSize:10,color:T.inkMid}}>{a.field}</span>
-                    <span style={{fontSize:11,fontWeight:800,color:T.green}}>{val}</span>
+                    <span style={{fontSize:11,fontWeight:800,color:valColor}}>{val}</span>
                     <div style={{display:"flex",alignItems:"center",gap:5}}>
                       <div style={{width:20,height:20,borderRadius:"50%",flexShrink:0,
                         background:isMe?T.red:"#E5E7EB",
@@ -3586,19 +3621,60 @@ export default function App(){
   };
 
   const handleChangeWithLog = (id, patch, proy, macro, categoria) => {
-    handleChange(id, patch);
-    const field = patch.pf?.pb!==undefined?'P unitario':
-                  patch.pf?.pa!==undefined?'P actual':
-                  patch.pt?'Parámetros Q':patch.dt?'Driver Q':'ajuste';
+    // No aplicar handleChange si es un reset (ya se maneja en el modal)
+    if (!patch._reset && !patch._inverse) {
+      handleChange(id, patch);
+    }
+    
+    // Determinar el campo y valor según el tipo de cambio
+    let field = 'ajuste';
+    let value = null;
+    
+    if (patch._reset) {
+      field = 'Reset a base';
+      value = { v: 'restaurado' };
+    } else if (patch._inverse) {
+      field = 'Ajuste inverso';
+      value = { v: patch.pf?.pb || 'aplicado' };
+    } else if (patch._capex !== undefined) {
+      field = 'CAPEX DVB';
+      value = { v: patch._capex };
+    } else if (patch.pf?.pb !== undefined) {
+      field = 'P unitario';
+      value = { v: patch.pf.pb };
+    } else if (patch.pf?.pa !== undefined) {
+      field = 'P actual';
+      value = { v: patch.pf.pa };
+    } else if (patch.pt) {
+      field = 'Parámetros Q';
+      // Capturar el primer valor cambiado en pt
+      const keys = Object.keys(patch.pt);
+      if (keys.length > 0) {
+        value = { v: patch.pt[keys[0]], k: keys[0] };
+      }
+    } else if (patch.dt) {
+      field = 'Driver Q';
+      value = { v: patch.dt };
+    } else if (patch.df) {
+      field = 'Driver P';
+      value = { v: patch.df };
+    } else if (patch._tree) {
+      field = 'Árbol PxQ';
+      value = { v: 'modificado' };
+    }
+    
     pushLog({
-      user_id:session.user.id,
-      user_email:session.user.email,
-      user_name:profile?.full_name||session.user.email.split('@')[0],
-      project_id:id, project_name:proy?.n||id,
-      macro_name:macro?.macro||'', categoria:categoria||'', field,
-      value_before:null,
-      value_after:patch.pf?.pb!=null?{v:patch.pf.pb}:patch.pf?.pa!=null?{v:patch.pf.pa}:null,
-    }).then(()=>fetchLog(session.user.id).then(({data})=>setAuditLog(data||[])));
+      user_id: session.user.id,
+      user_email: session.user.email,
+      user_name: profile?.full_name || session.user.email.split('@')[0],
+      project_id: id,
+      project_name: proy?.n || id,
+      macro_name: macro?.macro || '',
+      categoria: categoria || '',
+      field,
+      value_before: null,
+      value_after: value,
+    }).then(() => fetchLog(session.user.id).then(({ data }) => setAuditLog(data || [])));
   };
 
   const saveScenToDB = async (scen, totalCapex, deltaPct) => {
