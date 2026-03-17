@@ -1,6 +1,10 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import "./index.css";
 import * as XLSX from "xlsx";
+import { supabase, getProfile, touchLastSeen, fetchScenarios,
+         upsertScenario, removeScenario, pushLog, fetchLog,
+         authSignOut } from "./supabase";
+import AuthLogin from "./AuthLogin";
 
 /* ══════════════════════════════════════════════════════════════════════════
    DVB COMMAND CENTER · Kearney × Claro Colombia · CAPEX 2026
@@ -1934,7 +1938,7 @@ function ResetModal({overrides, onApply, onClose}){
 }
 
 
-function ViewTablero({overrides,setOverrides}){
+function ViewTablero({overrides,setOverrides,onChangeLog}){
   const[drawer,setDrawer]=useState(null);
   const[fTipo,setFTipo]=useState(null);
   const[inverso,setInverso]=useState(false);
@@ -2126,7 +2130,7 @@ function ViewTablero({overrides,setOverrides}){
       </div>
 
       {drawer&&<Drawer proy={drawer.proy} macroData={drawer.macroData} macroTipo={drawer.macroTipo} ov={overrides[drawer.proy.id]}
-        onChange={patch=>handleChange(drawer.proy.id,patch)} onClose={()=>setDrawer(null)}/>}
+        onChange={patch=>(onChangeLog||handleChange)(drawer.proy.id,patch,drawer.proy,drawer.macroData,drawer.macroTipo)} onClose={()=>setDrawer(null)}/>}
       {resetModal&&<ResetModal overrides={overrides} onApply={ids=>{setOverrides(p=>{const n={...p};ids.forEach(id=>delete n[id]);return n;});setResetModal(false);}} onClose={()=>setResetModal(false)}/>}
       {inverso&&<InverseModal overrides={overrides}
         onApply={upd=>setOverrides(p=>({...p,...Object.fromEntries(Object.entries(upd).map(([id,ov])=>[id,{...p[id],...ov}]))}))}
@@ -2314,7 +2318,7 @@ function ViewEficiencias({overrides, tBase, tDVB}){
                                         sub:`${fu(tBase)} − ${fu(tDVB)} = ${eficiencia>=0?"ahorro":"sobrecosto"}`},
             {label:"Proyectos ajustados",val:String(nAjustes), sub:`${ahorros.length} ahorros · ${incrementos.length} incrementos`},
           ].map((k,i)=>(
-            <React.Fragment key={i}>
+            <>
               {i>0&&<div style={{background:"rgba(255,255,255,.15)",width:1,margin:"20px 0"}}/>}
               <div style={{padding:"24px 28px"}}>
                 <div style={{fontSize:8.5,fontWeight:700,color:"rgba(255,255,255,.45)",
@@ -2323,7 +2327,7 @@ function ViewEficiencias({overrides, tBase, tDVB}){
                   letterSpacing:"-.025em",lineHeight:1,marginBottom:5}}>{k.val}</div>
                 <div style={{fontSize:10.5,color:"rgba(255,255,255,.55)",lineHeight:1.5}}>{k.sub}</div>
               </div>
-            </React.Fragment>
+            </>
           ))}
         </div>
       </div>
@@ -2709,8 +2713,7 @@ function generateXLSX(proyRows, overrides){
 /* ══════════════════════════════════════════════════════════════════════════
    TAB CONTROL — Carga / Descarga plantilla + parámetros globales
 ══════════════════════════════════════════════════════════════════════════ */
-function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, globalParams, setGlobalParams}){
-  const {useState,useRef,useCallback}=React;
+function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, globalParams, setGlobalParams, auditLog=[], userEmail=''}){
   const fileRef=useRef();
   const [parsing,setParsing]=useState(false);
   const [parseResult,setParseResult]=useState(null); // {ok, rows, errors}
@@ -2862,6 +2865,79 @@ function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, global
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:22}}>
 
         {/* ── COLUMNA IZQUIERDA: Carga ── */}
+
+        {/* ══ HISTORIAL DE AJUSTES ══ */}
+        <div style={{marginBottom:24,background:T.card,borderRadius:14,
+          border:`1px solid ${T.borderSm}`,overflow:"hidden"}}>
+          <div style={{padding:"12px 18px",borderBottom:`1px solid ${T.borderSm}`,
+            display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <div style={{fontSize:13,fontWeight:700,color:T.ink}}>Historial de ajustes</div>
+            <span style={{fontSize:10,color:T.inkSoft,background:T.surface,
+              padding:"2px 8px",borderRadius:99,border:`1px solid ${T.borderSm}`}}>
+              {auditLog.length} registros
+            </span>
+          </div>
+          {auditLog.length===0 ? (
+            <div style={{padding:"28px",textAlign:"center"}}>
+              <div style={{fontSize:22,marginBottom:8}}>📋</div>
+              <div style={{fontSize:12,fontWeight:600,color:T.ink,marginBottom:4}}>Sin ajustes todavía</div>
+              <div style={{fontSize:11,color:T.inkSoft}}>Modifica un Q o P en el tablero y aparecerá aquí</div>
+            </div>
+          ):(
+            <div style={{overflowX:"auto"}}>
+              <div style={{display:"grid",gridTemplateColumns:"110px 1fr 130px 90px 120px",
+                padding:"7px 18px",background:T.surface,
+                borderBottom:`1px solid ${T.borderSm}`,minWidth:600}}>
+                {["Cuándo","Proyecto","Campo","Valor nuevo","Quién"].map(h=>(
+                  <span key={h} style={{fontSize:8.5,fontWeight:700,color:T.inkSoft,
+                    textTransform:"uppercase",letterSpacing:".07em"}}>{h}</span>
+                ))}
+              </div>
+              {auditLog.slice(0,80).map((a,i)=>{
+                const who  = a.user_name||a.user_email?.split("@")[0]||"";
+                const when = new Date(a.created_at);
+                const diff = Math.round((Date.now()-when)/60000);
+                const t    = diff<1?"ahora":diff<60?`${diff}m`:diff<1440?`${Math.round(diff/60)}h`:when.toLocaleDateString("es-CO",{day:"2-digit",month:"short"});
+                const val  = a.value_after?.v!=null
+                  ? typeof a.value_after.v==="number"
+                    ? a.value_after.v>9999?`$${(a.value_after.v/1e3).toFixed(0)}K`:`${a.value_after.v}`
+                    : String(a.value_after.v)
+                  : "—";
+                const isMe = a.user_email===userEmail;
+                return(
+                  <div key={a.id} style={{display:"grid",
+                    gridTemplateColumns:"110px 1fr 130px 90px 120px",
+                    padding:"8px 18px",minWidth:600,
+                    background:i%2===0?T.card:"#FAFAF9",
+                    borderBottom:i<auditLog.slice(0,80).length-1?`1px solid ${T.borderSm}`:"none",
+                    alignItems:"center"}}>
+                    <span style={{fontSize:9.5,color:T.inkSoft}}>{t}</span>
+                    <div style={{overflow:"hidden"}}>
+                      <div style={{fontSize:11,fontWeight:600,color:T.ink,
+                        whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
+                        {a.project_name||a.project_id}
+                      </div>
+                      <div style={{fontSize:9,color:T.inkSoft}}>{a.macro_name||""}</div>
+                    </div>
+                    <span style={{fontSize:10,color:T.inkMid}}>{a.field}</span>
+                    <span style={{fontSize:11,fontWeight:800,color:T.green}}>{val}</span>
+                    <div style={{display:"flex",alignItems:"center",gap:5}}>
+                      <div style={{width:20,height:20,borderRadius:"50%",flexShrink:0,
+                        background:isMe?T.red:"#E5E7EB",
+                        display:"flex",alignItems:"center",justifyContent:"center",
+                        fontSize:9,fontWeight:800,color:isMe?"#fff":T.inkSoft}}>
+                        {who.charAt(0).toUpperCase()}
+                      </div>
+                      <span style={{fontSize:9.5,color:isMe?T.ink:T.inkMid,fontWeight:isMe?700:400}}>
+                        {who}{isMe&&" (tú)"}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
         <div>
           <div style={S.card}>
             <div style={S.sectionTitle}>
@@ -3090,8 +3166,7 @@ function ViewControl({overrides, setOverrides, loadedFile, setLoadedFile, global
 /* ══════════════════════════════════════════════════════════════════════════
    TAB ESCENARIOS — Multi-escenario con comparación
 ══════════════════════════════════════════════════════════════════════════ */
-function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, setOverrides}){
-  const {useState,useMemo}=React;
+function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, setOverrides, onSaveDB, onDeleteDB}){
   const [compareA,setCompareA]=useState(null);
   const [compareB,setCompareB]=useState(null);
   const [newName,setNewName]=useState('');
@@ -3108,12 +3183,15 @@ function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, s
               createdAt:new Date().toLocaleString('es-CO'),
               color:['#E8182A','#2563EB','#059669','#7C3AED','#D97706'][escenarios.length%5]};
     setEscenarios(prev=>[...prev,ns]);
+    if(onSaveDB) onSaveDB(ns);
     return id;
   };
 
   const deleteScenario=(id)=>{
+    const scen=escenarios.find(s=>s.id===id);
     setEscenarios(prev=>prev.filter(s=>s.id!==id));
     if(activeScen===id) setActiveScen(null);
+    if(onDeleteDB&&scen) onDeleteDB(scen);
     if(compareA===id) setCompareA(null);
     if(compareB===id) setCompareB(null);
   };
@@ -3426,18 +3504,111 @@ function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, s
 
 
 export default function App(){
-  const[overrides,setOverrides]=useState({});
-  const[tab,setTab]=useState("tablero");
-  const[escenarios,setEscenarios]=useState([]);
-  const[activeScen,setActiveScen]=useState(null);
-  const[loadedFile,setLoadedFile]=useState(null);
-  const[globalParams,setGlobalParams]=useState({ipc:5.2,ila:3.8,trm:4180,delta_amx:0,contingencia:3.0});
+  // ══ TODOS LOS HOOKS PRIMERO ════════════════════════════════════
 
+  // Auth
+  const [session,   setSession]   = useState(null);
+  const [profile,   setProfile]   = useState(null);
+  const [authReady, setAuthReady] = useState(false);
+
+  // App
+  const [overrides,    setOverrides]    = useState({});
+  const [auditLog,     setAuditLog]     = useState([]);
+  const [tab,          setTab]          = useState("tablero");
+  const [escenarios,   setEscenarios]   = useState([]);
+  const [activeScen,   setActiveScen]   = useState(null);
+  const [loadedFile,   setLoadedFile]   = useState(null);
+  const [globalParams, setGlobalParams] = useState({ipc:5.2,ila:3.8,trm:4180,delta_amx:0,contingencia:3.0});
+
+  // Estilos globales
   useEffect(()=>{
     const s=document.createElement("style");s.textContent=GS;document.head.appendChild(s);
-    // SheetJS importado via npm
     return()=>s.remove();
   },[]);
+
+  // Auth listener
+  useEffect(()=>{
+    supabase.auth.getSession().then(({data:{session:s}})=>{
+      setSession(s);
+      if(s) initUser(s);
+      setAuthReady(true);
+    });
+    const {data:{subscription}} = supabase.auth.onAuthStateChange((_,s)=>{
+      setSession(s);
+      if(s) initUser(s);
+      else { setProfile(null); setAuditLog([]); setEscenarios([]); }
+    });
+    return ()=>subscription.unsubscribe();
+  },[]);
+
+  // ══ GUARDS — después de todos los hooks ════════════════════════
+  if(!authReady) return(
+    <div style={{minHeight:"100vh",background:"#F7F6F3",display:"flex",
+      alignItems:"center",justifyContent:"center",
+      fontFamily:"'Outfit',system-ui,sans-serif"}}>
+      <div style={{fontSize:13,color:"#9CA3AF"}}>Cargando...</div>
+    </div>
+  );
+  if(!session) return <AuthLogin onAuth={(s)=>{ setSession(s); initUser(s); }}/>;
+
+  // ══ FUNCIONES — no son hooks, van después de los guards ════════
+
+  const initUser = async (s) => {
+    touchLastSeen(s.user.id);
+    const {data:p}    = await getProfile(s.user.id);
+    setProfile(p);
+    const {data:log}  = await fetchLog(s.user.id);
+    setAuditLog(log||[]);
+    const {data:scens}= await fetchScenarios(s.user.id);
+    if(scens?.length){
+      setEscenarios(scens.map((sc,i)=>({
+        id:'db_'+sc.id, dbId:sc.id,
+        name:sc.name, description:sc.description||'',
+        overrides:sc.overrides||{},
+        createdAt:new Date(sc.created_at).toLocaleString('es-CO'),
+        color:['#E8182A','#2563EB','#059669','#7C3AED','#D97706'][i%5]
+      })));
+    }
+  };
+
+  const handleSignOut = async ()=>{
+    await authSignOut();
+    setSession(null); setProfile(null); setAuditLog([]); setEscenarios([]);
+  };
+
+  const handleChange = (id, patch) => {
+    setOverrides(p=>{
+      const prev=p[id]||{};
+      return {...p,[id]:{...prev,...patch,
+        pt:patch.pt?{...(prev.pt||{}),...patch.pt}:prev.pt,
+        pf:patch.pf?{...(prev.pf||{}),...patch.pf}:prev.pf}};
+    });
+  };
+
+  const handleChangeWithLog = (id, patch, proy, macro, categoria) => {
+    handleChange(id, patch);
+    const field = patch.pf?.pb!==undefined?'P unitario':
+                  patch.pf?.pa!==undefined?'P actual':
+                  patch.pt?'Parámetros Q':patch.dt?'Driver Q':'ajuste';
+    pushLog({
+      user_id:session.user.id,
+      user_email:session.user.email,
+      user_name:profile?.full_name||session.user.email.split('@')[0],
+      project_id:id, project_name:proy?.n||id,
+      macro_name:macro?.macro||'', categoria:categoria||'', field,
+      value_before:null,
+      value_after:patch.pf?.pb!=null?{v:patch.pf.pb}:patch.pf?.pa!=null?{v:patch.pf.pa}:null,
+    }).then(()=>fetchLog(session.user.id).then(({data})=>setAuditLog(data||[])));
+  };
+
+  const saveScenToDB = async (scen, totalCapex, deltaPct) => {
+    const {data} = await upsertScenario(session.user.id, {...scen,totalCapex,deltaPct});
+    if(data) setEscenarios(prev=>prev.map(s=>s.id===scen.id?{...s,dbId:data.id}:s));
+  };
+
+  const deleteScenFromDB = async (scen) => {
+    if(scen.dbId) await removeScenario(session.user.id, scen.dbId);
+  };
 
   const tBase=DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+p.P_base,0),0);
   const tDVB=DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+calcCap(p,overrides[p.id]),0),0);
@@ -3470,6 +3641,29 @@ const TABS=[{id:"tablero",label:"Tablero DVB",icon:"📊"},{id:"eficiencias",lab
             <div style={{fontSize:9.5,color:T.inkSoft}}>Drivers Value Budgeting · CAPEX 2026</div>
           </div>
           <div style={{width:1,height:26,background:T.borderSm}}/>
+          {/* Usuario */}
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <div style={{width:28,height:28,borderRadius:"50%",background:T.red,
+              display:"flex",alignItems:"center",justifyContent:"center",
+              fontSize:11,fontWeight:800,color:"#fff",flexShrink:0}}>
+              {(profile?.full_name||session.user.email).charAt(0).toUpperCase()}
+            </div>
+            <div style={{lineHeight:1.2}}>
+              <div style={{fontSize:11,fontWeight:700,color:T.ink}}>
+                {profile?.full_name||session.user.email.split("@")[0]}
+              </div>
+              <div style={{fontSize:9,color:T.inkSoft,textTransform:"capitalize"}}>
+                {profile?.role||"editor"}
+              </div>
+            </div>
+            <button onClick={handleSignOut}
+              style={{padding:"4px 10px",borderRadius:7,border:`1px solid ${T.borderSm}`,
+                background:"transparent",color:T.inkSoft,fontSize:10,fontWeight:600,
+                cursor:"pointer",marginLeft:4,fontFamily:"'Outfit',system-ui"}}>
+              Salir
+            </button>
+          </div>
+          <div style={{width:1,height:26,background:T.borderSm}}/>
           {/* Live totals en header */}
           <div style={{display:"flex",gap:6}}>
             {[{l:"Base",v:fu(tBase),c:T.inkMid},{l:"DVB",v:fu(tDVB),c:cc(dT)},...(Math.abs(dT)>.1?[{l:"Δ",v:`${dT>=0?"+":""}${dT.toFixed(1)}%`,c:cc(dT)}]:[])].map(k=>(
@@ -3496,10 +3690,10 @@ const TABS=[{id:"tablero",label:"Tablero DVB",icon:"📊"},{id:"eficiencias",lab
 
       {/* CONTENT */}
       <div style={{flex:1,overflow:"auto"}}>
-        {tab==="tablero"    &&<ViewTablero overrides={overrides} setOverrides={setOverrides}/>}
+        {tab==="tablero"    &&<ViewTablero overrides={overrides} setOverrides={setOverrides} onChangeLog={handleChangeWithLog}/>}
         {tab==="eficiencias"&&<ViewEficiencias overrides={overrides} tBase={tBase} tDVB={tDVB}/>}
-        {tab==="escenarios" &&<ViewEscenarios escenarios={escenarios} setEscenarios={setEscenarios} activeScen={activeScen} setActiveScen={setActiveScen} setOverrides={setOverrides}/>}
-        {tab==="control"    &&<ViewControl overrides={overrides} setOverrides={setOverrides} loadedFile={loadedFile} setLoadedFile={setLoadedFile} globalParams={globalParams} setGlobalParams={setGlobalParams}/>}
+        {tab==="escenarios" &&<ViewEscenarios escenarios={escenarios} setEscenarios={setEscenarios} activeScen={activeScen} setActiveScen={setActiveScen} setOverrides={setOverrides} onSaveDB={saveScenToDB} onDeleteDB={deleteScenFromDB}/>}
+        {tab==="control"    &&<ViewControl overrides={overrides} setOverrides={setOverrides} loadedFile={loadedFile} setLoadedFile={setLoadedFile} globalParams={globalParams} setGlobalParams={setGlobalParams} auditLog={auditLog} userEmail={session?.user?.email||''}/>}
         {tab==="metodologia"&&<ViewMetodologia/>}
       </div>
 
