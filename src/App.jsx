@@ -3520,15 +3520,9 @@ export default function App(){
   const [loadedFile,   setLoadedFile]   = useState(null);
   const [globalParams, setGlobalParams] = useState({ipc:5.2,ila:3.8,trm:4180,delta_amx:0,contingencia:3.0});
 
-  // Estilos globales
-  useEffect(()=>{
-    const s=document.createElement("style");s.textContent=GS;document.head.appendChild(s);
-    return()=>s.remove();
-  },[]);
+  // ══ FUNCIONES CON useCallback — ANTES de usarlas ════════════════
 
-  // ══ FUNCIONES — definidas antes de usarlas ════════════════════════
-
-  const initUser = async (s) => {
+  const initUser = useCallback(async (s) => {
     touchLastSeen(s.user.id);
     const {data:p}    = await getProfile(s.user.id);
     setProfile(p);
@@ -3544,24 +3538,32 @@ export default function App(){
         color:['#E8182A','#2563EB','#059669','#7C3AED','#D97706'][i%5]
       })));
     }
-  };
+  }, []);
 
-  const handleSignOut = async ()=>{
+  const handleSignOut = useCallback(async ()=>{
     await authSignOut();
     setSession(null); setProfile(null); setAuditLog([]); setEscenarios([]);
-  };
+  }, []);
 
-  const handleChange = (id, patch) => {
+  const handleChange = useCallback((id, patch) => {
     setOverrides(p=>{
       const prev=p[id]||{};
       return {...p,[id]:{...prev,...patch,
         pt:patch.pt?{...(prev.pt||{}),...patch.pt}:prev.pt,
         pf:patch.pf?{...(prev.pf||{}),...patch.pf}:prev.pf}};
     });
-  };
+  }, []);
 
-  const handleChangeWithLog = (id, patch, proy, macro, categoria) => {
-    handleChange(id, patch);
+  const handleChangeWithLog = useCallback((id, patch, proy, macro, categoria) => {
+    // Aplicar cambio
+    setOverrides(p=>{
+      const prev=p[id]||{};
+      return {...p,[id]:{...prev,...patch,
+        pt:patch.pt?{...(prev.pt||{}),...patch.pt}:prev.pt,
+        pf:patch.pf?{...(prev.pf||{}),...patch.pf}:prev.pf}};
+    });
+    
+    // Determinar campo y valor para el log
     const field = patch._capex!==undefined?'CAPEX DVB':
                   patch.pf?.pb!==undefined?'P unitario':
                   patch.pf?.pa!==undefined?'P actual':
@@ -3576,25 +3578,39 @@ export default function App(){
                   patch.dt?{v:patch.dt}:
                   patch.df?{v:patch.df}:
                   patch._tree?{v:'modificado'}:null;
-    pushLog({
-      user_id:session.user.id,
-      user_email:session.user.email,
-      user_name:profile?.full_name||session.user.email.split('@')[0],
-      project_id:id, project_name:proy?.n||id,
-      macro_name:macro?.macro||'', categoria:categoria||'', field,
-      value_before:null,
-      value_after:value,
-    }).then(()=>fetchLog(session.user.id).then(({data})=>setAuditLog(data||[])));
-  };
+    
+    // Guardar en log (usar session y profile del closure)
+    if(session?.user?.id){
+      pushLog({
+        user_id:session.user.id,
+        user_email:session.user.email,
+        user_name:profile?.full_name||session.user.email.split('@')[0],
+        project_id:id, project_name:proy?.n||id,
+        macro_name:macro?.macro||'', categoria:categoria||'', field,
+        value_before:null,
+        value_after:value,
+      }).then(()=>fetchLog(session.user.id).then(({data})=>setAuditLog(data||[])));
+    }
+  }, [session, profile]);
 
-  const saveScenToDB = async (scen, totalCapex, deltaPct) => {
+  const saveScenToDB = useCallback(async (scen, totalCapex, deltaPct) => {
+    if(!session?.user?.id) return;
     const {data} = await upsertScenario(session.user.id, {...scen,totalCapex,deltaPct});
     if(data) setEscenarios(prev=>prev.map(s=>s.id===scen.id?{...s,dbId:data.id}:s));
-  };
+  }, [session]);
 
-  const deleteScenFromDB = async (scen) => {
+  const deleteScenFromDB = useCallback(async (scen) => {
+    if(!session?.user?.id) return;
     if(scen.dbId) await removeScenario(session.user.id, scen.dbId);
-  };
+  }, [session]);
+
+  // ══ EFFECTS — después de definir las funciones ════════════════
+
+  // Estilos globales
+  useEffect(()=>{
+    const s=document.createElement("style");s.textContent=GS;document.head.appendChild(s);
+    return()=>s.remove();
+  },[]);
 
   // Auth listener
   useEffect(()=>{
@@ -3609,7 +3625,7 @@ export default function App(){
       else { setProfile(null); setAuditLog([]); setEscenarios([]); }
     });
     return ()=>subscription.unsubscribe();
-  },[]);
+  },[initUser]);
 
   // ══ GUARDS — después de todos los hooks ════════════════════════
   if(!authReady) return(
@@ -3620,6 +3636,8 @@ export default function App(){
     </div>
   );
   if(!session) return <AuthLogin onAuth={(s)=>{ setSession(s); initUser(s); }}/>;
+
+  // ══ VARIABLES CALCULADAS ════════════════════════════════════
 
   const tBase=DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+p.P_base,0),0);
   const tDVB=DATA.reduce((s,m)=>s+m.proyectos.reduce((sp,p)=>sp+calcCap(p,overrides[p.id]),0),0);
