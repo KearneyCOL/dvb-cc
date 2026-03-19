@@ -219,24 +219,24 @@ let DATA = [
   // CATEGORÍA: ENTERPRISE Y B2B
   // ═══════════════════════════════════════════════════════════════════════════
   
-  {macro:"Soluciones Conectividad Enterprise",categoria:"Enterprise y B2B",tipo:"Crecimiento",P_base:18000000,proyectos:[
+  {macro:"Soluciones Conectividad Enterprise",categoria:"Red",tipo:"Crecimiento",P_base:18000000,proyectos:[
     {id:"EB.SC.01",n:"Redes Dedicadas y SD-WAN",m:"contrato",prio:"CRECIMIENTO",P_base:10000000,dt:"pipeline_b2b",pt:{pipeline:200,win_rate:0.50},df:"mercado",pf:{pa:100000,pb:100000}},
     {id:"EB.SC.02",n:"Conectividad Multi-Cloud",m:"POP",prio:"CRECIMIENTO",P_base:5000000,dt:"pipeline_b2b",pt:{pipeline:100,win_rate:0.50},df:"mercado",pf:{pa:50000,pb:50000}},
     {id:"EB.SC.03",n:"5G Privado y Network Slicing",m:"despliegue",prio:"CRECIMIENTO",P_base:3000000,dt:"pipeline_b2b",pt:{pipeline:30,win_rate:0.40},df:"mercado",pf:{pa:250000,pb:250000}},
   ]},
   
-  {macro:"Servicios Data Center B2B",categoria:"Enterprise y B2B",tipo:"Crecimiento",P_base:15000000,proyectos:[
+  {macro:"Servicios Data Center B2B",categoria:"Red",tipo:"Crecimiento",P_base:15000000,proyectos:[
     {id:"EB.SD.01",n:"Colocation y Housing",m:"rack",prio:"CRECIMIENTO",P_base:6000000,dt:"pipeline_b2b",pt:{pipeline:750,win_rate:0.50},df:"mercado",pf:{pa:8000,pb:8000}},
     {id:"EB.SD.02",n:"Cloud Privado y Managed Services",m:"contrato",prio:"CRECIMIENTO",P_base:5000000,dt:"pipeline_b2b",pt:{pipeline:50,win_rate:0.50},df:"mercado",pf:{pa:100000,pb:100000}},
     {id:"EB.SD.03",n:"Edge Computing Empresarial",m:"nodo",prio:"CRECIMIENTO",P_base:4000000,dt:"pipeline_b2b",pt:{pipeline:40,win_rate:0.40},df:"mercado",pf:{pa:150000,pb:150000}},
   ]},
   
-  {macro:"Gobierno y Verticales",categoria:"Enterprise y B2B",tipo:"Crecimiento",P_base:12000000,proyectos:[
+  {macro:"Gobierno y Verticales",categoria:"Red",tipo:"Crecimiento",P_base:12000000,proyectos:[
     {id:"EB.GV.01",n:"Conectividad Social MINTIC",m:"proyecto",prio:"CRECIMIENTO",P_base:8000000,dt:"pipeline_b2b",pt:{pipeline:10,win_rate:0.50},df:"mercado",pf:{pa:800000,pb:800000}},
     {id:"EB.GV.02",n:"Verticales Estratégicos",m:"proyecto",prio:"CRECIMIENTO",P_base:4000000,dt:"pipeline_b2b",pt:{pipeline:20,win_rate:0.40},df:"mercado",pf:{pa:500000,pb:500000}},
   ]},
   
-  {macro:"Capacidad Mayorista",categoria:"Enterprise y B2B",tipo:"Crecimiento",P_base:5000000,proyectos:[
+  {macro:"Capacidad Mayorista",categoria:"Red",tipo:"Crecimiento",P_base:5000000,proyectos:[
     {id:"EB.WS.01",n:"Servicios Wholesale",m:"Gbps",prio:"CRECIMIENTO",P_base:5000000,dt:"crecimiento_trafico",pt:{capacidad_actual:200,crecimiento_pct:0.50},df:"mercado",pf:{pa:50000,pb:50000}},
   ]},
   
@@ -1744,16 +1744,16 @@ function ViewTablero({overrides,setOverrides,onChangeLog}){
   const nOv=Object.keys(overrides).length;
   const tProj=DATA.reduce((s,m)=>s+m.proyectos.length,0);
 
-  const CAT_KEYS=["Crecimiento","Modernización","Regulatorio","Operación","Transformación","Evolución","Comercial"];
+  const CAT_KEYS=["Red","Tecnología","Inversión Clientes","Corporativo"];
   const porTipo=useMemo(()=>CAT_KEYS.map(k=>{
     const cfg=TIPO_CFG[k];
-    const ms=DATA.filter(m=>m.tipo===k);
+    const ms=DATA.filter(m=>m.categoria===k);
     const base=ms.reduce((s,m)=>s+mBase(m),0);
     const dvb=ms.reduce((s,m)=>s+mDVB(m),0);
     return{tipo:k,cfg,base,dvb,d:dp(dvb,base),count:ms.reduce((s,m)=>s+m.proyectos.length,0),pct:base/tBase};
   }),[overrides]);
 
-  const filtered=useMemo(()=>DATA.filter(m=>(fTipo?m.tipo===fTipo:true)&&(!search||m.macro.toLowerCase().includes(search.toLowerCase()))),[fTipo,search]);
+  const filtered=useMemo(()=>DATA.filter(m=>(fTipo?m.categoria===fTipo:true)&&(!search||m.macro.toLowerCase().includes(search.toLowerCase()))),[fTipo,search]);
   const handleChange=useCallback((id,patch)=>{setOverrides(p=>({...p,[id]:{...p[id],...patch,pt:patch.pt?{...(p[id]?.pt||{}),...patch.pt}:p[id]?.pt,pf:patch.pf?{...(p[id]?.pf||{}),...patch.pf}:p[id]?.pf}}));},[setOverrides]);
 
   return(
