@@ -152,10 +152,25 @@ function inferPt(dt, Q) {
   }
 }
 
+// ── Sufijos por N1 para desambiguar N2 con nombre genérico ───────────────────
+// (p.ej. "Operación" aparece bajo Acceso Fijo, Acceso Móvil, Data Center, etc.)
+const N1_SUFFIX = {
+  "Acceso Fijo":       "Fijo",
+  "Acceso Móvil":      "Móvil",
+  "Data Center":       "DC",
+  "Transporte y Core": "Core",   // "Core" ya aparece en algunos N2 → se omite automáticamente
+};
+
+function macroNombre(n1, n2) {
+  const sfx = N1_SUFFIX[n1];
+  // Solo agregar sufijo si el N2 no lo contiene ya
+  return sfx && !n2.includes(sfx) ? `${n2} ${sfx}` : n2;
+}
+
 // ── Generador de IDs para proyectos nuevos (no en META) ─────────────────────
 const _idCounters = {};
-function genId(n0, n2) {
-  const prefix = (n0.slice(0,2) + n2.replace(/\s/g,"").slice(0,3)).toUpperCase();
+function genId(n0, n1, n2) {
+  const prefix = ((n0[0]||"") + (n1[0]||"") + n2.replace(/\s/g,"").slice(0,2)).toUpperCase();
   _idCounters[prefix] = (_idCounters[prefix] || 0) + 1;
   return `${prefix}.${String(_idCounters[prefix]).padStart(2,"0")}`;
 }
@@ -164,15 +179,12 @@ function genId(n0, n2) {
 function parseArbolPxQ(ws) {
   const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
 
-  // Estado de contexto jerárquico
-  let curN0 = "", curN1 = "", curN2 = "", curN2Capex = 0;
-
-  // Resultado: mapa macro → entry
+  let curN0 = "", curN1 = "", curN2 = "", curMacroKey = "", curN2Capex = 0;
   const macroMap = new Map();
 
   for (const row of rows) {
     const nivel = String(row[0] || "").trim();
-    if (!nivel || nivel === "Nivel") continue; // cabecera
+    if (!nivel || nivel === "Nivel") continue;
 
     const n0    = String(row[1] || "").trim();
     const n1    = String(row[2] || "").trim();
@@ -188,11 +200,13 @@ function parseArbolPxQ(ws) {
 
     if (nivel === "N2 · Programa") {
       curN0 = n0; curN1 = n1; curN2 = n2; curN2Capex = capex;
+      curMacroKey = `${curN1}/${curN2}`;                    // clave única N1+N2
+      const macroName = macroNombre(curN1, curN2);          // nombre de display
       const cat  = N0_CAT[curN0] || curN0;
       const tipo = inferTipo(curN2);
-      if (!macroMap.has(curN2)) {
-        macroMap.set(curN2, {
-          macro: curN2,
+      if (!macroMap.has(curMacroKey)) {
+        macroMap.set(curMacroKey, {
+          macro: macroName,
           categoria: cat,
           tipo,
           P_base: curN2Capex,
@@ -204,23 +218,23 @@ function parseArbolPxQ(ws) {
 
     if (nivel === "N3 · Proyecto" && n3) {
       curN0 = n0; curN1 = n1; curN2 = n2;
+      curMacroKey = `${curN1}/${curN2}`;
+      const macroName = macroNombre(curN1, curN2);
       const cat  = N0_CAT[curN0] || curN0;
       const tipo = inferTipo(curN2);
 
-      // Asegurar que el macro existe (puede que N2 no haya aparecido antes si el Excel lo omite)
-      if (!macroMap.has(curN2)) {
-        macroMap.set(curN2, { macro: curN2, categoria: cat, tipo, P_base: curN2Capex, proyectos: [] });
+      if (!macroMap.has(curMacroKey)) {
+        macroMap.set(curMacroKey, { macro: macroName, categoria: cat, tipo, P_base: curN2Capex, proyectos: [] });
       }
 
-      // Buscar metadatos por nombre
       const meta = META[n3];
       const dt   = meta?.dt   || inferDt(curN2);
       const df   = meta?.df   || inferDf(curN0, curN2);
       const prio = meta?.prio || inferPrio(tipo);
-      const id   = meta?.id   || genId(curN0, curN2);
+      const id   = meta?.id   || genId(curN0, curN1, curN2);
       const pt   = inferPt(dt, Q);
 
-      macroMap.get(curN2).proyectos.push({
+      macroMap.get(curMacroKey).proyectos.push({
         id,
         n:    n3,
         m:    unid || "unidad",
