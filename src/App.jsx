@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import "./index.css";
 import * as XLSX from "xlsx";
+import { loadEstructura } from "./data/loadEstructura";
 import { supabase, getProfile, touchLastSeen, fetchScenarios,
          upsertScenario, removeScenario, pushLog, fetchLog,
          authSignOut } from "./supabase";
@@ -103,7 +104,9 @@ const CATEGORIA_CFG = TIPO_CFG;
 ══════════════════════════════════════════════════════════════════════════ */
 const PXQ_TREE = {};
 
-const DATA = [
+// Estructura CAPEX — se reemplaza con /public/capex-estructura.xlsx al iniciar.
+// Si el Excel falla, esta definición sirve de fallback.
+let DATA = [
   // ═══════════════════════════════════════════════════════════════════════════
   // CATEGORÍA: RED - ACCESO FIJO
   // ═══════════════════════════════════════════════════════════════════════════
@@ -3293,6 +3296,9 @@ function ViewEscenarios({escenarios, setEscenarios, activeScen, setActiveScen, s
 export default function App(){
   // ══ TODOS LOS HOOKS PRIMERO ════════════════════════════════════
 
+  // Estructura CAPEX desde Excel
+  const [dataReady, setDataReady] = useState(false);
+
   // Auth
   const [session,   setSession]   = useState(null);
   const [profile,   setProfile]   = useState(null);
@@ -3326,6 +3332,14 @@ export default function App(){
     }
   }, []);
 
+  // Carga estructura CAPEX desde Excel (fallback: DATA hardcodeado)
+  useEffect(()=>{
+    loadEstructura()
+      .then(d=>{ if(d.length>0) DATA=d; })
+      .catch(()=>{})
+      .finally(()=>setDataReady(true));
+  },[]);
+
   // Estilos globales
   useEffect(()=>{
     const s=document.createElement("style");s.textContent=GS;document.head.appendChild(s);
@@ -3348,7 +3362,7 @@ export default function App(){
   },[initUser]);
 
   // ══ GUARDS — después de todos los hooks ════════════════════════
-  if(!authReady) return(
+  if(!authReady||!dataReady) return(
     <div style={{minHeight:"100vh",background:"#F7F6F3",display:"flex",
       alignItems:"center",justifyContent:"center",
       fontFamily:"'Outfit',system-ui,sans-serif"}}>
