@@ -1744,7 +1744,7 @@ function ViewTablero({overrides,setOverrides,onChangeLog}){
   const nOv=Object.keys(overrides).length;
   const tProj=DATA.reduce((s,m)=>s+m.proyectos.length,0);
 
-  const CAT_KEYS=["Network Rollout","Network Modernization","Capacity Expansion","Customer Investment","Enterprise & Wholesale","Regulatory & Spectrum","IT & Digital","Network Operations","Gestión Administrativa"];
+  const CAT_KEYS=["Crecimiento","Modernización","Regulatorio","Operación","Transformación","Evolución","Comercial"];
   const porTipo=useMemo(()=>CAT_KEYS.map(k=>{
     const cfg=TIPO_CFG[k];
     const ms=DATA.filter(m=>m.tipo===k);
